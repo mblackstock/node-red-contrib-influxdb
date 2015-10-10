@@ -1,0 +1,20 @@
+{
+  "name": "node-red-contrib-influxdb",
+  "version": "0.0.1",
+  "description": "Node-RED nodes to save and query data from an influxdb time series database",
+  "main": "influxdb.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified yet!\" && exit 1"
+  },
+  "author": "Mike Blackstock",
+  "license": "Apache-2.0",
+  "keywords": [ "node-red", "influxdb" ],
+  "node-red"      : {
+    "nodes"     : {
+      "influxdb": "influxdb.js"
+    }
+  },
+  "dependencies": {
+    "influx": "4.0.1"
+  }
+}
