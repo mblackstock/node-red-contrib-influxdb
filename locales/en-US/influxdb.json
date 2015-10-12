@@ -4,11 +4,15 @@
             "host": "Host",
             "port": "Port",
             "database": "Database",
-            "series":"Series",
+            "measurement":"Measurement",
             "server":"Server",
             "query":"Query"
         },
-        "tip":"<b> Tip:</b> If no series is set, ensure <b>msg.series</b> will contain the series name",
-        "querytip":"<b> Tip:</b> If no query is set, ensure <b>msg.query</b> will contain the query"
+        "errors":{
+            "nomeasurement":"No measurement specified",
+            "missingconfig":"Configuration missing"
+        },
+        "tip":"<b> Tip:</b> If no measurement is specified, ensure <b>msg.measurement</b> contains the measurement name",
+        "querytip":"<b> Tip:</b> If no query is set, ensure <b>msg.query</b> contains a query."
     }
 }

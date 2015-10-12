@@ -6,8 +6,8 @@
         <input type="text" id="node-config-input-port" style="width:45px">
     </div>
     <div class="form-row">
-        <label for="node-config-input-db"><i class="fa fa-database"></i> <span data-i18n="influxdb.label.database"></span></label>
-        <input type="text" id="node-config-input-db">
+        <label for="node-config-input-database"><i class="fa fa-database"></i> <span data-i18n="influxdb.label.database"></span></label>
+        <input type="text" id="node-config-input-database">
     </div>
     <div class="form-row">
         <label for="node-config-input-user"><i class="fa fa-user"></i> <span data-i18n="node-red:common.label.username"></span></label>
@@ -29,7 +29,7 @@
         color: "rgb(218, 196, 180)",
         defaults: {
             hostname: {value: "127.0.0.1", required: true},
-            port: {value: 27017, required: true},
+            port: {value: 8086, required: true},
             database: {value: "", required: true},
             name: {value: ""}
         },
@@ -38,7 +38,7 @@
             password: {type: "password"}
         },
         label: function() {
-            return this.name || this.hostname + ":" + this.port + "/" + this.db;
+            return this.name || this.hostname + ":" + this.port + "/" + this.database;
         }
     });
 </script>
@@ -50,8 +50,8 @@
         <input type="text" id="node-input-influxdb">
     </div>
     <div class="form-row">
-        <label for="node-input-series"><i class="fa fa-briefcase"></i> <span data-i18n="influxdb.label.series"></span></label>
-        <input type="text" id="node-input-series">
+        <label for="node-input-measurement"><i class="fa fa-briefcase"></i> <span data-i18n="influxdb.label.measurement"></span></label>
+        <input type="text" id="node-input-measurement">
     </div>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
@@ -66,8 +66,8 @@
 
 <script type="text/javascript">
     function oneditprepare() {
-        $("#node-input-series").change(function () {
-            if($("#node-input-series").val() === "") {
+        $("#node-input-measurement").change(function () {
+            if($("#node-input-measurement").val() === "") {
                 $("#node-warning").show();
             } else {
                 $("#node-warning").hide();
@@ -87,7 +87,7 @@
         defaults: {
             influxdb: {type: "influxdb", required: true},
             name: {value: ""},
-            series: {value: ""}
+            measurement: {value: ""}
         },
         inputs: 1,
         outputs: 0,
@@ -95,7 +95,7 @@
         align: "right",
         label: function() {
             var influxNode = RED.nodes.node(this.influxdb);
-            return this.name || (influxNode ? influxNode.label() + " " + this.collection: "influxdb");
+            return this.name || (influxNode ? influxNode.label() + " " + this.measurement: "influxdb");
         },
         labelStyle: function() {
             return this.name ? "node_label_italic" : "";
@@ -139,7 +139,7 @@
         icon: "influxdb.png",
         label: function() {
             var influxNode = RED.nodes.node(this.influxdb);
-            return this.name || (influxNode ? influxNode.label() + " " + this.collection: "influxdb");
+            return this.name || (influxNode ? influxNode.label() + " " + this.query: "influxdb");
         },
         labelStyle: function() {
             return this.name ? "node_label_italic" : "";

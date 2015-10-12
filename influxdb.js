@@ -26,7 +26,7 @@ module.exports = function(RED) {
 
     function InfluxOutNode(n) {
         RED.nodes.createNode(this,n);
-        this.series = n.series;
+        this.measurement = n.measurement;
         this.influxdb = n.influxdb;
         this.influxdbConfig = RED.nodes.getNode(this.influxdb);
 
@@ -41,18 +41,18 @@ module.exports = function(RED) {
             });
             // when we get a message, write it to influxdb
             node.on("input",function(msg) {
-                var series;
-                if (node.series) {
-                    series = node.series;
+                var measurement;
+                if (node.measurement) {
+                    measurement = node.measurement;
                 } else {
-                    if (msg.series) {
-                        series = msg.series;
+                    if (msg.measurement) {
+                        measurement = msg.measurement;
                     } else {
-                        node.error(RED._("influxdb.errors.noseries"),msg);
+                        node.error(RED._("influxdb.errors.nomeasurement"),msg);
                         return;
                     }
                 }
-                client.writePoints(series, msg.payload, function (err, result) {
+                client.writePoints(measurement, msg.payload, function (err, result) {
                     if (err) {
                         node.error(err,msg);
                     }
