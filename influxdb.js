@@ -4,6 +4,9 @@ module.exports = function(RED) {
     "use strict";
     var influx = require('influx');
 
+    /**
+     * Config node.  Currently we only connect to one host.
+     */
     function InfluxConfigNode(n) {
         RED.nodes.createNode(this,n);
         this.hostname = n.hostname;
@@ -19,7 +22,9 @@ module.exports = function(RED) {
         }
     });
 
-
+    /**
+     * Output node to write to an influxdb measurement
+     */
     function InfluxOutNode(n) {
         RED.nodes.createNode(this,n);
         this.measurement = n.measurement;
@@ -35,7 +40,7 @@ module.exports = function(RED) {
                 username: this.influxdbConfig.credentials.username,
                 password: this.influxdbConfig.credentials.password
             });
-            // when we get a message, write it to influxdb
+
             node.on("input",function(msg) {
                 var measurement;
                 if (node.measurement) {
@@ -79,14 +84,13 @@ module.exports = function(RED) {
         } else {
             this.error(RED._("influxdb.errors.missingconfig"));
         }
-
-        this.on("close", function() {
-            // not sure we need to do anything here
-        });
     }
 
     RED.nodes.registerType("influxdb out",InfluxOutNode);
 
+    /**
+     * Input node to make queries to influxdb
+     */
     function InfluxInNode(n) {
         RED.nodes.createNode(this,n);
         this.influxdb = n.influxdb;
@@ -115,7 +119,6 @@ module.exports = function(RED) {
                         return;
                     }
                 }
-                console.log("query:"+query);
                 client.query(query, function(err, results) {
                     if (err) {
                         node.error(err);
@@ -128,12 +131,6 @@ module.exports = function(RED) {
         } else {
             this.error(RED._("influxdb.errors.missingconfig"));
         }
-
-        this.on("close", function() {
-            // if (this.clientDb) {
-            //     this.clientDb.close();
-            // }
-        });
     }
     RED.nodes.registerType("influxdb in",InfluxInNode);
 }
