@@ -61,7 +61,11 @@
 </script>
 
 <script type="text/x-red" data-help-name="influxdb out">
-    <p>Documentation to go here.</p>
+    <p>A simple influxdb output node to write values and tags to an influxdb measurement.</p>
+    <p>The fields and tags to write are in <b>msg.payload</b>.  If the message is a string, number, or boolean, it will be written as a single value to the specified measurement (called <i>value</i>).</p>
+    <p>If <b>msg.payload</b> is an object containing multiple properties, the fields will be written to the measurement.</p>
+    <p>If <b>msg.payload</b> is an array containing two objects, the first object will be written as the set of named fields, the second is the set of named tags.</p>
+    <p>Finally, if <b>msg.payload</b> is an array of arrays, it will be written as a series of points containing fields and tags.</p>
 </script>
 
 <script type="text/javascript">
@@ -122,7 +126,9 @@
 </script>
 
 <script type="text/x-red" data-help-name="influxdb in">
-    <p>Documentation to go here.</p>
+    <p>Allows basic queries to be made to an influxdb time series database.</p>
+    <p>The query can be specified in the configuration property or using the property
+    <b>msg.query</b>.  The results will be returned in <b>msg.payload</b>.</p>
 </script>
 
 <script type="text/javascript">

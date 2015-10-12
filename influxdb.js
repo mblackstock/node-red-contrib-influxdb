@@ -75,7 +75,6 @@ module.exports = function(RED) {
                         }
                     });
                 }
-
             });
         } else {
             this.error(RED._("influxdb.errors.missingconfig"));
