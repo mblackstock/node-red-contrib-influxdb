@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 module.exports = function(RED) {
     "use strict";
     var influx = require('influx');
@@ -17,12 +19,6 @@ module.exports = function(RED) {
         }
     });
 
-    // function ensureValidSelectorObject(selector) {
-    //     if (selector != null && (typeof selector != 'object' || Buffer.isBuffer(selector))) {
-    //         return {};
-    //     }
-    //     return selector;
-    // }
 
     function InfluxOutNode(n) {
         RED.nodes.createNode(this,n);
@@ -52,11 +48,34 @@ module.exports = function(RED) {
                         return;
                     }
                 }
-                client.writePoints(measurement, msg.payload, function (err, result) {
-                    if (err) {
-                        node.error(err,msg);
+                // depending on payload, call writePoints or writePoint
+                if (_.isArray(msg.payload) && msg.payload.length > 0) {
+                    if (_.isArray(msg.payload[0]) && msg.payload[0].length > 0) {
+                        // array of arrays means we have multiple points, use writePoints
+                        client.writePoints(measurement, msg.payload, function (err, result) {
+                            if (err) {
+                                node.error(err,msg);
+                            }
+                        });
+                    } else {
+                        // array of non-arrays, assume one point with both fields and tags
+                        var values = msg.payload[0];
+                        var tags = msg.payload[1];
+                        client.writePoint(measurement, values, tags, function(err, result) {
+                            if (err) {
+                                node.error(err,msg);
+                            }
+                        });
                     }
-                });
+                } else {
+                    // point with no tags, just field(s)
+                    client.writePoint(measurement, msg.payload, null, function(err, result) {
+                        if (err) {
+                            node.error(err,msg);
+                        }
+                    });
+                }
+
             });
         } else {
             this.error(RED._("influxdb.errors.missingconfig"));

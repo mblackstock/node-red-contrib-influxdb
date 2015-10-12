@@ -15,6 +15,7 @@
     }
   },
   "dependencies": {
-    "influx": "4.0.1"
+    "influx": "4.0.1",
+    "lodash": "^3.10.0"
   }
 }
