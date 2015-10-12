@@ -6,9 +6,20 @@
   "scripts": {
     "test": "echo \"Error: no test specified yet!\" && exit 1"
   },
-  "author": "Mike Blackstock",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mblackstock/node-red-contrib-influxdb"
+  },
+  "author": {
+    "name": "Mike Blackstock",
+    "email": "mikeblackstock@gmail.com",
+    "url": "http://mblackstock.com"
+  },
   "license": "Apache-2.0",
-  "keywords": [ "node-red", "influxdb" ],
+  "keywords":[
+    "node-red",
+    "influxdb"
+  ],
   "node-red"      : {
     "nodes"     : {
       "influxdb": "influxdb.js"
