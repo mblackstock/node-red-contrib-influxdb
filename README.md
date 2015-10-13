@@ -14,7 +14,7 @@ Install
 Run the following command in the root directory of your Node-RED install.
 Usually this is `~/.node-red` .
 
-    npm install node-red-node-influxdb
+    npm install node-red-contrib-influxdb
 
 Usage
 -----
