@@ -10,6 +10,7 @@ module.exports = function(RED) {
     function InfluxConfigNode(n) {
         RED.nodes.createNode(this,n);
         this.hostname = n.hostname;
+		this.protocol = n.protocol; //"https";
         this.port = n.port;
         this.database= n.database;
         this.name = n.name;
@@ -36,6 +37,7 @@ module.exports = function(RED) {
             var client = influx({
                 host: this.influxdbConfig.hostname,
                 port: this.influxdbConfig.port,
+				protocol: this.influxdbConfig.protocol,
                 database: this.influxdbConfig.database,
                 username: this.influxdbConfig.credentials.username,
                 password: this.influxdbConfig.credentials.password
@@ -102,6 +104,7 @@ module.exports = function(RED) {
             var client = influx({
                 host: this.influxdbConfig.hostname,
                 port: this.influxdbConfig.port,
+				protocol: this.influxdbConfig.protocol,
                 database: this.influxdbConfig.database,
                 username: this.influxdbConfig.credentials.username,
                 password: this.influxdbConfig.credentials.password
