@@ -6,6 +6,13 @@
         <input type="text" id="node-config-input-port" style="width:45px">
     </div>
     <div class="form-row">
+        <label for="node-config-input-protocol" > <i class="fa fa-bookmark"></i><span data-i18n="influxdb.label.protocol">Protocol</span></label>
+        <select type="text" id="node-config-input-protocol" style="width: 70%;">
+            <option value="http">http</option>
+            <option value="https">https</option>
+        </select>     
+    </div>
+    <div class="form-row">
         <label for="node-config-input-database"><i class="fa fa-database"></i> <span data-i18n="influxdb.label.database"></span></label>
         <input type="text" id="node-config-input-database">
     </div>
@@ -30,6 +37,7 @@
         defaults: {
             hostname: {value: "127.0.0.1", required: true},
             port: {value: 8086, required: true},
+			protocol: {value: "http", required: true},
             database: {value: "", required: true},
             name: {value: ""}
         },
@@ -66,6 +74,7 @@
     <p>If <b>msg.payload</b> is an object containing multiple properties, the fields will be written to the measurement.</p>
     <p>If <b>msg.payload</b> is an array containing two objects, the first object will be written as the set of named fields, the second is the set of named tags.</p>
     <p>Finally, if <b>msg.payload</b> is an array of arrays, it will be written as a series of points containing fields and tags.</p>
+    <p>If the <i>measurement</i> field is not set in the node configuration, the user can send in data with a specified measurement name in <b>msg.measurement</b> to overwrite the <i>measurement</i> field in the configuration of the node.</p>
 </script>
 
 <script type="text/javascript">
