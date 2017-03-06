@@ -2,7 +2,7 @@ var _ = require('lodash');
 
 module.exports = function(RED) {
     "use strict";
-    var influx = require('influx');
+    var Influx = require('influx');
 
     /**
      * Config node.  Currently we only connect to one host.
@@ -34,7 +34,7 @@ module.exports = function(RED) {
 
         if (this.influxdbConfig) {
             var node = this;
-            var client = influx({
+            var client = new Influx.InfluxDB({
                 host: this.influxdbConfig.hostname,
                 port: this.influxdbConfig.port,
                 protocol: this.influxdbConfig.protocol,
@@ -55,33 +55,61 @@ module.exports = function(RED) {
                         return;
                     }
                 }
-                // depending on payload, call writePoints or writePoint
+                // format payload to match new writePoints API
+                var points = [];
+                var point;
+                var timestamp;
                 if (_.isArray(msg.payload) && msg.payload.length > 0) {
+                    // array of arrays
                     if (_.isArray(msg.payload[0]) && msg.payload[0].length > 0) {
-                        // array of arrays means we have multiple points, use writePoints
-                        client.writePoints(measurement, msg.payload, function (err, result) {
-                            if (err) {
-                                node.error(err,msg);
+                        msg.payload.forEach(function(nodeRedPoint) {
+                            point = {
+                                measurement: measurement,
+                                fields: nodeRedPoint[0],
+                                tags: nodeRedPoint[1]
                             }
+                            if (point.fields.time) {
+                                point.timestamp = point.fields.time;
+                                delete point.fields.time;
+                            }
+                            points.push(point);
                         });
                     } else {
                         // array of non-arrays, assume one point with both fields and tags
-                        var values = msg.payload[0];
-                        var tags = msg.payload[1];
-                        client.writePoint(measurement, values, tags, function(err, result) {
-                            if (err) {
-                                node.error(err,msg);
-                            }
-                        });
+                        point = {
+                            measurement: measurement,
+                            fields: msg.payload[0],
+                            tags: msg.payload[1]
+                        };
+                        if (point.fields.time) {
+                            point.timestamp = point.fields.time;
+                            delete point.fields.time;
+                        }
+                        points.push(point);
                     }
                 } else {
-                    // point with no tags, just field(s)
-                    client.writePoint(measurement, msg.payload, null, function(err, result) {
-                        if (err) {
-                            node.error(err,msg);
-                        }
-                    });
+                    if (_.isPlainObject(msg.payload)) {
+                        console.log('only fields');
+                        point = {
+                            measurement: measurement,
+                            fields: msg.payload
+                        };
+                    } else {
+                        // just a value
+                        point = {
+                            measurement: measurement,
+                            fields: {value:msg.payload}
+                        };
+                    }
+                    if (point.fields.time) {
+                        point.timestamp = point.fields.time;
+                        delete point.fields.time;
+                    }
+                    points.push(point);
                 }
+                client.writePoints(points).catch(function(err) {
+                    node.error(err,msg);
+                });
             });
         } else {
             this.error(RED._("influxdb.errors.missingconfig"));
@@ -101,7 +129,7 @@ module.exports = function(RED) {
 
         if (this.influxdbConfig) {
             var node = this;
-            var client = influx({
+            var client = new Influx.InfluxDB({
                 host: this.influxdbConfig.hostname,
                 port: this.influxdbConfig.port,
                 protocol: this.influxdbConfig.protocol,
@@ -122,13 +150,11 @@ module.exports = function(RED) {
                         return;
                     }
                 }
-                client.query(query, function(err, results) {
-                    if (err) {
-                        node.error(err);
-                    } else {
-                        msg.payload = results;
-                        node.send(msg);
-                    }
+                client.query(query).then(function(results) {
+                    msg.payload = results;
+                    node.send(msg);
+                }).catch(function(err) {
+                    node.error(err);
                 });
             });
         } else {
