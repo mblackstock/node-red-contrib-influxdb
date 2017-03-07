@@ -6,13 +6,6 @@
         <input type="text" id="node-config-input-port" style="width:45px">
     </div>
     <div class="form-row">
-        <label for="node-config-input-protocol" > <i class="fa fa-bookmark"></i><span data-i18n="influxdb.label.protocol">Protocol</span></label>
-        <select type="text" id="node-config-input-protocol" style="width: 70%;">
-            <option value="http">http</option>
-            <option value="https">https</option>
-        </select>     
-    </div>
-    <div class="form-row">
         <label for="node-config-input-database"><i class="fa fa-database"></i> <span data-i18n="influxdb.label.database"></span></label>
         <input type="text" id="node-config-input-database">
     </div>
@@ -23,6 +16,13 @@
     <div class="form-row">
         <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="node-red:common.label.password"></span></label>
         <input type="password" id="node-config-input-password">
+    </div>
+    <div class="form-row">
+        <input type="checkbox" id="node-config-input-usetls" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-config-input-usetls" style="width: auto" data-i18n="influxdb.label.use-tls"></label>
+        <div id="node-config-row-tls" class="hide">
+            <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-config-input-tls"><span data-i18n="influxdb.label.tls-config"></span></label><input style="width: 300px;" type="text" id="node-config-input-tls">
+        </div>
     </div>
     <div class="form-row">
         <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
@@ -39,7 +39,9 @@
             port: {value: 8086, required: true},
 			protocol: {value: "http", required: true},
             database: {value: "", required: true},
-            name: {value: ""}
+            name: {value: ""},
+            usetls: {value: false},
+            tls: {type:"tls-config",required: false}
         },
         credentials: {
             username: {type: "text"},
@@ -47,10 +49,26 @@
         },
         label: function() {
             return this.name || this.hostname + ":" + this.port + "/" + this.database;
+        },
+        oneditprepare: function() {
+            if (typeof this.usetls === 'undefined') {
+                this.usetls = false;
+                $("#node-config-input-usetls").prop("checked",false);
+            }
+            function updateTLSOptions() {
+                if ($("#node-config-input-usetls").is(':checked')) {
+                    $("#node-config-row-tls").show();
+                } else {
+                    $("#node-config-row-tls").hide();
+                }
+            }
+            updateTLSOptions();
+            $("#node-config-input-usetls").on("click",function() {
+                updateTLSOptions();
+            });
         }
     });
 </script>
-
 
 <script type="text/x-red" data-template-name="influxdb out">
     <div class="form-row">
