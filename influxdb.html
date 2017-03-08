@@ -88,7 +88,7 @@
 
 <script type="text/x-red" data-help-name="influxdb out">
     <p>A simple influxdb output node to write values and tags to an influxdb measurement.</p>
-    <p>The fields and tags to write are in <b>msg.payload</b>.  If the message is a string, number, or boolean, it will be written as a single value to the specified measurement (called <i>value</i>).</p>
+    <p>The fields and tags to write are in <b>msg.payload</b>.  If <b>msg.payload</b> is a string, number, or boolean, it will be written as a single value to the specified measurement (called <i>value</i>).</p>
     <p>If <b>msg.payload</b> is an object containing multiple properties, the fields will be written to the measurement.</p>
     <p>If <b>msg.payload</b> is an array containing two objects, the first object will be written as the set of named fields, the second is the set of named tags.</p>
     <p>Finally, if <b>msg.payload</b> is an array of arrays, it will be written as a series of points containing fields and tags.</p>
@@ -135,6 +135,64 @@
     });
 </script>
 
+
+<script type="text/x-red" data-template-name="influxdb batch">
+    <div class="form-row">
+        <label for="node-input-influxdb"><i class="fa fa-bookmark"></i> <span data-i18n="influxdb.label.server"></span></label>
+        <input type="text" id="node-input-influxdb">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
+    <div class="form-tips" id="node-warning" style="display: none"><span data-i18n="[html]influxdb.tip"></span></div>
+</script>
+
+<script type="text/x-red" data-help-name="influxdb batch">
+    <p>A influxdb output node to write multiple points (fields and tags) to multiple influxdb measurements.</p>
+    <p>The fields, tags and measurements to write are in <b>msg.payload</b>.</p>
+    <p>more to come!</p>
+</script>
+
+<script type="text/javascript">
+    function oneditprepare() {
+        $("#node-input-measurement").change(function () {
+            if($("#node-input-measurement").val() === "") {
+                $("#node-warning").show();
+            } else {
+                $("#node-warning").hide();
+            }
+        });
+        $("#node-input-query").change(function () {
+            if($("#node-input-query").val() === "") {
+                $("#node-warning").show();
+            } else {
+                $("#node-warning").hide();
+            }
+        });
+    }
+    RED.nodes.registerType('influxdb batch', {
+        category: 'storage-output',
+        color: "rgb(218, 196, 180)",
+        paletteLabel: 'influx batch',
+        defaults: {
+            influxdb: {type: "influxdb", required: true},
+            name: {value: ""}
+        },
+        inputs: 1,
+        outputs: 0,
+        icon: "influxdb.png",
+        align: "right",
+        label: function() {
+            var influxNode = RED.nodes.node(this.influxdb);
+            return this.name || (influxNode ? influxNode.label() : "influxdb batch");
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: oneditprepare
+    });
+</script>
 
 <script type="text/x-red" data-template-name="influxdb in">
     <div class="form-row">

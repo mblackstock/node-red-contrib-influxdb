@@ -136,6 +136,41 @@ module.exports = function(RED) {
     RED.nodes.registerType("influxdb out",InfluxOutNode);
 
     /**
+     * Output node to write batches of points to influxdb
+     */
+    function InfluxBatchNode(n) {
+        RED.nodes.createNode(this,n);
+        this.influxdb = n.influxdb;
+        this.influxdbConfig = RED.nodes.getNode(this.influxdb);
+
+        if (this.influxdbConfig) {
+            var node = this;
+            var client = new Influx.InfluxDB({
+                hosts: [ {
+                    host: this.influxdbConfig.hostname,
+                    port: this.influxdbConfig.port,
+                    protocol: this.influxdbConfig.usetls ? "https" : "http",
+                    options: this.influxdbConfig.hostOptions
+                    }
+                ],
+                database: this.influxdbConfig.database,
+                username: this.influxdbConfig.credentials.username,
+                password: this.influxdbConfig.credentials.password
+            });
+
+            node.on("input",function(msg) {
+                client.writePoints(msg.payload).catch(function(err) {
+                    node.error(err,msg);
+                });
+            });
+        } else {
+            this.error(RED._("influxdb.errors.missingconfig"));
+        }
+    }
+
+    RED.nodes.registerType("influxdb batch",InfluxBatchNode);
+
+    /**
      * Input node to make queries to influxdb
      */
     function InfluxInNode(n) {
