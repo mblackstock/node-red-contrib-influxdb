@@ -150,8 +150,11 @@
 
 <script type="text/x-red" data-help-name="influxdb batch">
     <p>A influxdb output node to write multiple points (fields and tags) to multiple influxdb measurements.</p>
-    <p>The fields, tags and measurements to write are in <b>msg.payload</b>.</p>
-    <p>more to come!</p>
+    <p>The <b>msg.payload</b> needs to be an array of <i>point</i> objects.</p>
+    <p>The <b>measurement</b> property of a point contains
+    the name of the measurement for the point.  The <b>fields</b> property will contain the
+    fields of the point.  If supplied, the <b>tags</b> property will contain the tags for the point.  To set the time
+    for the point, supply a <b>timestamp</b> property.</p>
 </script>
 
 <script type="text/javascript">
