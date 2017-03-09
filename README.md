@@ -1,13 +1,13 @@
 node-red-contrib-influxdb
 =========================
 
-A <a href="http://nodered.org" target="_new">Node-RED</a> node to write and query data from an influxdb time series database.  These nodes use the <a href="https://www.npmjs.com/package/influx" target="_new">influxDB client</a> for node.js, specifically calling the **writePoint()**, **writePoints()**, and **query()** methods.  Currently it can only communicate with one influxdb host.
+A <a href="http://nodered.org" target="_new">Node-RED</a> node to write and query data from an influxdb time series database.  These nodes use the <a href="https://www.npmjs.com/package/influx" target="_new">influxDB client</a> for node.js, specifically calling the **writePoints()**, and **query()** methods.  Currently it can only communicate with one influxdb host.
 
 
 Pre-requesites
 --------------
 
-To run this you'll need access to an influxdb database version 0.9.x, possibly later.  See the <a href="https://influxdb.com/" target="_new">influxdb site</a> for more information.  The last release of this node has been tested with InfluxDb 0.9.6.1.
+To run this you'll need access to an influxdb database version 1.1.x, possibly later.  See the <a href="https://influxdb.com/" target="_new">influxdb site</a> for more information.  The last release of this node has been tested with InfluxDb 1.1.1.
 
 Install
 -------
@@ -126,7 +126,7 @@ Note how timestamps are specified - the number of milliseconds since 1 January 1
 
 The batch output node (influx batch) sends a list of *points* together in a batch to InfluxDB in a slightly different format from the output node, more in line with the underlying node.js [influx library version 5.0.x](https://www.npmjs.com/package/influx). In each point you must specify the measurement name to write into as well as a list of tag and field values. Optionally, you can specify the time to tag that point at, defaulting to the current time.
 
-Under the hood we are calling the node influxdb library **writePoints()** call as documented [here](https://node-influx.github.io/class/src/index.js~InfluxDB.html#instance-method-writePoints).
+Under the hood we are calling the node influxdb 5.0.x library **writePoints()** call as documented [here](https://node-influx.github.io/class/src/index.js~InfluxDB.html#instance-method-writePoints).
 
 By default the node will write timestamps using ms precision since that's what JavaScript gives us. if you specify the timestamp as a Date object, we'll convert it to milliseconds.  If you provide a string or number as the timestamp, we'll pass it straight into Influx to parse.
 
