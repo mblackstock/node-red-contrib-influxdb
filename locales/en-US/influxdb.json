@@ -6,7 +6,9 @@
             "database": "Database",
             "measurement":"Measurement",
             "server":"Server",
-            "query":"Query"
+            "query":"Query",
+            "use-tls": "Enable secure (SSL/TLS) connection",
+            "tls-config":"TLS Configuration"
         },
         "errors":{
             "nomeasurement":"No measurement specified",

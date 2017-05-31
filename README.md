@@ -1,13 +1,13 @@
 node-red-contrib-influxdb
 =========================
 
-A <a href="http://nodered.org" target="_new">Node-RED</a> node to write and query data from an influxdb time series database.  These nodes use the <a href="https://www.npmjs.com/package/influx" target="_new">influxDB client</a> for node.js, specifically calling the **writePoint()**, **writePoints()**, and **query()** methods.  Currently it can only communicate with one influxdb host.
+A <a href="http://nodered.org" target="_new">Node-RED</a> node to write and query data from an influxdb time series database.  These nodes use the <a href="https://www.npmjs.com/package/influx" target="_new">influxDB client</a> for node.js, specifically calling the **writePoints()**, and **query()** methods.  Currently it can only communicate with one influxdb host.
 
 
 Pre-requesites
 --------------
 
-To run this you'll need access to an influxdb database version 0.9.x, possibly later.  See the <a href="https://influxdb.com/" target="_new">influxdb site</a> for more information.  The last release of this node has been tested with InfluxDb 0.9.6.1.
+To run this you'll need access to an influxdb database version 1.1.x, possibly later.  See the <a href="https://influxdb.com/" target="_new">influxdb site</a> for more information.  The last release of this node has been tested with InfluxDb 1.1.1.
 
 Install
 -------
@@ -121,3 +121,44 @@ The function node in the above flow looks as follows:
 	return msg;
 
 Note how timestamps are specified - the number of milliseconds since 1 January 1970 00:00:00 UTC.
+
+### The Batch Output Node
+
+The batch output node (influx batch) sends a list of *points* together in a batch to InfluxDB in a slightly different format from the output node, more in line with the underlying node.js [influx library version 5.0.x](https://www.npmjs.com/package/influx). In each point you must specify the measurement name to write into as well as a list of tag and field values. Optionally, you can specify the time to tag that point at, defaulting to the current time.
+
+Under the hood we are calling the node influxdb 5.0.x library **writePoints()** call as documented [here](https://node-influx.github.io/class/src/index.js~InfluxDB.html#instance-method-writePoints).
+
+By default the node will write timestamps using ms precision since that's what JavaScript gives us. if you specify the timestamp as a Date object, we'll convert it to milliseconds.  If you provide a string or number as the timestamp, we'll pass it straight into Influx to parse.
+
+The following example flow writes two points to two measurments, setting the timestamp to the current date.
+
+	[{"id":"4a271a88.499184","type":"function","z":"87205ed6.329bc","name":"multiple measurement points","func":"msg.payload = [\n    {\n        measurement: \"weather_sensor\",\n        fields: {\n            temp: 5.5,\n            light: 678,\n            humidity: 51\n        },\n        tags:{\n            location:\"garden\"\n        },\n        timestamp: new Date()\n    },\n    {\n        measurement: \"alarm_sensor\",\n        fields: {\n            proximity: 999,\n            temp: 19.5\n        },\n        tags:{\n            location:\"home\"\n        },\n        timestamp: new Date()\n    }\n];\nreturn msg;","outputs":1,"noerr":0,"x":400,"y":280,"wires":[["748a06bd.675ed8"]]},{"id":"6493a442.1cdcbc","type":"inject","z":"87205ed6.329bc","name":"","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"x":140,"y":220,"wires":[["4a271a88.499184"]]},{"id":"748a06bd.675ed8","type":"influxdb batch","z":"87205ed6.329bc","influxdb":"6ca8bde.9eb2f44","name":"","x":670,"y":220,"wires":[]},{"id":"6ca8bde.9eb2f44","type":"influxdb","z":"","hostname":"localhost","port":"8086","protocol":"https","database":"new_db","name":"","usetls":true,"tls":"f7f39f4e.896ae"},{"id":"f7f39f4e.896ae","type":"tls-config","z":"","name":"local-tls","cert":"","key":"","ca":"","certname":"","keyname":"","caname":"","verifyservercert":false}]
+
+The function node generates sample points as follows:
+
+	msg.payload = [
+		{
+			measurement: "weather_sensor",
+			fields: {
+				temp: 5.5,
+				light: 678,
+				humidity: 51
+			},
+			tags:{
+				location:"garden"
+			},
+			timestamp: new Date()
+		},
+		{
+			measurement: "alarm_sensor",
+			fields: {
+				proximity: 999,
+				temp: 19.5
+			},
+			tags:{
+				location:"home"
+			},
+			timestamp: new Date()
+		}
+	];
+	return msg;

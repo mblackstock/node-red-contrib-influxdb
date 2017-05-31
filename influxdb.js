@@ -10,10 +10,24 @@ module.exports = function(RED) {
     function InfluxConfigNode(n) {
         RED.nodes.createNode(this,n);
         this.hostname = n.hostname;
-        this.protocol = n.protocol; //"https";
         this.port = n.port;
         this.database= n.database;
         this.name = n.name;
+        this.usetls = n.usetls;
+        if (typeof this.usetls === 'undefined'){
+            this.usetls = false;
+        }
+        // for backward compatibility with old protocol setting
+        if (n.protocol === 'https') {
+            this.usetls = true;
+        }
+        if (this.usetls && n.tls) {
+            var tlsNode = RED.nodes.getNode(n.tls);
+            if (tlsNode) {
+                this.hostOptions = {};
+                tlsNode.addTLSOptions(this.hostOptions);
+            }
+        }
     }
 
     RED.nodes.registerType("influxdb",InfluxConfigNode,{
@@ -35,9 +49,13 @@ module.exports = function(RED) {
         if (this.influxdbConfig) {
             var node = this;
             var client = new Influx.InfluxDB({
-                host: this.influxdbConfig.hostname,
-                port: this.influxdbConfig.port,
-                protocol: this.influxdbConfig.protocol,
+                hosts: [ {
+                    host: this.influxdbConfig.hostname,
+                    port: this.influxdbConfig.port,
+                    protocol: this.influxdbConfig.usetls ? "https" : "http",
+                    options: this.influxdbConfig.hostOptions
+                    }
+                ],
                 database: this.influxdbConfig.database,
                 username: this.influxdbConfig.credentials.username,
                 password: this.influxdbConfig.credentials.password
@@ -89,7 +107,6 @@ module.exports = function(RED) {
                     }
                 } else {
                     if (_.isPlainObject(msg.payload)) {
-                        console.log('only fields');
                         point = {
                             measurement: measurement,
                             fields: msg.payload
@@ -119,6 +136,41 @@ module.exports = function(RED) {
     RED.nodes.registerType("influxdb out",InfluxOutNode);
 
     /**
+     * Output node to write batches of points to influxdb
+     */
+    function InfluxBatchNode(n) {
+        RED.nodes.createNode(this,n);
+        this.influxdb = n.influxdb;
+        this.influxdbConfig = RED.nodes.getNode(this.influxdb);
+
+        if (this.influxdbConfig) {
+            var node = this;
+            var client = new Influx.InfluxDB({
+                hosts: [ {
+                    host: this.influxdbConfig.hostname,
+                    port: this.influxdbConfig.port,
+                    protocol: this.influxdbConfig.usetls ? "https" : "http",
+                    options: this.influxdbConfig.hostOptions
+                    }
+                ],
+                database: this.influxdbConfig.database,
+                username: this.influxdbConfig.credentials.username,
+                password: this.influxdbConfig.credentials.password
+            });
+
+            node.on("input",function(msg) {
+                client.writePoints(msg.payload).catch(function(err) {
+                    node.error(err,msg);
+                });
+            });
+        } else {
+            this.error(RED._("influxdb.errors.missingconfig"));
+        }
+    }
+
+    RED.nodes.registerType("influxdb batch",InfluxBatchNode);
+
+    /**
      * Input node to make queries to influxdb
      */
     function InfluxInNode(n) {
@@ -126,13 +178,16 @@ module.exports = function(RED) {
         this.influxdb = n.influxdb;
         this.query = n.query;
         this.influxdbConfig = RED.nodes.getNode(this.influxdb);
-
         if (this.influxdbConfig) {
             var node = this;
             var client = new Influx.InfluxDB({
-                host: this.influxdbConfig.hostname,
-                port: this.influxdbConfig.port,
-                protocol: this.influxdbConfig.protocol,
+                hosts: [ {
+                    host: this.influxdbConfig.hostname,
+                    port: this.influxdbConfig.port,
+                    protocol: this.influxdbConfig.usetls ? "https" : "http",
+                    options: this.influxdbConfig.hostOptions
+                    }
+                ],
                 database: this.influxdbConfig.database,
                 username: this.influxdbConfig.credentials.username,
                 password: this.influxdbConfig.credentials.password
