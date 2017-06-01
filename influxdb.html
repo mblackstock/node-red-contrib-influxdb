@@ -182,6 +182,30 @@
         <input type="text" id="node-input-query">
     </div>
     <div class="form-row">
+        <input type="checkbox" id="node-input-rawOutput" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-rawOutput" style="width: 70%;"><span data-i18n="influxdb.label.rawOutput"></span></label>        
+    </div>
+    <div class="form-row" id="node-set-tick">
+        <input type="checkbox" id="node-input-enableAdvancedOptions" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-enableAdvancedOptions" style="width: 70%;"><span data-i18n="influxdb.label.advancedQueryOptions"></span></label>
+    </div>      
+    <div class="form-row" id="node-set-precision">
+        <label for="node-input-precision"><i class="fa fa-tag"></i> <span data-i18n="influxdb.label.timePrecision"></span></label>
+        <select type="text" id="node-input-precision" style="width:70%">
+            <option value="u">Microseconds</option> 
+            <option value="ms">Milliseconds</option> 
+            <option value="s">Seconds</option>
+            <option value="m">Minute</option>
+            <option value="h">Hour</option>
+            <option value="d">Day</option>
+            <option value="w">Week</option>
+        </select>  
+    </div>
+    <div class="form-row" id="node-set-retentionPolicy">
+        <label for="node-input-retentionPolicy"><i class="fa fa-briefcase"></i> <span data-i18n="influxdb.label.retentionPolicy"></span></label>
+        <input type="text" id="node-input-retentionPolicy">
+    </div>          
+    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
@@ -192,6 +216,8 @@
     <p>Allows basic queries to be made to an influxdb time series database.</p>
     <p>The query can be specified in the configuration property or using the property
     <b>msg.query</b>.  The results will be returned in <b>msg.payload</b>.</p>
+    <p>Users can specify in the configuration to whether or not return raw output. This configuration can also be overwritten in <b>msg.rawOutput</b>. </p>
+    <p>Users can specify in the configuration to set advanced query options. The advanced query options can also be overwritten in <b>msg.precision</b> and <b>msg.retentionPolicy</b>. </p>  
 </script>
 
 <script type="text/javascript">
@@ -202,6 +228,10 @@
             influxdb: {type: "influxdb", required: true},
             name: {value: ""},
             query: {value: ""},
+            rawOutput: {value: false},
+            precision: {value: "u"},
+            enableAdvancedOptions:{value:false},
+            retentionPolicy:{value:""}
         },
         inputs: 1,
         outputs: 1,
@@ -221,6 +251,21 @@
                     $("#node-warning").hide();
                 }
             });
+
+            var setAdvancedQueryOptions = function () {
+                if ($('#node-input-enableAdvancedOptions').is(":checked")) {
+                    $("#node-set-precision").show();
+                    $("#node-set-retentionPolicy").show();
+                } else {
+                    $("#node-set-precision").hide();
+                    $("#node-set-retentionPolicy").hide();
+                }
+            }; 
+
+            $("#node-input-enableAdvancedOptions").change( function () {
+              setAdvancedQueryOptions();
+            })
+            setAdvancedQueryOptions();
         }
     });
 </script>

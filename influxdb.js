@@ -174,26 +174,35 @@ module.exports = function(RED) {
      * Input node to make queries to influxdb
      */
     function InfluxInNode(n) {
-        RED.nodes.createNode(this,n);
+        RED.nodes.createNode(this, n);
         this.influxdb = n.influxdb;
         this.query = n.query;
+        this.enableAdvancedOptions = n.enableAdvancedOptions;
+        this.precision = n.precision;
+        this.retentionPolicy = n.retentionPolicy;
+        this.rawOutput = n.rawOutput;
         this.influxdbConfig = RED.nodes.getNode(this.influxdb);
         if (this.influxdbConfig) {
             var node = this;
             var client = new Influx.InfluxDB({
-                hosts: [ {
+                hosts: [{
                     host: this.influxdbConfig.hostname,
                     port: this.influxdbConfig.port,
                     protocol: this.influxdbConfig.usetls ? "https" : "http",
                     options: this.influxdbConfig.hostOptions
-                    }
+                }
                 ],
                 database: this.influxdbConfig.database,
                 username: this.influxdbConfig.credentials.username,
                 password: this.influxdbConfig.credentials.password
             });
-            node.on("input",function(msg) {
+            node.on("input", function (msg) {
                 var query;
+                var rawOutput;
+                var queryOptions = {};
+                var precision;
+                var retentionPolicy;
+
                 if (node.query) {
                     query = node.query;
                 }
@@ -201,14 +210,41 @@ module.exports = function(RED) {
                     if (msg.query) {
                         query = msg.query;
                     } else {
-                        node.error(RED._("influxdb.errors.noquery"),msg);
+                        node.error(RED._("influxdb.errors.noquery"), msg);
                         return;
                     }
                 }
-                client.query(query).then(function(results) {
+
+                rawOutput = msg.hasOwnProperty('rawOutput') ? msg.rawOutput : node.rawOutput;
+
+                if (node.enableAdvancedOptions) {
+                    if (node.precision) {
+                        queryOptions.precision = node.precision;
+                    }
+
+                    if (node.retentionPolicy) {
+                        queryOptions.retentionPolicy = node.retentionPolicy;
+                    }
+                }
+
+                if (msg.hasOwnProperty('precision')) {
+                    queryOptions.precision = msg.precision;
+                }
+
+                if (msg.hasOwnProperty('retentionPolicy')) {
+                    queryOptions.retentionPolicy = msg.retentionPolicy;
+                }
+
+                if (rawOutput) {
+                    var queryPromise = client.queryRaw(query, queryOptions);
+                } else {
+                    var queryPromise = client.query(query, queryOptions);
+                }
+
+                queryPromise.then(function (results) {
                     msg.payload = results;
                     node.send(msg);
-                }).catch(function(err) {
+                }).catch(function (err) {
                     node.error(err);
                 });
             });
