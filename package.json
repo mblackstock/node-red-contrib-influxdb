@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-influxdb",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Node-RED nodes to save and query data from an influxdb time series database",
   "main": "influxdb.js",
   "scripts": {
@@ -16,12 +16,12 @@
     "url": "http://mblackstock.com"
   },
   "license": "Apache-2.0",
-  "keywords":[
+  "keywords": [
     "node-red",
     "influxdb"
   ],
-  "node-red"      : {
-    "nodes"     : {
+  "node-red": {
+    "nodes": {
       "influxdb": "influxdb.js"
     }
   },

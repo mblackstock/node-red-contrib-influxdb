@@ -183,28 +183,30 @@
     </div>
     <div class="form-row">
         <input type="checkbox" id="node-input-rawOutput" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-input-rawOutput" style="width: 70%;"><span data-i18n="influxdb.label.rawOutput"></span></label>        
+        <label for="node-input-rawOutput"><span data-i18n="influxdb.label.use-raw-output"></span></label>        
     </div>
-    <div class="form-row" id="node-set-tick">
+    <div class="form-row">
         <input type="checkbox" id="node-input-enableAdvancedOptions" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-input-enableAdvancedOptions" style="width: 70%;"><span data-i18n="influxdb.label.advancedQueryOptions"></span></label>
-    </div>      
-    <div class="form-row" id="node-set-precision">
-        <label for="node-input-precision"><i class="fa fa-tag"></i> <span data-i18n="influxdb.label.timePrecision"></span></label>
-        <select type="text" id="node-input-precision" style="width:70%">
-            <option value="u">Microseconds</option> 
-            <option value="ms">Milliseconds</option> 
-            <option value="s">Seconds</option>
-            <option value="m">Minute</option>
-            <option value="h">Hour</option>
-            <option value="d">Day</option>
-            <option value="w">Week</option>
-        </select>  
+        <label for="node-input-enableAdvancedOptions" style="width: 70%;"><span data-i18n="influxdb.label.use-advanced-query"></span></label>
     </div>
-    <div class="form-row" id="node-set-retentionPolicy">
-        <label for="node-input-retentionPolicy"><i class="fa fa-briefcase"></i> <span data-i18n="influxdb.label.retentionPolicy"></span></label>
-        <input type="text" id="node-input-retentionPolicy">
-    </div>          
+    <div id="advanced-options-div" style="display:none">
+        <div class="form-row">
+            <label for="node-input-precision" style="width:35%"><i class="fa fa-clock-o"></i> <span data-i18n="influxdb.label.time-precision"></span></label>
+            <select type="text" id="node-input-precision" style="width:55%">
+                <option value="u">Microseconds (u)</option> 
+                <option value="ms">Milliseconds (ms)</option> 
+                <option value="s">Seconds (s)</option>
+                <option value="m">Minute (m)</option>
+                <option value="h">Hour (h)</option>
+                <option value="d">Day (d)</option>
+                <option value="w">Week (w)</option>
+            </select>  
+        </div>
+        <div class="form-row">
+            <label for="node-input-retentionPolicy" style="width:35%"><i class="fa fa-gavel"></i> <span data-i18n="influxdb.label.retention-policy"></span></label>
+            <input type="text" style="width:55%" id="node-input-retentionPolicy">
+        </div>
+    </div>    
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
@@ -216,8 +218,12 @@
     <p>Allows basic queries to be made to an influxdb time series database.</p>
     <p>The query can be specified in the configuration property or using the property
     <b>msg.query</b>.  The results will be returned in <b>msg.payload</b>.</p>
-    <p>Users can specify in the configuration to whether or not return raw output. This configuration can also be overwritten in <b>msg.rawOutput</b>. </p>
-    <p>Users can specify in the configuration to set advanced query options. The advanced query options can also be overwritten in <b>msg.precision</b> and <b>msg.retentionPolicy</b>. </p>  
+    <p>To output the results of the query in the raw output format returned by InfluxDb,
+    check the <b>Raw Output</b> checkbox.</p>
+    <p>Check <b>Advanced Query Options</b> to specify a time precision and retention policy for the query.<p>
+    The raw output configuration can be overwritten by the message property <b>msg.rawOutput</b>. </p>
+    <p>The advanced query options <b>Time Precision</b> and <b>Retention Policy</b> can be overwritten using 
+    message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p>  
 </script>
 
 <script type="text/javascript">
@@ -254,11 +260,9 @@
 
             var setAdvancedQueryOptions = function () {
                 if ($('#node-input-enableAdvancedOptions').is(":checked")) {
-                    $("#node-set-precision").show();
-                    $("#node-set-retentionPolicy").show();
+                    $("#advanced-options-div").show()
                 } else {
-                    $("#node-set-precision").hide();
-                    $("#node-set-retentionPolicy").hide();
+                    $("#advanced-options-div").hide()
                 }
             }; 
 

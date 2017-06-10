@@ -9,10 +9,10 @@
             "query":"Query",
             "use-tls": "Enable secure (SSL/TLS) connection",
             "tls-config":"TLS Configuration",
-            "rawOutput":"Raw Output",
-            "timePrecision":"Time Precision",
-            "retentionPolicy":"Retention Policy",
-            "advancedQueryOptions":"Enable Advanced Query Options?"
+            "use-raw-output":"Raw Output",
+            "time-precision":"Time Precision",
+            "retention-policy":"Retention Policy",
+            "use-advanced-query":"Advanced Query Options"
         },
         "errors":{
             "nomeasurement":"No measurement specified",
