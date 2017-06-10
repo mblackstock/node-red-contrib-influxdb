@@ -8,7 +8,11 @@
             "server":"Server",
             "query":"Query",
             "use-tls": "Enable secure (SSL/TLS) connection",
-            "tls-config":"TLS Configuration"
+            "tls-config":"TLS Configuration",
+            "rawOutput":"Raw Output",
+            "timePrecision":"Time Precision",
+            "retentionPolicy":"Retention Policy",
+            "advancedQueryOptions":"Enable Advanced Query Options?"
         },
         "errors":{
             "nomeasurement":"No measurement specified",
