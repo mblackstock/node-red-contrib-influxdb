@@ -44,6 +44,8 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         this.measurement = n.measurement;
         this.influxdb = n.influxdb;
+        this.precision = n.precision;
+        this.retentionPolicy = n.retentionPolicy;
         this.influxdbConfig = RED.nodes.getNode(this.influxdb);
 
         if (this.influxdbConfig) {
@@ -63,16 +65,23 @@ module.exports = function(RED) {
 
             node.on("input",function(msg) {
                 var measurement;
-                if (node.measurement) {
-                    measurement = node.measurement;
-                } else {
-                    if (msg.measurement) {
-                        measurement = msg.measurement;
-                    } else {
-                        node.error(RED._("influxdb.errors.nomeasurement"),msg);
-                        return;
-                    }
+                var writeOptions = {};
+                var measurement = msg.hasOwnProperty('measurement') ? msg.measurement : node.measurement;
+                if (!measurement) {
+                    node.error(RED._("influxdb.errors.nomeasurement"),msg);
+                    return;                
                 }
+                var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
+                var retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
+
+                if (precision) {
+                    writeOptions.precision = precision;
+                }
+
+                if (retentionPolicy) {
+                    writeOptions.retentionPolicy = retentionPolicy;
+                }
+                
                 // format payload to match new writePoints API
                 var points = [];
                 var point;
@@ -124,7 +133,8 @@ module.exports = function(RED) {
                     }
                     points.push(point);
                 }
-                client.writePoints(points).catch(function(err) {
+
+                client.writePoints(points, writeOptions).catch(function(err) {
                     node.error(err,msg);
                 });
             });
@@ -141,10 +151,13 @@ module.exports = function(RED) {
     function InfluxBatchNode(n) {
         RED.nodes.createNode(this,n);
         this.influxdb = n.influxdb;
+        this.precision = n.precision;
+        this.retentionPolicy = n.retentionPolicy;
         this.influxdbConfig = RED.nodes.getNode(this.influxdb);
 
         if (this.influxdbConfig) {
             var node = this;
+
             var client = new Influx.InfluxDB({
                 hosts: [ {
                     host: this.influxdbConfig.hostname,
@@ -159,7 +172,19 @@ module.exports = function(RED) {
             });
 
             node.on("input",function(msg) {
-                client.writePoints(msg.payload).catch(function(err) {
+                var writeOptions = {};
+                var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
+                var retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
+
+                if (precision) {
+                    writeOptions.precision = precision;
+                }
+
+                if (retentionPolicy) {
+                    writeOptions.retentionPolicy = retentionPolicy;
+                }
+
+                client.writePoints(msg.payload, writeOptions).catch(function(err) {
                     node.error(err,msg);
                 });
             });
