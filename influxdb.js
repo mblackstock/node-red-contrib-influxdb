@@ -14,10 +14,10 @@ module.exports = function(RED) {
         this.database= n.database;
         this.name = n.name;
         this.usetls = n.usetls;
-        if (typeof this.usetls === 'undefined'){
+        if (typeof this.usetls === 'undefined') {
             this.usetls = false;
         }
-        // for backward compatibility with old protocol setting
+        // for backward compatibility with old 'protocol' setting
         if (n.protocol === 'https') {
             this.usetls = true;
         }
@@ -177,7 +177,6 @@ module.exports = function(RED) {
         RED.nodes.createNode(this, n);
         this.influxdb = n.influxdb;
         this.query = n.query;
-        this.enableAdvancedOptions = n.enableAdvancedOptions;
         this.precision = n.precision;
         this.retentionPolicy = n.retentionPolicy;
         this.rawOutput = n.rawOutput;
@@ -203,36 +202,22 @@ module.exports = function(RED) {
                 var precision;
                 var retentionPolicy;
 
-                if (node.query) {
-                    query = node.query;
-                }
-                if (!node.query) {
-                    if (msg.query) {
-                        query = msg.query;
-                    } else {
-                        node.error(RED._("influxdb.errors.noquery"), msg);
-                        return;
-                    }
+                query = msg.hasOwnProperty('query') ? msg.query : node.query;
+                if (!query) {
+                    node.error(RED._("influxdb.errors.noquery"), msg);
+                    return;                  
                 }
 
                 rawOutput = msg.hasOwnProperty('rawOutput') ? msg.rawOutput : node.rawOutput;
+                precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
+                retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
 
-                if (node.enableAdvancedOptions) {
-                    if (node.precision) {
-                        queryOptions.precision = node.precision;
-                    }
-
-                    if (node.retentionPolicy) {
-                        queryOptions.retentionPolicy = node.retentionPolicy;
-                    }
+                if (precision) {
+                    queryOptions.precision = precision;
                 }
 
-                if (msg.hasOwnProperty('precision')) {
-                    queryOptions.precision = msg.precision;
-                }
-
-                if (msg.hasOwnProperty('retentionPolicy')) {
-                    queryOptions.retentionPolicy = msg.retentionPolicy;
+                if (retentionPolicy) {
+                    queryOptions.retentionPolicy = retentionPolicy;
                 }
 
                 if (rawOutput) {

@@ -186,13 +186,15 @@
         <label for="node-input-rawOutput"><span data-i18n="influxdb.label.use-raw-output"></span></label>        
     </div>
     <div class="form-row">
-        <input type="checkbox" id="node-input-enableAdvancedOptions" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-input-enableAdvancedOptions" style="width: 70%;"><span data-i18n="influxdb.label.use-advanced-query"></span></label>
+        <input type="checkbox" id="advanced-options-checkbox" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="advanced-options-checkbox" style="width: 70%;"><span data-i18n="influxdb.label.use-advanced-query"></span></label>
     </div>
     <div id="advanced-options-div" style="display:none">
         <div class="form-row">
             <label for="node-input-precision" style="width:35%"><i class="fa fa-clock-o"></i> <span data-i18n="influxdb.label.time-precision"></span></label>
             <select type="text" id="node-input-precision" style="width:55%">
+                <option value="">Default</option> 
+                <option value="ns">Nanoseconds (ns)</option> 
                 <option value="u">Microseconds (u)</option> 
                 <option value="ms">Milliseconds (ms)</option> 
                 <option value="s">Seconds (s)</option>
@@ -235,8 +237,7 @@
             name: {value: ""},
             query: {value: ""},
             rawOutput: {value: false},
-            precision: {value: "u"},
-            enableAdvancedOptions:{value:false},
+            precision: {value: ""},
             retentionPolicy:{value:""}
         },
         inputs: 1,
@@ -258,18 +259,29 @@
                 }
             });
 
-            var setAdvancedQueryOptions = function () {
-                if ($('#node-input-enableAdvancedOptions').is(":checked")) {
-                    $("#advanced-options-div").show()
+            $("#advanced-options-checkbox").change( function () {
+                if ($('#advanced-options-checkbox').is(":checked")) {
+                    $("#advanced-options-div").show();
                 } else {
-                    $("#advanced-options-div").hide()
+                    $("#advanced-options-div").hide();
                 }
-            }; 
+            });
 
-            $("#node-input-enableAdvancedOptions").change( function () {
-              setAdvancedQueryOptions();
-            })
-            setAdvancedQueryOptions();
+            // show advanced options if a query option is set on startup
+            if (($('#node-input-precision').val() === "")
+                    && ($('#node-input-retentionPolicy').val() === "")) {
+                $("#advanced-options-div").hide();
+            } else {
+                $('#advanced-options-checkbox').prop('checked', true);
+                $("#advanced-options-div").show();
+            }
+        },
+        oneditsave: function() {
+            // reset inputs if we are not using advanced options
+            if (!$("#advanced-options-checkbox").is(':checked')) {
+                $("#node-input-precision").val("");
+                $("#node-input-retentionPolicy").val("");
+            }
         }
     });
 </script>
