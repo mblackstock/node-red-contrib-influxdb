@@ -7,7 +7,7 @@ A <a href="http://nodered.org" target="_new">Node-RED</a> node to write and quer
 Pre-requesites
 --------------
 
-To run this you'll need access to an influxdb database version 1.1.x, possibly later.  See the <a href="https://influxdb.com/" target="_new">influxdb site</a> for more information.  The last release of this node has been tested with InfluxDb 1.1.1.
+To run this you'll need access to an influxdb database version 1.1.x, possibly later.  See the <a href="https://influxdb.com/" target="_new">influxdb site</a> for more information.  The last release of this node has been tested with InfluxDb 1.2.4.
 
 Install
 -------
