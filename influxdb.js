@@ -64,13 +64,13 @@ module.exports = function(RED) {
             });
 
             node.on("input",function(msg) {
-                var measurement;
                 var writeOptions = {};
                 var measurement = msg.hasOwnProperty('measurement') ? msg.measurement : node.measurement;
                 if (!measurement) {
                     node.error(RED._("influxdb.errors.nomeasurement"),msg);
                     return;                
                 }
+                measurement = measurement.replace(/ /g, '\\ ');
                 var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
                 var retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
 
