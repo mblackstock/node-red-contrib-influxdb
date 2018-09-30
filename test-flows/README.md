@@ -19,8 +19,6 @@ self signed SSL cert as follows:
 
 Answer the questions as you like.
 
-
-
 ## Running influxdb for tests
 
 To run influxdb using the config file in the current directory:
