@@ -162,3 +162,12 @@ The function node generates sample points as follows:
 		}
 	];
 	return msg;
+
+
+### Handling Failed Reads and Writes
+Errors in the read and writes can be caught using the node-red `catch`
+node. Error information is availlable in the default `msg.error` as well
+as in the `msg.influx_error`. At time of writing this only includes the
+status code from the influx client. The `influx-read` node will
+always throw a `503`, whereas the write nodes throw more descriptive
+error codes as detailed in the [Influx API documentation](https://docs.influxdata.com/influxdb/v1.7/tools/api/#status-codes-and-responses-2).
