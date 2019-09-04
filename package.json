@@ -27,6 +27,6 @@
   },
   "dependencies": {
     "influx": "5.1.1",
-    "lodash": "4.17.12"
+    "lodash": "4.17.15"
   }
 }
