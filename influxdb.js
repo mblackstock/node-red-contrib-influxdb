@@ -74,9 +74,7 @@ module.exports = function(RED) {
                 var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
                 var retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
 
-                if (precision) {
-                    writeOptions.precision = precision;
-                }
+                writeOptions.precision = precision ? precision : "ms";
 
                 if (retentionPolicy) {
                     writeOptions.retentionPolicy = retentionPolicy;
@@ -176,9 +174,7 @@ module.exports = function(RED) {
                 var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
                 var retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
 
-                if (precision) {
-                    writeOptions.precision = precision;
-                }
+                writeOptions.precision = precision ? precision : "ms";
 
                 if (retentionPolicy) {
                     writeOptions.retentionPolicy = retentionPolicy;
@@ -237,9 +233,7 @@ module.exports = function(RED) {
                 precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
                 retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
 
-                if (precision) {
-                    queryOptions.precision = precision;
-                }
+                queryOptions.precision = precision ? precision : "ms";
 
                 if (retentionPolicy) {
                     queryOptions.retentionPolicy = retentionPolicy;
