@@ -135,6 +135,9 @@ module.exports = function(RED) {
                 }
 
                 client.writePoints(points, writeOptions).catch(function(err) {
+                    msg.influx_error = {
+                        statusCode : err.res ? err.res.statusCode : 503
+                    }
                     node.error(err,msg);
                 });
             });
@@ -185,6 +188,9 @@ module.exports = function(RED) {
                 }
 
                 client.writePoints(msg.payload, writeOptions).catch(function(err) {
+                    msg.influx_error = {
+                        statusCode : err.res ? err.res.statusCode : 503
+                    }
                     node.error(err,msg);
                 });
             });
@@ -255,7 +261,10 @@ module.exports = function(RED) {
                     msg.payload = results;
                     node.send(msg);
                 }).catch(function (err) {
-                    node.error(err);
+                    msg.influx_error = {
+                        statusCode : err.res ? err.res.statusCode : 503
+                    }
+                    node.error(err, msg);
                 });
             });
         } else {
