@@ -115,7 +115,7 @@ The function node in the above flow looks as follows:
     ];
     return msg;
 
-Note how timestamps are specified - the number of milliseconds since 1 January 1970 00:00:00 UTC.
+Note how timestamps are specified - the number of milliseconds since 1 January 1970 00:00:00 UTC. In this case do not forget to set "ms" in "Time Precision" (Advanced Query Options) of the "Influx Out Node".
 
 ### The Batch Output Node
 
