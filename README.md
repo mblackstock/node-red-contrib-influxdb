@@ -4,7 +4,7 @@ A <a href="http://nodered.org" target="_new">Node-RED</a> node to write and quer
 
 ## Prerequisites
 
-To run this you'll need access to an influxdb database version 1.x.  See the <a href="https://influxdb.com/" target="_new">influxdb site</a> for more information.  The last release of this node has been tested with InfluxDb 1.8.    Look for a new set of nodes to support Influ
+To run this you'll need access to an influxdb database version 1.x.  See the <a href="https://influxdb.com/" target="_new">influxdb site</a> for more information.  The last release of this node has been tested with InfluxDb 1.8.
 
 ## Install
 
@@ -119,9 +119,9 @@ Note how timestamps are specified - the number of milliseconds since 1 January 1
 
 ### The Batch Output Node
 
-The batch output node (influx batch) sends a list of *points* together in a batch to InfluxDB in a slightly different format from the output node, more in line with the underlying node.js [influx library version 5.0.x](https://www.npmjs.com/package/influx). In each point you must specify the measurement name to write into as well as a list of tag and field values. Optionally, you can specify the time to tag that point at, defaulting to the current time.
+The batch output node (influx batch) sends a list of *points* together in a batch to InfluxDB in a slightly different format from the output node, more in line with the underlying node.js [influx library version 5.x](https://www.npmjs.com/package/influx). In each point you must specify the measurement name to write into as well as a list of tag and field values. Optionally, you can specify the time to tag that point at, defaulting to the current time.
 
-Under the hood we are calling the node influxdb 5.0.x library **writePoints()** call as documented [here](https://node-influx.github.io/class/src/index.js~InfluxDB.html#instance-method-writePoints).
+Under the hood we are calling the node influxdb 5.x library **writePoints()** call as documented [here](https://node-influx.github.io/class/src/index.js~InfluxDB.html#instance-method-writePoints).
 
 By default the node will write timestamps using ms precision since that's what JavaScript gives us. if you specify the timestamp as a Date object, we'll convert it to milliseconds.
 
@@ -168,4 +168,6 @@ Errors in reads and writes can be caught using the node-red `catch` node as usua
 Standard error information is availlable in the default `msg.error` field; additional
 information about the underlying error is in the `msg.influx_error` field. Currently,
 this includes the HTTP status code returned from the influxdb server. The `influx-read`
-node will always throw a `503`, whereas the write nodes will include other status codes as detailed in the [Influx API documentation](https://docs.influxdata.com/influxdb/v1.7/tools/api/#status-codes-and-responses-2).
+node will always throw a `503`, whereas the write nodes will include other status codes
+as detailed in the 
+[Influx API documentation](https://docs.influxdata.com/influxdb/v1.8/tools/api/#status-codes-and-responses-2).
