@@ -8,7 +8,7 @@ Set up influxdb using docker.  See documentation at https://hub.docker.com/_/inf
 
 We have a configuration file already set up for use with a self signed cert.  To generate a new, fresh config file locally:
 
-    docker run --rm influxdb:1.6.3 influxd config > influxdb.conf
+    docker run --rm influxdb:1.8 influxd config > influxdb.conf
 
 ## Set up self signed certificate
 
@@ -26,7 +26,7 @@ To run influxdb using the config file in the current directory:
     docker run --name=influxdb -p 8086:8086 \
       -v $PWD/influxdb.conf:/etc/influxdb/influxdb.conf:ro \
       -v $PWD/ssl:/etc/ssl \
-      influxdb:1.6.3 -config /etc/influxdb/influxdb.conf
+      influxdb:1.8 -config /etc/influxdb/influxdb.conf
 
 To run the influxdb CLI against this container using a self-signed cert:
 
