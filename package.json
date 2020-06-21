@@ -1,7 +1,7 @@
 {
   "name": "node-red-contrib-influxdb",
   "version": "0.4.1",
-  "description": "Node-RED nodes to save and query data from an influxdb time series database",
+  "description": "Node-RED nodes to save and query data from an influxdb 1.x time series database",
   "main": "influxdb.js",
   "scripts": {
     "test": "echo \"Error: no test specified yet!\" && exit 1"
