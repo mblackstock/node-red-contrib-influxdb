@@ -1,10 +1,10 @@
 # node-red-contrib-influxdb
 
-A <a href="http://nodered.org" target="_new">Node-RED</a> node to write and query data from an influxdb time series database.  These nodes use the <a href="https://www.npmjs.com/package/influx" target="_new">influxDB client</a> for node.js, specifically calling the **writePoints()**, and **query()** methods.  Currently it can only communicate with one influxdb host.
+A <a href="http://nodered.org" target="_new">Node-RED</a> node to write and query data from an influxdb time series database.  These nodes use the <a href="https://www.npmjs.com/package/influx" target="_new">influxDB 1.x client</a> for node.js, specifically calling the **writePoints()**, and **query()** methods.  Currently these nodes can only communicate with one influxdb host.
 
 ## Prerequisites
 
-To run this you'll need access to an influxdb database version 1.1.x, possibly later.  See the <a href="https://influxdb.com/" target="_new">influxdb site</a> for more information.  The last release of this node has been tested with InfluxDb 1.7.6.
+To run this you'll need access to an influxdb database version 1.x.  See the <a href="https://influxdb.com/" target="_new">influxdb site</a> for more information.  The last release of this node has been tested with InfluxDb 1.8.    Look for a new set of nodes to support Influ
 
 ## Install
 

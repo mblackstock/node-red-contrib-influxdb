@@ -28,6 +28,19 @@ module.exports = function(RED) {
                 tlsNode.addTLSOptions(this.hostOptions);
             }
         }
+
+        this.client = new Influx.InfluxDB({
+            hosts: [ {
+                host: this.hostname,
+                port: this.port,
+                protocol: this.usetls ? "https" : "http",
+                options: this.hostOptions
+                }
+            ],
+            database: this.database,
+            username: this.credentials.username,
+            password: this.credentials.password
+        });
     }
 
     RED.nodes.registerType("influxdb",InfluxConfigNode,{
@@ -50,18 +63,7 @@ module.exports = function(RED) {
 
         if (this.influxdbConfig) {
             var node = this;
-            var client = new Influx.InfluxDB({
-                hosts: [ {
-                    host: this.influxdbConfig.hostname,
-                    port: this.influxdbConfig.port,
-                    protocol: this.influxdbConfig.usetls ? "https" : "http",
-                    options: this.influxdbConfig.hostOptions
-                    }
-                ],
-                database: this.influxdbConfig.database,
-                username: this.influxdbConfig.credentials.username,
-                password: this.influxdbConfig.credentials.password
-            });
+            var client = this.influxdbConfig.client;
 
             node.on("input",function(msg) {
                 var measurement;
@@ -160,19 +162,7 @@ module.exports = function(RED) {
 
         if (this.influxdbConfig) {
             var node = this;
-
-            var client = new Influx.InfluxDB({
-                hosts: [ {
-                    host: this.influxdbConfig.hostname,
-                    port: this.influxdbConfig.port,
-                    protocol: this.influxdbConfig.usetls ? "https" : "http",
-                    options: this.influxdbConfig.hostOptions
-                    }
-                ],
-                database: this.influxdbConfig.database,
-                username: this.influxdbConfig.credentials.username,
-                password: this.influxdbConfig.credentials.password
-            });
+            var client = this.influxdbConfig.client;
 
             node.on("input",function(msg) {
                 var writeOptions = {};
@@ -214,18 +204,8 @@ module.exports = function(RED) {
         this.influxdbConfig = RED.nodes.getNode(this.influxdb);
         if (this.influxdbConfig) {
             var node = this;
-            var client = new Influx.InfluxDB({
-                hosts: [{
-                    host: this.influxdbConfig.hostname,
-                    port: this.influxdbConfig.port,
-                    protocol: this.influxdbConfig.usetls ? "https" : "http",
-                    options: this.influxdbConfig.hostOptions
-                }
-                ],
-                database: this.influxdbConfig.database,
-                username: this.influxdbConfig.credentials.username,
-                password: this.influxdbConfig.credentials.password
-            });
+            var client = this.influxdbConfig.client;
+
             node.on("input", function (msg) {
                 var query;
                 var rawOutput;
