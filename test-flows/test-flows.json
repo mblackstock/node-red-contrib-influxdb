@@ -1,249 +1,27 @@
 [
     {
-        "id": "99bf88cf.4254c8",
-        "type": "influxdb in",
-        "z": "e7ce51cb.4244",
-        "influxdb": "730dac77.69ca34",
-        "name": "",
-        "query": "select * from test",
-        "rawOutput": false,
-        "precision": "",
-        "retentionPolicy": "",
-        "x": 450,
-        "y": 400,
-        "wires": [
-            [
-                "fa349e8c.f740a"
-            ]
-        ]
+        "id": "675bec0c.46dbd4",
+        "type": "tab",
+        "label": "InfluxDB 1.8",
+        "disabled": false,
+        "info": ""
     },
     {
-        "id": "d1adae5b.bca4",
-        "type": "inject",
-        "z": "e7ce51cb.4244",
-        "name": "",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "x": 200,
-        "y": 400,
-        "wires": [
-            [
-                "99bf88cf.4254c8"
-            ]
-        ]
+        "id": "653805bf.2d2784",
+        "type": "tab",
+        "label": "InfluxDB 1.8 flux",
+        "disabled": false,
+        "info": ""
     },
     {
-        "id": "fa349e8c.f740a",
-        "type": "debug",
-        "z": "e7ce51cb.4244",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "x": 710,
-        "y": 400,
-        "wires": []
+        "id": "c70ec85f.ffbc3",
+        "type": "tab",
+        "label": "InfluxDB 2",
+        "disabled": false,
+        "info": ""
     },
     {
-        "id": "eac189ce.f28be8",
-        "type": "inject",
-        "z": "e7ce51cb.4244",
-        "name": "",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 360,
-        "y": 100,
-        "wires": [
-            [
-                "b397e971.522bd8"
-            ]
-        ]
-    },
-    {
-        "id": "b397e971.522bd8",
-        "type": "function",
-        "z": "e7ce51cb.4244",
-        "name": "Fields",
-        "func": "msg.payload = {\n    numValue: 123.0,\n    strValue: \"message\",\n    randomValue: Math.random()*10\n}\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 508,
-        "y": 100,
-        "wires": [
-            [
-                "51fc70d6.dc65b"
-            ]
-        ]
-    },
-    {
-        "id": "51fc70d6.dc65b",
-        "type": "influxdb out",
-        "z": "e7ce51cb.4244",
-        "influxdb": "730dac77.69ca34",
-        "name": "",
-        "measurement": "test",
-        "precision": "",
-        "retentionPolicy": "",
-        "x": 698,
-        "y": 100,
-        "wires": []
-    },
-    {
-        "id": "a9d0f3cc.bbceb",
-        "type": "inject",
-        "z": "e7ce51cb.4244",
-        "name": "",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 340,
-        "y": 160,
-        "wires": [
-            [
-                "a284e9c0.969b08"
-            ]
-        ]
-    },
-    {
-        "id": "a284e9c0.969b08",
-        "type": "function",
-        "z": "e7ce51cb.4244",
-        "name": "Fields and Tags",
-        "func": "msg.payload = [{\n    numValue: 12,\n    randomValue: Math.random()*10,\n    strValue: \"message2\"\n},\n{\n    tag1:\"sensor1\",\n    tag2:\"device2\"\n}];\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 511,
-        "y": 160,
-        "wires": [
-            [
-                "2056b637.2cdf8a"
-            ]
-        ]
-    },
-    {
-        "id": "2056b637.2cdf8a",
-        "type": "influxdb out",
-        "z": "e7ce51cb.4244",
-        "influxdb": "730dac77.69ca34",
-        "name": "",
-        "measurement": "test",
-        "precision": "",
-        "retentionPolicy": "",
-        "x": 719,
-        "y": 160,
-        "wires": []
-    },
-    {
-        "id": "b70228ff.b5c1c8",
-        "type": "function",
-        "z": "e7ce51cb.4244",
-        "name": "multiple readings",
-        "func": "msg.payload = [\n    [{\n        numValue: 10,\n        randomValue: Math.random()*10,\n        strValue: \"message1\",\n        time: new Date(\"2015-12-28T19:41:13Z\").getTime()\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }],\n    [{\n        numValue: 20,\n        randomValue: Math.random()*10,\n        strValue: \"message2\",\n        time: new Date(\"2015-12-28T19:41:14Z\").getTime()\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }]\n];\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 490,
-        "y": 240,
-        "wires": [
-            [
-                "f77ae03a.c8af"
-            ]
-        ]
-    },
-    {
-        "id": "cc5a4f6c.7ca5",
-        "type": "inject",
-        "z": "e7ce51cb.4244",
-        "name": "",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 316,
-        "y": 240,
-        "wires": [
-            [
-                "b70228ff.b5c1c8"
-            ]
-        ]
-    },
-    {
-        "id": "f77ae03a.c8af",
-        "type": "influxdb out",
-        "z": "e7ce51cb.4244",
-        "influxdb": "730dac77.69ca34",
-        "name": "",
-        "measurement": "test",
-        "precision": "",
-        "retentionPolicy": "",
-        "x": 711,
-        "y": 239,
-        "wires": []
-    },
-    {
-        "id": "b005e63a.2cde38",
-        "type": "function",
-        "z": "e7ce51cb.4244",
-        "name": "multiple measurement points",
-        "func": "msg.payload = [\n    {\n        measurement: \"weather_sensor\",\n        fields: {\n            temp: 5.5,\n            light: 678,\n            humidity: 51\n        },\n        tags:{\n            location:\"garden\"\n        },\n        timestamp: new Date()\n    },\n    {\n        measurement: \"alarm_sensor\",\n        fields: {\n            proximity: 999,\n            temp: 19.5\n        },\n        tags:{\n            location:\"home\"\n        },\n        timestamp: new Date()\n    }\n];\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 440,
-        "y": 320,
-        "wires": [
-            [
-                "ea1abed6.da87d"
-            ]
-        ]
-    },
-    {
-        "id": "fb899d8a.42d35",
-        "type": "inject",
-        "z": "e7ce51cb.4244",
-        "name": "",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 220,
-        "y": 320,
-        "wires": [
-            [
-                "b005e63a.2cde38"
-            ]
-        ]
-    },
-    {
-        "id": "ea1abed6.da87d",
-        "type": "influxdb batch",
-        "z": "e7ce51cb.4244",
-        "influxdb": "730dac77.69ca34",
-        "precision": "",
-        "retentionPolicy": "",
-        "name": "",
-        "x": 690,
-        "y": 320,
-        "wires": []
-    },
-    {
-        "id": "730dac77.69ca34",
+        "id": "df96ca87.d13428",
         "type": "influxdb",
         "z": "",
         "hostname": "127.0.0.1",
@@ -252,20 +30,890 @@
         "database": "test",
         "name": "",
         "usetls": true,
-        "tls": "8086d718.bcda28"
+        "tls": "d50d0c9f.31e858"
     },
     {
-        "id": "8086d718.bcda28",
+        "id": "d50d0c9f.31e858",
         "type": "tls-config",
         "z": "",
         "name": "",
         "cert": "",
         "key": "",
         "ca": "",
-        "certname": "",
-        "keyname": "",
+        "certname": "influxdb-selfsigned.crt",
+        "keyname": "influxdb-selfsigned.key",
         "caname": "",
         "servername": "",
         "verifyservercert": false
+    },
+    {
+        "id": "eb34baa.56944c8",
+        "type": "influxdb18flux",
+        "z": "",
+        "url": "https://localhost:8086",
+        "name": ""
+    },
+    {
+        "id": "3dcd3c8e.fe9b24",
+        "type": "influxdb2",
+        "z": "",
+        "url": "https://localhost:9999",
+        "token": "M7r8bFX-PqZVyehdeKKRqnGiGq8HIKkSSgcKJulra63_FrJydTtm_KmzTm_KzZLuME69xBCTW-MFbOBl2JpGtg==",
+        "name": ""
+    },
+    {
+        "id": "c2ea71f2.6e7ee8",
+        "type": "influxdb in",
+        "z": "675bec0c.46dbd4",
+        "influxdb": "df96ca87.d13428",
+        "name": "",
+        "query": "SELECT * from test",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 420,
+        "y": 340,
+        "wires": [
+            [
+                "4eb1c830.f46c18"
+            ]
+        ]
+    },
+    {
+        "id": "1c929879.20ea78",
+        "type": "inject",
+        "z": "675bec0c.46dbd4",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 340,
+        "wires": [
+            [
+                "c2ea71f2.6e7ee8"
+            ]
+        ]
+    },
+    {
+        "id": "4eb1c830.f46c18",
+        "type": "debug",
+        "z": "675bec0c.46dbd4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 690,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "74d2118d.6dc7b8",
+        "type": "inject",
+        "z": "675bec0c.46dbd4",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 320,
+        "y": 40,
+        "wires": [
+            [
+                "1d651a65.b7e6ee"
+            ]
+        ]
+    },
+    {
+        "id": "1d651a65.b7e6ee",
+        "type": "function",
+        "z": "675bec0c.46dbd4",
+        "name": "Fields",
+        "func": "msg.payload = {\n    numValue: 123.0,\n    strValue: \"message\",\n    randomValue: Math.random()*10\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 468,
+        "y": 40,
+        "wires": [
+            [
+                "63ba3d84.7c2dac"
+            ]
+        ]
+    },
+    {
+        "id": "63ba3d84.7c2dac",
+        "type": "influxdb out",
+        "z": "675bec0c.46dbd4",
+        "influxdb": "df96ca87.d13428",
+        "name": "",
+        "measurement": "test",
+        "precision": "ms",
+        "retentionPolicy": "",
+        "x": 670,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "d4ab44e3.058ac",
+        "type": "inject",
+        "z": "675bec0c.46dbd4",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 300,
+        "y": 100,
+        "wires": [
+            [
+                "b152581e.9c1b2"
+            ]
+        ]
+    },
+    {
+        "id": "b152581e.9c1b2",
+        "type": "function",
+        "z": "675bec0c.46dbd4",
+        "name": "Fields and Tags",
+        "func": "msg.payload = [{\n    numValue: 12,\n    randomValue: Math.random()*10,\n    strValue: \"message2\"\n},\n{\n    tag1:\"sensor1\",\n    tag2:\"device2\"\n}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 471,
+        "y": 100,
+        "wires": [
+            [
+                "4e0835ac.406c44"
+            ]
+        ]
+    },
+    {
+        "id": "4e0835ac.406c44",
+        "type": "influxdb out",
+        "z": "675bec0c.46dbd4",
+        "influxdb": "df96ca87.d13428",
+        "name": "",
+        "measurement": "test",
+        "precision": "ms",
+        "retentionPolicy": "",
+        "x": 679,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "abc53c6e.db7e38",
+        "type": "function",
+        "z": "675bec0c.46dbd4",
+        "name": "multiple readings",
+        "func": "msg.payload = [\n    [{\n        numValue: 10,\n        randomValue: Math.random()*10,\n        strValue: \"message1\",\n        time: new Date(\"2015-12-28T19:41:13Z\").getTime()\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }],\n    [{\n        numValue: 20,\n        randomValue: Math.random()*10,\n        strValue: \"message2\",\n        time: new Date(\"2015-12-28T19:41:14Z\").getTime()\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }]\n];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 450,
+        "y": 180,
+        "wires": [
+            [
+                "833789c9.586a"
+            ]
+        ]
+    },
+    {
+        "id": "76c0a613.0913c",
+        "type": "inject",
+        "z": "675bec0c.46dbd4",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 276,
+        "y": 180,
+        "wires": [
+            [
+                "abc53c6e.db7e38"
+            ]
+        ]
+    },
+    {
+        "id": "833789c9.586a",
+        "type": "influxdb out",
+        "z": "675bec0c.46dbd4",
+        "influxdb": "df96ca87.d13428",
+        "name": "",
+        "measurement": "test",
+        "precision": "ms",
+        "retentionPolicy": "",
+        "x": 671,
+        "y": 179,
+        "wires": []
+    },
+    {
+        "id": "d24946a8.e84d2",
+        "type": "function",
+        "z": "675bec0c.46dbd4",
+        "name": "multiple measurement points",
+        "func": "msg.payload = [\n    {\n        measurement: \"weather_sensor\",\n        fields: {\n            temp: 5.5,\n            light: 678,\n            humidity: 51\n        },\n        tags:{\n            location:\"garden\"\n        },\n        timestamp: new Date()\n    },\n    {\n        measurement: \"alarm_sensor\",\n        fields: {\n            proximity: 999,\n            temp: 19.5\n        },\n        tags:{\n            location:\"home\"\n        },\n        timestamp: new Date()\n    }\n];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 400,
+        "y": 260,
+        "wires": [
+            [
+                "d6516113.48e038"
+            ]
+        ]
+    },
+    {
+        "id": "53c37662.0e30e8",
+        "type": "inject",
+        "z": "675bec0c.46dbd4",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 260,
+        "wires": [
+            [
+                "d24946a8.e84d2"
+            ]
+        ]
+    },
+    {
+        "id": "d6516113.48e038",
+        "type": "influxdb batch",
+        "z": "675bec0c.46dbd4",
+        "influxdb": "df96ca87.d13428",
+        "precision": "ms",
+        "retentionPolicy": "",
+        "name": "",
+        "x": 650,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "4fc65aec.2d88bc",
+        "type": "inject",
+        "z": "653805bf.2d2784",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 120,
+        "wires": [
+            [
+                "b6d751d.392793"
+            ]
+        ]
+    },
+    {
+        "id": "b6d751d.392793",
+        "type": "function",
+        "z": "653805bf.2d2784",
+        "name": "Fields",
+        "func": "msg.payload = {\n  numValue: 123.0,\n  strValue: \"message\",\n  floatValue: Math.random() * 10,\n  booleanValue: true,\n  //time: new Date(\"2020-07-15T12:00:00Z\")\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 310,
+        "y": 120,
+        "wires": [
+            [
+                "207a1809.718b5"
+            ]
+        ]
+    },
+    {
+        "id": "69e12add.55122c",
+        "type": "catch",
+        "z": "653805bf.2d2784",
+        "name": "",
+        "scope": [
+            "61db7932.0bc2b8"
+        ],
+        "uncaught": false,
+        "x": 110,
+        "y": 380,
+        "wires": [
+            [
+                "eb70b7f.ef181c8"
+            ]
+        ]
+    },
+    {
+        "id": "eb70b7f.ef181c8",
+        "type": "debug",
+        "z": "653805bf.2d2784",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "207a1809.718b5",
+        "type": "influxdb 1.8 flux out",
+        "z": "653805bf.2d2784",
+        "influxdb": "eb34baa.56944c8",
+        "database": "test",
+        "measurement": "test",
+        "precision": "ms",
+        "retentionPolicy": "",
+        "name": "",
+        "x": 580,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "120c5823.db609",
+        "type": "inject",
+        "z": "653805bf.2d2784",
+        "name": "",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "date"
+            },
+            {
+                "p": "topic",
+                "v": "",
+                "vt": "string"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 60,
+        "wires": [
+            [
+                "eb30f561.c70148"
+            ]
+        ]
+    },
+    {
+        "id": "eb30f561.c70148",
+        "type": "function",
+        "z": "653805bf.2d2784",
+        "name": "Single Value",
+        "func": "msg.payload = Math.random() * 10;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 330,
+        "y": 60,
+        "wires": [
+            [
+                "cad9f0d2.1463e8"
+            ]
+        ]
+    },
+    {
+        "id": "cad9f0d2.1463e8",
+        "type": "influxdb 1.8 flux out",
+        "z": "653805bf.2d2784",
+        "influxdb": "eb34baa.56944c8",
+        "database": "test",
+        "measurement": "test",
+        "precision": "ms",
+        "retentionPolicy": "",
+        "name": "",
+        "x": 580,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "e33df9a0.62473",
+        "type": "inject",
+        "z": "653805bf.2d2784",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 180,
+        "wires": [
+            [
+                "d195b182.a4702"
+            ]
+        ]
+    },
+    {
+        "id": "d195b182.a4702",
+        "type": "function",
+        "z": "653805bf.2d2784",
+        "name": "Fields and Tags",
+        "func": "msg.payload = [{\n  numValue: 12,\n  randomValue: Math.random() * 10,\n  strValue: \"message2\",\n  //time: new Date(\"2020-07-09T16:00:00Z\")\n},\n{\n  tag1: \"sensor1\",\n  tag2: \"device2\"\n}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 340,
+        "y": 180,
+        "wires": [
+            [
+                "bf4607a5.cc9a88"
+            ]
+        ]
+    },
+    {
+        "id": "bf4607a5.cc9a88",
+        "type": "influxdb 1.8 flux out",
+        "z": "653805bf.2d2784",
+        "influxdb": "eb34baa.56944c8",
+        "database": "test",
+        "measurement": "test",
+        "precision": "ms",
+        "retentionPolicy": "",
+        "name": "",
+        "x": 610,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "99251519.a7b3e8",
+        "type": "inject",
+        "z": "653805bf.2d2784",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 240,
+        "wires": [
+            [
+                "1bf3451b.36b1bb"
+            ]
+        ]
+    },
+    {
+        "id": "1bf3451b.36b1bb",
+        "type": "function",
+        "z": "653805bf.2d2784",
+        "name": "multiple readings",
+        "func": "msg.payload = [\n  [{\n    numValue: 10,\n    randomValue: Math.random() * 10,\n    strValue: \"message1\",\n    time: new Date(\"2020-07-16T13:00:02Z\")\n  },\n  {\n    tag1: \"sensor1\",\n    tag2: \"device2\"\n  }],\n  [{\n    numValue: 20,\n    randomValue: Math.random() * 10,\n    strValue: \"message2\",\n    time: new Date(\"2020-07-16T13:00:03Z\")\n  },\n  {\n    tag1: \"sensor2\",\n    tag2: \"device1\"\n  }]\n];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 350,
+        "y": 240,
+        "wires": [
+            [
+                "fd4b0034.d7eb7"
+            ]
+        ]
+    },
+    {
+        "id": "fd4b0034.d7eb7",
+        "type": "influxdb 1.8 flux out",
+        "z": "653805bf.2d2784",
+        "influxdb": "eb34baa.56944c8",
+        "database": "test",
+        "measurement": "test",
+        "precision": "ms",
+        "retentionPolicy": "",
+        "name": "",
+        "x": 610,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "2c24bff8.5d5fb",
+        "type": "influxdb 1.8 flux in",
+        "z": "653805bf.2d2784",
+        "influxdb": "eb34baa.56944c8",
+        "query": "from(bucket: \"test/autogen\") |> range(start: -1m, stop: 1h)",
+        "name": "",
+        "x": 520,
+        "y": 300,
+        "wires": [
+            [
+                "9ec53e18.774c18"
+            ]
+        ]
+    },
+    {
+        "id": "9ec53e18.774c18",
+        "type": "debug",
+        "z": "653805bf.2d2784",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 930,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "a89497f8.4c509",
+        "type": "inject",
+        "z": "653805bf.2d2784",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 300,
+        "wires": [
+            [
+                "2c24bff8.5d5fb"
+            ]
+        ]
+    },
+    {
+        "id": "1606c311.639f3d",
+        "type": "inject",
+        "z": "c70ec85f.ffbc3",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 120,
+        "wires": [
+            [
+                "6fad44a5.d5f544"
+            ]
+        ]
+    },
+    {
+        "id": "6fad44a5.d5f544",
+        "type": "function",
+        "z": "c70ec85f.ffbc3",
+        "name": "Fields",
+        "func": "msg.payload = {\n  numValue: 123.0,\n  strValue: \"message\",\n  floatValue: Math.random() * 10,\n  booleanValue: true,\n  //time: new Date(\"2020-07-15T12:00:00Z\")\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 310,
+        "y": 120,
+        "wires": [
+            [
+                "a57b64be.670488"
+            ]
+        ]
+    },
+    {
+        "id": "d390a898.f747a",
+        "type": "catch",
+        "z": "c70ec85f.ffbc3",
+        "name": "",
+        "scope": [
+            "61db7932.0bc2b8"
+        ],
+        "uncaught": false,
+        "x": 110,
+        "y": 380,
+        "wires": [
+            [
+                "2fb394b6.0d2684"
+            ]
+        ]
+    },
+    {
+        "id": "2fb394b6.0d2684",
+        "type": "debug",
+        "z": "c70ec85f.ffbc3",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "d9f0ebfc.ecfec8",
+        "type": "inject",
+        "z": "c70ec85f.ffbc3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "date"
+            },
+            {
+                "p": "topic",
+                "v": "",
+                "vt": "string"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 60,
+        "wires": [
+            [
+                "c555c3a0.204c58"
+            ]
+        ]
+    },
+    {
+        "id": "c555c3a0.204c58",
+        "type": "function",
+        "z": "c70ec85f.ffbc3",
+        "name": "Single Value",
+        "func": "msg.payload = Math.random() * 10;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 330,
+        "y": 60,
+        "wires": [
+            [
+                "f5a4befd.56d75"
+            ]
+        ]
+    },
+    {
+        "id": "f35e5815.9ac48",
+        "type": "inject",
+        "z": "c70ec85f.ffbc3",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 180,
+        "wires": [
+            [
+                "cc6a2a67.5edc28"
+            ]
+        ]
+    },
+    {
+        "id": "cc6a2a67.5edc28",
+        "type": "function",
+        "z": "c70ec85f.ffbc3",
+        "name": "Fields and Tags",
+        "func": "msg.payload = [{\n  numValue: 12,\n  randomValue: Math.random() * 10,\n  strValue: \"message2\",\n  //time: new Date(\"2020-07-09T16:00:00Z\")\n},\n{\n  tag1: \"sensor1\",\n  tag2: \"device2\"\n}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 340,
+        "y": 180,
+        "wires": [
+            [
+                "42816c54.99f794"
+            ]
+        ]
+    },
+    {
+        "id": "cab64da3.ec089",
+        "type": "inject",
+        "z": "c70ec85f.ffbc3",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 240,
+        "wires": [
+            [
+                "45dc1b5a.7ab1d4"
+            ]
+        ]
+    },
+    {
+        "id": "45dc1b5a.7ab1d4",
+        "type": "function",
+        "z": "c70ec85f.ffbc3",
+        "name": "multiple readings",
+        "func": "msg.payload = [\n  [{\n    numValue: 10,\n    randomValue: Math.random() * 10,\n    strValue: \"message1\",\n    time: new Date(\"2020-07-16T13:00:02Z\")\n  },\n  {\n    tag1: \"sensor1\",\n    tag2: \"device2\"\n  }],\n  [{\n    numValue: 20,\n    randomValue: Math.random() * 10,\n    strValue: \"message2\",\n    time: new Date(\"2020-07-16T13:00:03Z\")\n  },\n  {\n    tag1: \"sensor2\",\n    tag2: \"device1\"\n  }]\n];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 350,
+        "y": 240,
+        "wires": [
+            [
+                "3c9f8227.c549de"
+            ]
+        ]
+    },
+    {
+        "id": "3e760db.d141d72",
+        "type": "debug",
+        "z": "c70ec85f.ffbc3",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 930,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "6d054c00.b726dc",
+        "type": "inject",
+        "z": "c70ec85f.ffbc3",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 300,
+        "wires": [
+            [
+                "de82c653.cd498"
+            ]
+        ]
+    },
+    {
+        "id": "f5a4befd.56d75",
+        "type": "influxdb 2 out",
+        "z": "c70ec85f.ffbc3",
+        "influxdb": "3dcd3c8e.fe9b24",
+        "org": "my-org",
+        "bucket": "test",
+        "measurement": "test",
+        "precision": "ms",
+        "name": "",
+        "x": 650,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "a57b64be.670488",
+        "type": "influxdb 2 out",
+        "z": "c70ec85f.ffbc3",
+        "influxdb": "3dcd3c8e.fe9b24",
+        "org": "my-org",
+        "bucket": "test",
+        "measurement": "test",
+        "precision": "ms",
+        "name": "",
+        "x": 650,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "42816c54.99f794",
+        "type": "influxdb 2 out",
+        "z": "c70ec85f.ffbc3",
+        "influxdb": "3dcd3c8e.fe9b24",
+        "org": "my-org",
+        "bucket": "test",
+        "measurement": "test",
+        "precision": "ms",
+        "name": "",
+        "x": 650,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "3c9f8227.c549de",
+        "type": "influxdb 2 out",
+        "z": "c70ec85f.ffbc3",
+        "influxdb": "3dcd3c8e.fe9b24",
+        "org": "my-org",
+        "bucket": "test",
+        "measurement": "test",
+        "precision": "ms",
+        "name": "",
+        "x": 650,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "de82c653.cd498",
+        "type": "influxdb 2 in",
+        "z": "c70ec85f.ffbc3",
+        "influxdb": "3dcd3c8e.fe9b24",
+        "org": "my-org",
+        "query": "from(bucket: \"test\") |> range(start: -1m, stop: 1h)",
+        "name": "",
+        "x": 500,
+        "y": 300,
+        "wires": [
+            [
+                "3e760db.d141d72"
+            ]
+        ]
     }
 ]

@@ -20,5 +20,47 @@
         },
         "tip":"<b> Tip:</b> If no measurement is specified, ensure <b>msg.measurement</b> contains the measurement name",
         "querytip":"<b> Tip:</b> If no query is set, ensure <b>msg.query</b> contains a query."
+    },
+    "influxdb18": {
+        "label": {
+            "url": "URL",
+            "database": "Database",
+            "server": "Server",
+            "measurement": "Measurement",
+            "time-precision": "Precision",
+            "retention-policy": "Retention",
+            "query": "Query"
+        },
+        "tip": {
+            "measurement": "<b> Tip:</b> If no measurement is specified, ensure <b>msg.measurement</b> contains the measurement name",
+            "retention-policy": "<b> Tip:</b> If no retention policy is specified, <b>autogen</b> will be assumed",
+            "querytip": "<b> Tip:</b> If no query is set, ensure <b>msg.query</b> contains a query."
+        },
+        "errors":{
+            "nomeasurement": "No measurement specified",
+            "missingconfig": "Configuration missing",
+            "noquery": "No query was especified"
+        }               
+    },
+    "influxdb2": {
+        "label": {
+            "url": "URL",
+            "token": "Token",
+            "server": "Server",
+            "org": "Organisation",
+            "bucket": "Bucket",            
+            "measurement":"Measurement",
+            "time-precision":"Precision",
+            "query":"Query"
+        },
+        "tip": {
+            "measurement": "<b> Tip:</b> If no measurement is specified, ensure <b>msg.measurement</b> contains the measurement name",
+            "querytip": "<b> Tip:</b> If no query is set, ensure <b>msg.query</b> contains a query."
+        },
+        "errors":{            
+            "nomeasurement": "No measurement specified",            
+            "missingconfig": "Configuration missing",
+            "noquery": "No query was especified"
+        }               
     }
 }

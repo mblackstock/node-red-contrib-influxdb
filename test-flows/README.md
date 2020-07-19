@@ -1,8 +1,8 @@
 # Test Flows README
 
-To test this node, we use influxdb running in a docker container.  Currently testing with influxdb 1.6.3
+To test this node, we use influxdb running in a docker container. Currently tested with InfluxDB 1.8 and 2.0.
 
-Set up influxdb using docker.  See documentation at https://hub.docker.com/_/influxdb/
+Set up influxdb using docker. See documentation at https://hub.docker.com/_/influxdb/
 
 ## Generating influxdb configuration
 
@@ -12,7 +12,7 @@ We have a configuration file already set up for use with a self signed cert.  To
 
 ## Set up self signed certificate
 
-From the [influxdb admim documentation](https://docs.influxdata.com/influxdb/v1.6/administration/https_setup/) you can set up
+From the [influxdb admim documentation](https://docs.influxdata.com/influxdb/v1.8/administration/https_setup/) you can set up
 self signed SSL cert as follows:
 
     sudo openssl req -x509 -nodes -newkey rsa:2048 -keyout ./keys/influxdb-selfsigned.key -out ./keys/influxdb-selfsigned.crt
@@ -21,7 +21,9 @@ Answer the questions as you like.
 
 ## Running influxdb for tests
 
-To run influxdb using the config file in the current directory:
+### Docker
+
+To run influxdb 1.8 using the config file in the current directory:
 
     docker run --name=influxdb -p 8086:8086 \
       -v $PWD/influxdb.conf:/etc/influxdb/influxdb.conf:ro \
@@ -34,8 +36,18 @@ To run the influxdb CLI against this container using a self-signed cert:
 
 You can then execute CLI commands to create databases, make queries, etc..
 
-First, create a `test database to use by the test flows.  
+First, create a `test` database to use by the test flows.  
 
     create database test
 
-Then import the test flows into Node-RED and ensure they work.
+Then, import the test flows into Node-RED and ensure they work.
+
+### Docker Compose
+
+To run InfluxDB 1.8, 2.0 and Chronograf using the config file in the current directory:
+
+    docker-compose up
+
+For InfluxDB 1.8+, select `Unsafe SSL option` in the Connection Configuration section with Chronograf. Create a `test` database to be used by the test flows.
+
+Then, import the test flows into Node-RED and ensure they work.
