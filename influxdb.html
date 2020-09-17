@@ -77,16 +77,6 @@
             }         
         },
         oneditprepare: function () {
-                
-            //console.log($("#node-config-input-influxdbVersion option:selected").text());
-            //console.log($("#node-config-input-influxdbVersion option:selected").val());
-
-            /*
-            if (typeof this.usetls === 'undefined') {
-                this.usetls = false;
-                $("#node-config-input-usetls").prop("checked", false);
-            }
-            */
             function updateTLSOptions() {
                 if ($("#node-config-input-usetls").is(':checked')) {
                     $("#node-config-row-tls").show();
@@ -135,11 +125,9 @@
                     });
                 }
                 if ($("#node-config-input-influxdbVersion option:selected").val() === '1.8 flux') {
-                    //alert("Handler for .change() 1.8 flux called.");
                     update18FluxOptions();
                 }
                 if ($("#node-config-input-influxdbVersion option:selected").val() === '2.0') {
-                    //alert("Handler for .change() 2.0 flux called.");
                     update20Options();
                 }          
             });
@@ -287,7 +275,6 @@
             }
 
             function update18Options() {                
-                //console.log('update 18 options called!');
                 $("#node-input-row-org").hide();
                 $("#node-input-row-bucket").hide();
                 $("#node-input-row-database").hide();
@@ -298,7 +285,6 @@
             }
 
             function update18FluxOptions() {       
-                //console.log('update 18 Flux options called!');
                 $("#node-input-row-org").hide();
                 $("#node-input-row-bucket").hide();         
                 $("#node-input-row-database").show();
@@ -309,7 +295,6 @@
             }
 
             function update20Options() {
-                //console.log('update 20 options called!');
                 $("#node-input-row-org").show();
                 $("#node-input-row-bucket").show();           
                 $("#node-input-row-database").hide();
@@ -327,16 +312,11 @@
                     var influxDBVersion = influxDBVersionMatches[1];
                 }
                 
-                //console.log(influxDBVersion);
-                
                 if (influxDBVersion === 'v1.8' || influxDBVersion == '') {
-                    //alert("Handler for .change() 1.8 called.");
                     update18Options();
                 } else if (influxDBVersion === 'v1.8 flux') {
-                    //alert("Handler for .change() 1.8 flux called.");
                     update18FluxOptions();                    
                 } else if (influxDBVersion === 'v2.0') {
-                    //alert("Handler for .change() 2.0 called.");
                     update20Options();                    
                 }
             });
@@ -572,22 +552,19 @@
                 $("#advanced-options-div").show();
             }
 
-            function update18Options() {                
-                //console.log('update 18 options called!');                
+            function update18Options() {
                 $("#node-input-row-org").hide();
                 $("#node-input-row-rawOutput").show();
                 $("#node-input-row-enableAdvancedOptions").show();
             }
 
-            function update18FluxOptions() {       
-                //console.log('update 18 Flux options called!');
+            function update18FluxOptions() {                
                 $("#node-input-row-org").hide();
                 $("#node-input-row-rawOutput").hide();
                 $("#node-input-row-enableAdvancedOptions").hide();
             }
 
             function update20Options() {
-                //console.log('update 20 options called!');
                 $("#node-input-row-org").show();
                 $("#node-input-row-rawOutput").hide();
                 $("#node-input-row-enableAdvancedOptions").hide();
@@ -599,18 +576,12 @@
                 var influxDBVersion = '';
                 if (influxDBVersionMatches) {
                     var influxDBVersion = influxDBVersionMatches[1];
-                }
-                
-                //console.log(influxDBVersion);
-                
+                }		    
                 if (influxDBVersion === 'v1.8' || influxDBVersion == '') {
-                    //alert("Handler for .change() 1.8 called.");
                     update18Options();
                 } else if (influxDBVersion === 'v1.8 flux') {
-                    //alert("Handler for .change() 1.8 flux called.");
                     update18FluxOptions();                    
                 } else if (influxDBVersion === 'v2.0') {
-                    //alert("Handler for .change() 2.0 called.");
                     update20Options();                    
                 }
             });
