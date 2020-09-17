@@ -1,23 +1,39 @@
-<script type="text/x-red" data-template-name="influxdb">
+<script type="text/x-red" data-template-name="influxdb">    
     <div class="form-row">
+        <label for="node-config-input-influxdbVersion"><i class="fa fa-code-fork"></i> <span data-i18n="influxdb.label.version"></span></label>
+        <select type="text" id="node-config-input-influxdbVersion">
+            <option value="1.8">1.8</option> 
+            <option value="1.8 flux">1.8 flux</option> 
+            <option value="2.0">2.0</option> 
+        </select>
+    </div>
+    <div class="form-row" id="node-config-row-hostname-port">
         <label for="node-config-input-hostname"><i class="fa fa-server"></i> <span data-i18n="influxdb.label.host"></span></label>
         <input class="input-append-left" type="text" id="node-config-input-hostname" placeholder="localhost" style="width: 40%;" >
         <label for="node-config-input-port" style="margin-left: 10px; width: 35px; "> <span data-i18n="influxdb.label.port"></span></label>
         <input type="text" id="node-config-input-port" style="width:45px">
     </div>
-    <div class="form-row">
+    <div class="form-row" id="node-config-row-url">
+        <label for="node-config-input-url"><i class="fa fa-server"></i> <span data-i18n="influxdb.label.url"></span></label>
+        <input class="input-append-left" type="text" id="node-config-input-url" placeholder="http://localhost:8086">
+    </div>
+    <div class="form-row" id="node-config-row-database">
         <label for="node-config-input-database"><i class="fa fa-database"></i> <span data-i18n="influxdb.label.database"></span></label>
         <input type="text" id="node-config-input-database">
     </div>
-    <div class="form-row">
+    <div class="form-row" id="node-config-row-username">
         <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="node-red:common.label.username"></span></label>
         <input type="text" id="node-config-input-username">
     </div>
-    <div class="form-row">
+    <div class="form-row" id="node-config-row-password">
         <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="node-red:common.label.password"></span></label>
         <input type="password" id="node-config-input-password">
     </div>
-    <div class="form-row">
+    <div class="form-row" id="node-config-row-token">
+        <label for="node-config-input-token"><i class="fa fa-lock"></i> <span data-i18n="influxdb.label.token"></span></label>
+        <input type="password" id="node-config-input-token">
+    </div>    
+    <div class="form-row" id="node-config-row-enableSecureConnection">
         <input type="checkbox" id="node-config-input-usetls" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="node-config-input-usetls" style="width: auto" data-i18n="influxdb.label.use-tls"></label>
         <div id="node-config-row-tls" class="hide">
@@ -37,25 +53,40 @@
         color: "rgb(218, 196, 180)",
         defaults: {
             hostname: {value: "127.0.0.1", required: true},
-            port: {value: 8086, required: true},
+            port: {value: 8086, required: true},            
 			protocol: {value: "http", required: true},
-            database: {value: "", required: true},
+            database: {value: "database", required: true},
             name: {value: ""},
             usetls: {value: false},
-            tls: {type:"tls-config",required: false}
+            tls: {type:"tls-config",required: false},
+            influxdbVersion: {value: "1.8", required: true},
+            url: {value: "http://localhost:8086", required: true}
         },
         credentials: {
             username: {type: "text"},
-            password: {type: "password"}
+            password: { type: "password" },
+            token: {type: "password"}
         },
-        label: function() {
-            return this.name || this.hostname + ":" + this.port + "/" + this.database;
+        label: function () {
+            if (this.influxdbVersion === '1.8') {
+                return this.name || "[v1.8] - " + this.hostname + ":" + this.port + "/" + this.database;
+            } else if (this.influxdbVersion === '1.8 flux') {
+                return this.name || "[v1.8 flux] - " + this.url;
+            } else if (this.influxdbVersion === '2.0') {
+                return this.name || "[v2.0] - " + this.url;
+            }         
         },
-        oneditprepare: function() {
+        oneditprepare: function () {
+                
+            //console.log($("#node-config-input-influxdbVersion option:selected").text());
+            //console.log($("#node-config-input-influxdbVersion option:selected").val());
+
+            /*
             if (typeof this.usetls === 'undefined') {
                 this.usetls = false;
-                $("#node-config-input-usetls").prop("checked",false);
+                $("#node-config-input-usetls").prop("checked", false);
             }
+            */
             function updateTLSOptions() {
                 if ($("#node-config-input-usetls").is(':checked')) {
                     $("#node-config-row-tls").show();
@@ -63,9 +94,54 @@
                     $("#node-config-row-tls").hide();
                 }
             }
-            updateTLSOptions();
-            $("#node-config-input-usetls").on("click",function() {
-                updateTLSOptions();
+
+            function update18Options() {                
+                $("#node-config-row-hostname-port").show();
+                $("#node-config-row-url").hide();
+                $("#node-config-row-database").show();
+                $("#node-config-row-username").show();
+                $("#node-config-row-password").show();
+                $("#node-config-row-token").hide();
+                $("#node-config-row-enableSecureConnection").show();                
+            }
+
+            function update18FluxOptions() {                
+                $("#node-config-row-hostname-port").hide();
+                $("#node-config-row-url").show();
+                $("#node-config-row-database").hide();
+                $("#node-config-row-username").show();
+                $("#node-config-row-password").show();
+                $("#node-config-row-token").hide();
+                $("#node-config-row-enableSecureConnection").hide();   
+            }
+
+            function update20Options() {                
+                $("#node-config-row-hostname-port").hide();
+                $("#node-config-row-url").show();
+                $("#node-config-row-database").hide();
+                $("#node-config-row-username").hide();
+                $("#node-config-row-password").hide();
+                $("#node-config-row-token").show();
+                $("#node-config-row-enableSecureConnection").hide();  
+            }
+
+            $("#node-config-input-influxdbVersion").change(function () {
+                if ($("#node-config-input-influxdbVersion option:selected").val() === '1.8') {
+                    //alert("Handler for .change() 1.8 called.");
+                    update18Options();
+                    updateTLSOptions();
+                    $("#node-config-input-usetls").on("click", function () {
+                        updateTLSOptions();
+                    });
+                }
+                if ($("#node-config-input-influxdbVersion option:selected").val() === '1.8 flux') {
+                    //alert("Handler for .change() 1.8 flux called.");
+                    update18FluxOptions();
+                }
+                if ($("#node-config-input-influxdbVersion option:selected").val() === '2.0') {
+                    //alert("Handler for .change() 2.0 flux called.");
+                    update20Options();
+                }          
             });
         }
     });
@@ -76,11 +152,23 @@
         <label for="node-input-influxdb"><i class="fa fa-server"></i> <span data-i18n="influxdb.label.server"></span></label>
         <input type="text" id="node-input-influxdb">
     </div>
+    <div class="form-row" id="node-input-row-org">
+        <label for="node-input-org"><i class="fa fa-sitemap"></i> <span data-i18n="influxdb.label.org"></span></label>
+        <input type="text" id="node-input-org">
+    </div>
+    <div class="form-row" id="node-input-row-bucket">
+        <label for="node-input-bucket"><i class="fa fa-database"></i> <span data-i18n="influxdb.label.bucket"></span></label>
+        <input type="text" id="node-input-bucket">
+    </div>
+    <div class="form-row" id="node-input-row-database">
+        <label for="node-input-database"><i class="fa fa-database"></i> <span data-i18n="influxdb.label.database"></span></label>
+        <input type="text" id="node-input-database">
+    </div>
     <div class="form-row">
         <label for="node-input-measurement"><i style="width: 10px;" class="fa fa-rss"></i> <span data-i18n="influxdb.label.measurement"></span></label>
         <input type="text" id="node-input-measurement">
     </div>
-    <div class="form-row">
+    <div class="form-row" id="node-input-row-enableAdvancedOptions">
         <input type="checkbox" id="advanced-options-checkbox" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="advanced-options-checkbox" style="width: 70%;"><span data-i18n="influxdb.label.use-advanced-query"></span></label>
         <div id="advanced-options-div" class="hide" style="margin-left: 20px; margin-top: 10px;">
@@ -103,17 +191,32 @@
                 <input type="text" style="width:55%" id="node-input-retentionPolicy">
             </div>
         </div>  
-    </div>  
+    </div>
+    <div class="form-row" id="node-input-row-precisionV18FluxV20">
+        <label for="node-input-precisionV18FluxV20"><i class="fa fa-clock-o"></i> <span data-i18n="influxdb.label.time-precision"></span></label>
+        <select type="text" id="node-input-precisionV18FluxV20">
+            <option value="ns">Nanoseconds (ns)</option> 
+            <option value="us">Microseconds (us)</option> 
+            <option value="ms">Milliseconds (ms)</option> 
+            <option value="s">Seconds (s)</option>
+        </select>  
+    </div>
+    <div class="form-row" id="node-input-row-retentionPolicyV18Flux">
+        <label for="node-input-retentionPolicyV18Flux"><i class="fa fa-gavel"></i> <span data-i18n="influxdb.label.retention-policy"></span></label>
+        <input type="text" id="node-input-retentionPolicyV18Flux">
+    </div>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
-    <div class="form-tips" id="node-warning" style="display: none"><span data-i18n="[html]influxdb.tip"></span></div>
+    <div class="form-tips" id="node-warning-measurement"><span data-i18n="[html]influxdb.tip.measurement"></span></div>
+    <div class="form-tips" id="node-warning-retention-policy"><span data-i18n="[html]influxdb.tip.retention-policy"></span></div>
 </script>
 
 <script type="text/x-red" data-help-name="influxdb out">
+    <p><b>InfluxDB 1.8</b></p>
     <p>A simple influxdb output node to write values and tags to an influxdb measurement.</p>
-    <p>The fields and tags to write are in <b>msg.payload</b>.  If <b>msg.payload</b> is a string, number, or boolean, 
+    <p>The fields and tags to write are in <b>msg.payload</b>. If <b>msg.payload</b> is a string, number, or boolean, 
     it will be written as a single value to the specified measurement (called <i>value</i>).</p>
     <p>If <b>msg.payload</b> is an object containing multiple properties, the fields will be written to the measurement.</p>
     <p>If <b>msg.payload</b> is an array containing two objects, the first object will be written as the set of named fields, 
@@ -123,19 +226,36 @@
     measurement name in <b>msg.measurement</b> to overwrite the <i>measurement</i> field in the configuration of the node.</p>
     <p>Check <i>Advanced Query Options</i> to specify a time precision and retention policy for the insertion.<p>
     <p>The advanced query options <i>Time Precision</i> and <i>Retention Policy</i> can be overwritten using 
-    message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p> 
+    message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p>
+
+    <p>&nbsp;</p><p><b>InfluxDB 1.8 Flux and InfluxDB 2.0</b></p>
+    <p>A simple output node to write values and tags to an influxdb measurement.</p>
+    <p>The fields and tags to write are in <b>msg.payload</b>. If <b>msg.payload</b> is a string, number, or boolean, 
+    it will be written as a single value to the specified measurement (called <i>value</i>).</p>
+    <p>If <b>msg.payload</b> is an object containing multiple properties, the fields will be written to the measurement.</p>
+    <p>If <b>msg.payload</b> is an array containing two objects, the first object will be written as the set of named fields, 
+    the second is the set of named tags.</p>
+    <p>Finally, if <b>msg.payload</b> is an array of arrays, it will be written as a series of points containing fields and tags.</p>
+    <p>If the <i>measurement</i> field is not set in the node configuration, the user can send in data with a specified measurement 
+    name in <b>msg.measurement</b> to overwrite the <i>measurement</i> field in the configuration of the node.</p>
+    <p>If no retention policy is specified, <i>autogen</i> will be assumed.</p>
 </script>
 
 <script type="text/javascript">
     RED.nodes.registerType('influxdb out', {
-        category: 'InfluxDB 18',
+        category: 'storage-output',
         color: "rgb(218, 196, 180)",
         defaults: {
             influxdb: {type: "influxdb", required: true},
             name: {value: ""},
             measurement: {value: ""},
             precision: {value: ""},
-            retentionPolicy: {value: ""}
+            retentionPolicy: {value: ""},
+            database: {value: "database", required: true},
+            precisionV18FluxV20: {value: "ms"},
+            retentionPolicyV18Flux: {value: ""},
+            org: {value: "organisation", required: true},
+            bucket: {value: "bucket", required: true}
         },
         inputs: 1,
         outputs: 0,
@@ -149,14 +269,6 @@
             return this.name ? "node_label_italic" : "";
         },
         oneditprepare: function() {
-            $("#node-input-measurement").change(function () {
-                if($("#node-input-measurement").val() === "") {
-                    $("#node-warning").show();
-                } else {
-                    $("#node-warning").hide();
-                }
-            });
-
             $("#advanced-options-checkbox").change( function () {
                 if ($('#advanced-options-checkbox').is(":checked")) {
                     $("#advanced-options-div").show();
@@ -173,6 +285,69 @@
                 $('#advanced-options-checkbox').prop('checked', true);
                 $("#advanced-options-div").show();
             }
+
+            function update18Options() {                
+                //console.log('update 18 options called!');
+                $("#node-input-row-org").hide();
+                $("#node-input-row-bucket").hide();
+                $("#node-input-row-database").hide();
+                $("#node-input-row-enableAdvancedOptions").show();
+                $("#node-input-row-precisionV18FluxV20").hide();
+                $("#node-input-row-retentionPolicyV18Flux").hide();
+                $("#node-warning-retention-policy").show();
+            }
+
+            function update18FluxOptions() {       
+                //console.log('update 18 Flux options called!');
+                $("#node-input-row-org").hide();
+                $("#node-input-row-bucket").hide();         
+                $("#node-input-row-database").show();
+                $("#node-input-row-enableAdvancedOptions").hide();
+                $("#node-input-row-precisionV18FluxV20").show();
+                $("#node-input-row-retentionPolicyV18Flux").show();
+                $("#node-warning-retention-policy").show();
+            }
+
+            function update20Options() {
+                //console.log('update 20 options called!');
+                $("#node-input-row-org").show();
+                $("#node-input-row-bucket").show();           
+                $("#node-input-row-database").hide();
+                $("#node-input-row-enableAdvancedOptions").hide();
+                $("#node-input-row-precisionV18FluxV20").show();
+                $("#node-input-row-retentionPolicyV18Flux").hide();
+                $("#node-warning-retention-policy").hide();
+            }
+
+            $("#node-input-influxdb").change(function () {
+                var optionSelected = $("#node-input-influxdb option:selected").text();
+                var influxDBVersionMatches = optionSelected.match(/\[(.*?)\]/);
+                var influxDBVersion = '';
+                if (influxDBVersionMatches) {
+                    var influxDBVersion = influxDBVersionMatches[1];
+                }
+                
+                //console.log(influxDBVersion);
+                
+                if (influxDBVersion === 'v1.8' || influxDBVersion == '') {
+                    //alert("Handler for .change() 1.8 called.");
+                    update18Options();
+                } else if (influxDBVersion === 'v1.8 flux') {
+                    //alert("Handler for .change() 1.8 flux called.");
+                    update18FluxOptions();                    
+                } else if (influxDBVersion === 'v2.0') {
+                    //alert("Handler for .change() 2.0 called.");
+                    update20Options();                    
+                }
+            });
+
+            $("#node-input-measurement").change(function () {
+                if($("#node-input-measurement").val() === "") {
+                    $("#node-warning-measurement").show();
+                } else {
+                    $("#node-warning-measurement").hide();
+                }
+            });
         },
         oneditsave: function() {
             // reset inputs if we are not using advanced options
@@ -217,23 +392,23 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
-    <div class="form-tips" id="node-warning" style="display: none"><span data-i18n="[html]influxdb.tip"></span></div>
 </script>
 
 <script type="text/x-red" data-help-name="influxdb batch">
+    <p><b>InfluxDB 1.8</b></p>
     <p>A influxdb output node to write multiple points (fields and tags) to multiple influxdb measurements.</p>
     <p>The <b>msg.payload</b> needs to be an array of <i>point</i> objects.</p>
-    <p>The <b>measurement</b> property of a point contains the name of the measurement for the point.  The <b>fields</b> property will contain the
-    fields of the point.  If supplied, the <b>tags</b> property will contain the tags for the point.  To set the time
+    <p>The <b>measurement</b> property of a point contains the name of the measurement for the point. The <b>fields</b> property will contain the
+    fields of the point.  If supplied, the <b>tags</b> property will contain the tags for the point. To set the time
     for the point, supply a <b>timestamp</b> property.</p>
     <p>Check <i>Advanced Query Options</i> to specify a time precision and retention policy for the insertion.<p>
     <p>The advanced query options <i>Time Precision</i> and <i>Retention Policy</i> can be overwritten using 
-    message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p>  
+    message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p>
 </script>
 
 <script type="text/javascript">
     RED.nodes.registerType('influxdb batch', {
-        category: 'InfluxDB 18',
+        category: 'storage-output',
         color: "rgb(218, 196, 180)",
         paletteLabel: 'influx batch',
         defaults: {
@@ -286,15 +461,19 @@
         <label for="node-input-influxdb"><i class="fa fa-server"></i> <span data-i18n="influxdb.label.server"></span></label>
         <input type="text" id="node-input-influxdb">
     </div>
+    <div class="form-row" id="node-input-row-org">
+        <label for="node-input-org"><i class="fa fa-sitemap"></i> <span data-i18n="influxdb.label.org"></span></label>
+        <input type="text" id="node-input-org">
+    </div>
     <div class="form-row">
         <label for="node-input-query"><i class="fa fa-briefcase"></i> <span data-i18n="influxdb.label.query"></span></label>
         <input type="text" id="node-input-query">
     </div>
-    <div class="form-row">
+    <div class="form-row" id="node-input-row-rawOutput">
         <input type="checkbox" id="node-input-rawOutput" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="node-input-rawOutput"><span data-i18n="influxdb.label.use-raw-output"></span></label>        
     </div>
-    <div class="form-row">
+    <div class="form-row" id="node-input-row-enableAdvancedOptions">
         <input type="checkbox" id="advanced-options-checkbox" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="advanced-options-checkbox" style="width: 70%;"><span data-i18n="influxdb.label.use-advanced-query"></span></label>
         <div id="advanced-options-div" class="hide" style="margin-left: 20px; margin-top: 10px;">
@@ -323,24 +502,30 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
-    <div class="form-tips" id="node-warning" style="display: none"><span data-i18n="[html]influxdb.querytip"></span></div>
+    <div class="form-tips" id="node-warning" style="display: none"><span data-i18n="[html]influxdb.tip.querytip"></span></div>
 </script>
 
 <script type="text/x-red" data-help-name="influxdb in">
+    <p><b>InfluxDB 1.8</b></p>
     <p>Allows basic queries to be made to an influxdb time series database.</p>
     <p>The query can be specified in the configuration property or using the property
-    <b>msg.query</b>.  The results will be returned in <b>msg.payload</b>.</p>
+    <b>msg.query</b>. The results will be returned in <b>msg.payload</b>.</p>
     <p>To output the results of the query in the raw output format returned by InfluxDb,
     check the <i>Raw Output</i> checkbox.</p>
     <p>Check <i>Advanced Query Options</i> to specify a time precision and retention policy for the query.<p>
-    <p>The raw output configuration can be overwritten by the message property <b>msg.rawOutput</b>. </p>
+    <p>The raw output configuration can be overwritten by the message property <b>msg.rawOutput</b>.</p>
     <p>The advanced query options <i>Time Precision</i> and <i>Retention Policy</i> can be overwritten using 
-    message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p>  
+    message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p>
+
+    <p>&nbsp;</p><p><b>InfluxDB 1.8 Flux and InfluxDB 2.0</b></p>
+    <p>Allows basic queries to be made to an influxdb 2 time series database.</p>
+    <p>The flux query can be specified in the configuration property or using the property
+    <b>msg.query</b>. The results will be returned in <b>msg.payload</b>.</p>
 </script>
 
 <script type="text/javascript">
     RED.nodes.registerType('influxdb in', {
-        category: 'InfluxDB 18',
+        category: 'storage-output',
         color: "rgb(218, 196, 180)",
         defaults: {
             influxdb: {type: "influxdb", required: true},
@@ -348,7 +533,8 @@
             query: {value: ""},
             rawOutput: {value: false},
             precision: {value: ""},
-            retentionPolicy: {value: ""}
+            retentionPolicy: {value: ""},
+            org: {value: "organisation", required: true}
         },
         inputs: 1,
         outputs: 1,
@@ -385,6 +571,49 @@
                 $('#advanced-options-checkbox').prop('checked', true);
                 $("#advanced-options-div").show();
             }
+
+            function update18Options() {                
+                //console.log('update 18 options called!');                
+                $("#node-input-row-org").hide();
+                $("#node-input-row-rawOutput").show();
+                $("#node-input-row-enableAdvancedOptions").show();
+            }
+
+            function update18FluxOptions() {       
+                //console.log('update 18 Flux options called!');
+                $("#node-input-row-org").hide();
+                $("#node-input-row-rawOutput").hide();
+                $("#node-input-row-enableAdvancedOptions").hide();
+            }
+
+            function update20Options() {
+                //console.log('update 20 options called!');
+                $("#node-input-row-org").show();
+                $("#node-input-row-rawOutput").hide();
+                $("#node-input-row-enableAdvancedOptions").hide();
+            }
+
+            $("#node-input-influxdb").change(function () {
+                var optionSelected = $("#node-input-influxdb option:selected").text();
+                var influxDBVersionMatches = optionSelected.match(/\[(.*?)\]/);
+                var influxDBVersion = '';
+                if (influxDBVersionMatches) {
+                    var influxDBVersion = influxDBVersionMatches[1];
+                }
+                
+                //console.log(influxDBVersion);
+                
+                if (influxDBVersion === 'v1.8' || influxDBVersion == '') {
+                    //alert("Handler for .change() 1.8 called.");
+                    update18Options();
+                } else if (influxDBVersion === 'v1.8 flux') {
+                    //alert("Handler for .change() 1.8 flux called.");
+                    update18FluxOptions();                    
+                } else if (influxDBVersion === 'v2.0') {
+                    //alert("Handler for .change() 2.0 called.");
+                    update20Options();                    
+                }
+            });
         },
         oneditsave: function() {
             // reset inputs if we are not using advanced options
@@ -392,338 +621,6 @@
                 $("#node-input-precision").val("");
                 $("#node-input-retentionPolicy").val("");
             }
-        }
-    });
-</script>
-
-<script type="text/x-red" data-template-name="influxdb18flux">
-    <div class="form-row">
-        <label for="node-config-input-url"><i class="fa fa-server"></i> <span data-i18n="influxdb18.label.url"></span></label>
-        <input class="input-append-left" type="text" id="node-config-input-url" placeholder="http://localhost:8086">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="node-red:common.label.username"></span></label>
-        <input type="text" id="node-config-input-username">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="node-red:common.label.password"></span></label>
-        <input type="password" id="node-config-input-password">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
-        <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
-    </div>    
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType('influxdb18flux', {
-        category: 'config',
-        color: "rgb(218, 196, 180)",
-        defaults: {
-            url: {value: "http://localhost:8086", required: true},            
-            name: {value: ""}
-        },
-        credentials: {
-            username: {type: "text", required: true},
-            password: {type: "password", required: true}
-        },
-        label: function() {
-            return this.name || this.url;
-        }
-    });
-</script>
-
-<script type="text/x-red" data-template-name="influxdb 1.8 flux out">
-    <div class="form-row">
-        <label for="node-input-influxdb"><i class="fa fa-server"></i> <span data-i18n="influxdb18.label.server"></span></label>
-        <input type="text" id="node-input-influxdb">
-    </div>
-    <div class="form-row">
-        <label for="node-input-database"><i class="fa fa-database"></i> <span data-i18n="influxdb18.label.database"></span></label>
-        <input type="text" id="node-input-database">
-    </div>
-    <div class="form-row">
-        <label for="node-input-measurement"><i style="width: 10px;" class="fa fa-rss"></i> <span data-i18n="influxdb18.label.measurement"></span></label>
-        <input type="text" id="node-input-measurement">
-    </div>
-    <div class="form-row">
-        <label for="node-input-precision"><i class="fa fa-clock-o"></i> <span data-i18n="influxdb18.label.time-precision"></span></label>
-        <select type="text" id="node-input-precision">
-            <option value="ns">Nanoseconds (ns)</option> 
-            <option value="us">Microseconds (us)</option> 
-            <option value="ms">Milliseconds (ms)</option> 
-            <option value="s">Seconds (s)</option>
-        </select>  
-    </div>
-    <div class="form-row">
-        <label for="node-input-retentionPolicy"><i class="fa fa-gavel"></i> <span data-i18n="influxdb18.label.retention-policy"></span></label>
-        <input type="text" id="node-input-retentionPolicy">
-    </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
-    </div>
-    <div class="form-tips" id="node-warning-measurement"><span data-i18n="[html]influxdb18.tip.measurement"></span></div>
-    <div class="form-tips" id="node-warning-retention-policy"><span data-i18n="[html]influxdb18.tip.retention-policy"></span></div>
-</script>
-
-<script type="text/x-red" data-help-name="influxdb 1.8 flux out">
-    <p>A simple influxdb 1.8 output node to write values and tags to an influxdb measurement.</p>
-    <p>The fields and tags to write are in <b>msg.payload</b>. If <b>msg.payload</b> is a string, number, or boolean, 
-    it will be written as a single value to the specified measurement (called <i>value</i>).</p>
-    <p>If <b>msg.payload</b> is an object containing multiple properties, the fields will be written to the measurement.</p>
-    <p>If <b>msg.payload</b> is an array containing two objects, the first object will be written as the set of named fields, 
-    the second is the set of named tags.</p>
-    <p>Finally, if <b>msg.payload</b> is an array of arrays, it will be written as a series of points containing fields and tags.</p>
-    <p>If the <i>measurement</i> field is not set in the node configuration, the user can send in data with a specified 
-    measurement name in <b>msg.measurement</b> to overwrite the <i>measurement</i> field in the configuration of the node.</p>
-    <p>The options <i>Precision</i> and <i>Retention</i> for time precision and retention policy can be overwritten 
-    using message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p> 
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType('influxdb 1.8 flux out', {
-        category: 'InfluxDB 18 flux',
-        color: "rgb(218, 196, 180)",
-        defaults: {
-            influxdb: {type: "influxdb18flux", required: true},
-            database: {value: "", required: true},            
-            measurement: {value: ""},
-            precision: {value: "ms"},
-            retentionPolicy: {value: ""},
-            name: {value: ""}
-        },
-        inputs: 1,
-        outputs: 0,
-        icon: "influxdb.png",
-        align: "right",
-        label: function() {
-            var influxNode = RED.nodes.node(this.influxdb);
-            return this.name || (influxNode ? influxNode.label() + "/" + this.database + " " + this.measurement : "influxdb 1.8 flux out");
-        },
-        labelStyle: function() {
-            return this.name ? "node_label_italic" : "";
-        },
-        oneditprepare: function() {
-            $("#node-input-measurement").change(function () {
-                if($("#node-input-measurement").val() === "") {
-                    $("#node-warning-measurement").show();
-                } else {
-                    $("#node-warning-measurement").hide();
-                }
-            });
-            $("#node-input-retentionPolicy").change(function () {
-                if($("#node-input-retentionPolicy").val() === "") {
-                    $("#node-warning-retention-policy").show();
-                } else {
-                    $("#node-warning-retention-policy").hide();
-                }
-            });
-        }
-    });
-</script>
-
-<script type="text/x-red" data-template-name="influxdb 1.8 flux in">
-    <div class="form-row">
-        <label for="node-input-influxdb"><i class="fa fa-server"></i> <span data-i18n="influxdb18.label.server"></span></label>
-        <input type="text" id="node-input-influxdb">
-    </div>
-    <div class="form-row">
-        <label for="node-input-query"><i class="fa fa-briefcase"></i> <span data-i18n="influxdb18.label.query"></span></label>
-        <input type="text" id="node-input-query">
-    </div> 
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
-    </div>
-    <div class="form-tips" id="node-warning" style="display: none"><span data-i18n="[html]influxdb18.tip.querytip"></span></div>
-</script>
-
-<script type="text/x-red" data-help-name="influxdb 1.8 flux in">
-    <p>Allows basic queries to be made to an influxdb 1.8 flux time series database.</p>
-    <p>The flux query can be specified in the configuration property or using the property
-    <b>msg.query</b>. The results will be returned in <b>msg.payload</b>.</p>
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType('influxdb 1.8 flux in', {
-        category: 'InfluxDB 18 flux',
-        color: "rgb(218, 196, 180)",
-        defaults: {
-            influxdb: {type: "influxdb18flux", required: true},
-            query: {value: ""},
-            name: {value: ""}
-        },
-        inputs: 1,
-        outputs: 1,
-        icon: "influxdb.png",
-        label: function() {
-            var influxNode = RED.nodes.node(this.influxdb);
-            return this.name || (influxNode ? influxNode.label() + " " + this.query : "influxdb 1.8 flux in");
-        },
-        labelStyle: function() {
-            return this.name ? "node_label_italic" : "";
-        }
-    });
-</script>
-
-<script type="text/x-red" data-template-name="influxdb2">
-    <div class="form-row">
-        <label for="node-config-input-url"><i class="fa fa-server"></i> <span data-i18n="influxdb2.label.url"></span></label>
-        <input class="input-append-left" type="text" id="node-config-input-url" placeholder="http://localhost:9999">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-token"><i class="fa fa-lock"></i> <span data-i18n="influxdb2.label.token"></span></label>
-        <input type="password" id="node-config-input-token">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
-        <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
-    </div>    
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType('influxdb2', {
-        category: 'config',
-        color: "rgb(218, 196, 180)",
-        defaults: {
-            url: {value: "http://localhost:9999", required: true},            
-            token: {value: "", required: true},
-            name: {value: ""}
-        },
-        label: function() {
-            return this.name || this.url;
-        }
-    });
-</script>
-
-<script type="text/x-red" data-template-name="influxdb 2 out">
-    <div class="form-row">
-        <label for="node-input-influxdb"><i class="fa fa-server"></i> <span data-i18n="influxdb2.label.server"></span></label>
-        <input type="text" id="node-input-influxdb">
-    </div>
-    <div class="form-row">
-        <label for="node-input-org"><i class="fa fa-sitemap"></i> <span data-i18n="influxdb2.label.org"></span></label>
-        <input type="text" id="node-input-org">
-    </div>
-    <div class="form-row">
-        <label for="node-input-bucket"><i class="fa fa-database"></i> <span data-i18n="influxdb2.label.bucket"></span></label>
-        <input type="text" id="node-input-bucket">
-    </div>
-    <div class="form-row">
-        <label for="node-input-measurement"><i style="width: 10px;" class="fa fa-rss"></i> <span data-i18n="influxdb2.label.measurement"></span></label>
-        <input type="text" id="node-input-measurement">
-    </div>
-    <div class="form-row">
-        <label for="node-input-precision"><i class="fa fa-clock-o"></i> <span data-i18n="influxdb2.label.time-precision"></span></label>
-        <select type="text" id="node-input-precision">
-            <option value="ns">Nanoseconds (ns)</option> 
-            <option value="us">Microseconds (us)</option> 
-            <option value="ms">Milliseconds (ms)</option> 
-            <option value="s">Seconds (s)</option>
-        </select>  
-    </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
-    </div>
-    <div class="form-tips" id="node-warning-measurement"><span data-i18n="[html]influxdb2.tip.measurement"></span></div>    
-</script>
-
-<script type="text/x-red" data-help-name="influxdb 2 out">
-    <p>A simple influxdb 2 output node to write values and tags to an influxdb measurement.</p>
-    <p>The fields and tags to write are in <b>msg.payload</b>. If <b>msg.payload</b> is a string, number, or boolean, 
-    it will be written as a single value to the specified measurement (called <i>value</i>).</p>
-    <p>If <b>msg.payload</b> is an object containing multiple properties, the fields will be written to the measurement.</p>
-    <p>If <b>msg.payload</b> is an array containing two objects, the first object will be written as the set of named fields, 
-    the second is the set of named tags.</p>
-    <p>Finally, if <b>msg.payload</b> is an array of arrays, it will be written as a series of points containing fields and tags.</p>
-    <p>If the <i>measurement</i> field is not set in the node configuration, the user can send in data with a specified 
-    measurement name in <b>msg.measurement</b> to overwrite the <i>measurement</i> field in the configuration of the node.</p>
-    <p>The options <i>Precision</i> and <i>Retention</i> for time precision and retention policy can be overwritten 
-    using message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p> 
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType('influxdb 2 out', {
-        category: 'InfluxDB 2',
-        color: "rgb(218, 196, 180)",
-        defaults: {
-            influxdb: {type: "influxdb2", required: true},
-            org: {value: "", required: true},
-            bucket: {value: "", required: true},  
-            measurement: {value: ""},
-            precision: {value: "ms"},
-            name: {value: ""}
-        },
-        inputs: 1,
-        outputs: 0,
-        icon: "influxdb.png",
-        align: "right",
-        label: function() {
-            var influxNode = RED.nodes.node(this.influxdb);
-            return this.name || (influxNode ? influxNode.label() + "/" + this.bucket + " " + this.measurement : "influxdb 2 out");
-        },
-        labelStyle: function() {
-            return this.name ? "node_label_italic" : "";
-        },
-        oneditprepare: function() {
-            $("#node-input-measurement").change(function () {
-                if($("#node-input-measurement").val() === "") {
-                    $("#node-warning-measurement").show();
-                } else {
-                    $("#node-warning-measurement").hide();
-                }
-            });
-        }
-    });
-</script>
-
-<script type="text/x-red" data-template-name="influxdb 2 in">
-    <div class="form-row">
-        <label for="node-input-influxdb"><i class="fa fa-server"></i> <span data-i18n="influxdb2.label.server"></span></label>
-        <input type="text" id="node-input-influxdb">
-    </div>
-    <div class="form-row">
-        <label for="node-input-org"><i class="fa fa-sitemap"></i> <span data-i18n="influxdb2.label.org"></span></label>
-        <input type="text" id="node-input-org">
-    </div>
-    <div class="form-row">
-        <label for="node-input-query"><i class="fa fa-briefcase"></i> <span data-i18n="influxdb2.label.query"></span></label>
-        <input type="text" id="node-input-query">
-    </div> 
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
-    </div>
-    <div class="form-tips" id="node-warning" style="display: none"><span data-i18n="[html]influxdb2.tip.querytip"></span></div>
-</script>
-
-<script type="text/x-red" data-help-name="influxdb 2 in">
-    <p>Allows basic queries to be made to an influxdb 2 time series database.</p>
-    <p>The flux query can be specified in the configuration property or using the property
-    <b>msg.query</b>. The results will be returned in <b>msg.payload</b>.</p>
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType('influxdb 2 in', {
-        category: 'InfluxDB 2',
-        color: "rgb(218, 196, 180)",
-        defaults: {
-            influxdb: {type: "influxdb2", required: true},
-            org: {value: "", required: true},
-            query: {value: ""},
-            name: {value: ""}
-        },
-        inputs: 1,
-        outputs: 1,
-        icon: "influxdb.png",
-        label: function() {
-            var influxNode = RED.nodes.node(this.influxdb);
-            return this.name || (influxNode ? influxNode.label() + " " + this.query : "influxdb 2 in");
-        },
-        labelStyle: function() {
-            return this.name ? "node_label_italic" : "";
         }
     });
 </script>
