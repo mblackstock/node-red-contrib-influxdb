@@ -15,6 +15,10 @@
       "name": "Mike Blackstock",
       "email": "mikeblackstock@gmail.com",
       "url": "http://mblackstock.com"
+    },
+    {
+      "name": "Alberto Armijo",
+      "email": "alberto.arm@gmail.com"
     }
   ],
   "license": "Apache-2.0",
