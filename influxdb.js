@@ -16,7 +16,7 @@ module.exports = function (RED) {
         this.name = n.name;
 
         var clientOptions = null;
-        if (n.influxdbVersion === '1.8') {
+        if (n.influxdbVersion === '1.x') {
             this.usetls = n.usetls;
             if (typeof this.usetls === 'undefined') {
                 this.usetls = false;
@@ -44,10 +44,11 @@ module.exports = function (RED) {
                 username: this.credentials.username,
                 password: this.credentials.password
             });
-        } else if (n.influxdbVersion === '1.8 flux') {
+        } else if (n.influxdbVersion === '1.8-flux') {
             var token = `${this.credentials.username}:${this.credentials.password}`;
             clientOptions = {
                 url: n.url,
+                rejectUnauthorized: n.rejectUnauthorized,
                 token: token
             }
 
@@ -55,6 +56,7 @@ module.exports = function (RED) {
         } else if (n.influxdbVersion === '2.0') {
             clientOptions = {
                 url: n.url,
+                rejectUnauthorized: n.rejectUnauthorized,
                 token: this.credentials.token
             }
 
@@ -205,7 +207,7 @@ module.exports = function (RED) {
         this.bucket = n.bucket;
 
         if (this.influxdbConfig) {
-            if (this.influxdbConfig.influxdbVersion === '1.8') {
+            if (this.influxdbConfig.influxdbVersion === '1.x') {
                 var node = this;
                 var client = this.influxdbConfig.client;
 
@@ -287,7 +289,7 @@ module.exports = function (RED) {
                         node.error(err, msg);
                     });
                 });
-            } else if (this.influxdbConfig.influxdbVersion === '1.8 flux') {
+            } else if (this.influxdbConfig.influxdbVersion === '1.8-flux') {
                 let retentionPolicy = this.retentionPolicyV18Flux ? this.retentionPolicyV18Flux : 'autogen';
                 let bucket = `${this.database}/${retentionPolicy}`;
                 this.client = this.influxdbConfig.client.getWriteApi('', bucket, this.precisionV18FluxV20);
@@ -303,6 +305,8 @@ module.exports = function (RED) {
                 node.on("input", function (msg) {
                     writePoints(msg, node);
                 });
+            } else {
+                this.error(RED._("influxdb.errors.invalidconfig"));
             }
         } else {
             this.error(RED._("influxdb.errors.missingconfig"));
@@ -321,7 +325,11 @@ module.exports = function (RED) {
         this.retentionPolicy = n.retentionPolicy;
         this.influxdbConfig = RED.nodes.getNode(this.influxdb);
 
-        if (this.influxdbConfig && this.influxdbConfig.influxdbVersion === '1.8') {
+        if (!this.influxdbConfig) {
+            this.error(RED._("influxdb.errors.missingconfig"));
+        } else if (this.influxdbConfig.influxdbVersion !== '1.x') {
+            this.error(RED._("influxdb.errors.invalidconfig"));
+        } else {
             var node = this;
             var client = this.influxdbConfig.client;
 
@@ -345,8 +353,6 @@ module.exports = function (RED) {
                     node.error(err, msg);
                 });
             });
-        } else {
-            this.error(RED._("influxdb.errors.missingconfig"));
         }
     }
 
@@ -366,7 +372,7 @@ module.exports = function (RED) {
         this.org = n.org;
 
         if (this.influxdbConfig) {
-            if (this.influxdbConfig.influxdbVersion === '1.8') {
+            if (this.influxdbConfig.influxdbVersion === '1.x') {
                 var node = this;
                 var client = this.influxdbConfig.client;
 
@@ -412,7 +418,7 @@ module.exports = function (RED) {
                     });
                 });
 
-            } else if (this.influxdbConfig.influxdbVersion === '1.8 flux') {
+            } else if (this.influxdbConfig.influxdbVersion === '1.8-flux') {
                 this.client = this.influxdbConfig.client.getQueryApi('');
                 var node = this;
 

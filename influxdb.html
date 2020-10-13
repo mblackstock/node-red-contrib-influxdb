@@ -2,8 +2,8 @@
     <div class="form-row">
         <label for="node-config-input-influxdbVersion"><i class="fa fa-code-fork"></i> <span data-i18n="influxdb.label.version"></span></label>
         <select type="text" id="node-config-input-influxdbVersion">
-            <option value="1.8">1.8</option> 
-            <option value="1.8 flux">1.8 flux</option> 
+            <option value="1.x">1.x</option> 
+            <option value="1.8-flux">1.8-flux</option> 
             <option value="2.0">2.0</option> 
         </select>
     </div>
@@ -32,7 +32,11 @@
     <div class="form-row" id="node-config-row-token">
         <label for="node-config-input-token"><i class="fa fa-lock"></i> <span data-i18n="influxdb.label.token"></span></label>
         <input type="password" id="node-config-input-token">
-    </div>    
+    </div>
+    <div class="form-row" id="node-config-row-rejectUnauthorized">
+        <input type="checkbox" id="node-config-input-rejectUnauthorized" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-config-input-rejectUnauthorized" style="width: auto" data-i18n="influxdb.label.reject-unauthorized"></label>
+    </div>
     <div class="form-row" id="node-config-row-enableSecureConnection">
         <input type="checkbox" id="node-config-input-usetls" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="node-config-input-usetls" style="width: auto" data-i18n="influxdb.label.use-tls"></label>
@@ -59,8 +63,9 @@
             name: {value: ""},
             usetls: {value: false},
             tls: {type:"tls-config",required: false},
-            influxdbVersion: {value: "1.8", required: true},
-            url: {value: "http://localhost:8086", required: true}
+            influxdbVersion: {value: "1.x", required: true},
+            url: {value: "http://localhost:8086", required: true},
+            rejectUnauthorized: {value: true}
         },
         credentials: {
             username: {type: "text"},
@@ -68,12 +73,12 @@
             token: {type: "password"}
         },
         label: function () {
-            if (this.influxdbVersion === '1.8') {
-                return this.name || "[v1.8] - " + this.hostname + ":" + this.port + "/" + this.database;
-            } else if (this.influxdbVersion === '1.8 flux') {
-                return this.name || "[v1.8 flux] - " + this.url;
+            if (this.influxdbVersion === '1.x') {
+                return this.name || "[v1.x] " + this.hostname + ":" + this.port + "/" + this.database;
+            } else if (this.influxdbVersion === '1.8-flux') {
+                return this.name || "[v1.8-flux] " + this.url;
             } else if (this.influxdbVersion === '2.0') {
-                return this.name || "[v2.0] - " + this.url;
+                return this.name || "[v2.0] " + this.url;
             }         
         },
         oneditprepare: function () {
@@ -92,6 +97,7 @@
                 $("#node-config-row-username").show();
                 $("#node-config-row-password").show();
                 $("#node-config-row-token").hide();
+                $("#node-config-row-rejectUnauthorized").hide();   
                 $("#node-config-row-enableSecureConnection").show();                
             }
 
@@ -102,6 +108,7 @@
                 $("#node-config-row-username").show();
                 $("#node-config-row-password").show();
                 $("#node-config-row-token").hide();
+                $("#node-config-row-rejectUnauthorized").show();   
                 $("#node-config-row-enableSecureConnection").hide();   
             }
 
@@ -112,19 +119,19 @@
                 $("#node-config-row-username").hide();
                 $("#node-config-row-password").hide();
                 $("#node-config-row-token").show();
+                $("#node-config-row-rejectUnauthorized").show();   
                 $("#node-config-row-enableSecureConnection").hide();  
             }
 
             $("#node-config-input-influxdbVersion").change(function () {
-                if ($("#node-config-input-influxdbVersion option:selected").val() === '1.8') {
-                    //alert("Handler for .change() 1.8 called.");
+                if ($("#node-config-input-influxdbVersion option:selected").val() === '1.x') {
                     update18Options();
                     updateTLSOptions();
                     $("#node-config-input-usetls").on("click", function () {
                         updateTLSOptions();
                     });
                 }
-                if ($("#node-config-input-influxdbVersion option:selected").val() === '1.8 flux') {
+                if ($("#node-config-input-influxdbVersion option:selected").val() === '1.8-flux') {
                     update18FluxOptions();
                 }
                 if ($("#node-config-input-influxdbVersion option:selected").val() === '2.0') {
@@ -202,7 +209,6 @@
 </script>
 
 <script type="text/x-red" data-help-name="influxdb out">
-    <p><b>InfluxDB 1.8</b></p>
     <p>A simple influxdb output node to write values and tags to an influxdb measurement.</p>
     <p>The fields and tags to write are in <b>msg.payload</b>. If <b>msg.payload</b> is a string, number, or boolean, 
     it will be written as a single value to the specified measurement (called <i>value</i>).</p>
@@ -210,22 +216,15 @@
     <p>If <b>msg.payload</b> is an array containing two objects, the first object will be written as the set of named fields, 
     the second is the set of named tags.</p>
     <p>Finally, if <b>msg.payload</b> is an array of arrays, it will be written as a series of points containing fields and tags.</p>
-    <p>If the <i>measurement</i> field is not set in the node configuration, the user can send in data with a specified 
-    measurement name in <b>msg.measurement</b> to overwrite the <i>measurement</i> field in the configuration of the node.</p>
+    <p>If the <i>measurement</i> field is not set in the node configuration, the user can send in data with a specified measurement 
+        name in <b>msg.measurement</b> to overwrite the <i>measurement</i> field in the configuration of the node.</p>
+
+    <p><b>InfluxDB 1.x Mode</b></p>
     <p>Check <i>Advanced Query Options</i> to specify a time precision and retention policy for the insertion.<p>
     <p>The advanced query options <i>Time Precision</i> and <i>Retention Policy</i> can be overwritten using 
     message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p>
 
-    <p>&nbsp;</p><p><b>InfluxDB 1.8 Flux and InfluxDB 2.0</b></p>
-    <p>A simple output node to write values and tags to an influxdb measurement.</p>
-    <p>The fields and tags to write are in <b>msg.payload</b>. If <b>msg.payload</b> is a string, number, or boolean, 
-    it will be written as a single value to the specified measurement (called <i>value</i>).</p>
-    <p>If <b>msg.payload</b> is an object containing multiple properties, the fields will be written to the measurement.</p>
-    <p>If <b>msg.payload</b> is an array containing two objects, the first object will be written as the set of named fields, 
-    the second is the set of named tags.</p>
-    <p>Finally, if <b>msg.payload</b> is an array of arrays, it will be written as a series of points containing fields and tags.</p>
-    <p>If the <i>measurement</i> field is not set in the node configuration, the user can send in data with a specified measurement 
-    name in <b>msg.measurement</b> to overwrite the <i>measurement</i> field in the configuration of the node.</p>
+    <p><b>InfluxDB 1.8 Flux and InfluxDB 2.0 Mode</b></p>
     <p>If no retention policy is specified, <i>autogen</i> will be assumed.</p>
 </script>
 
@@ -312,7 +311,7 @@
                     var influxDBVersion = influxDBVersionMatches[1];
                 }
                 
-                if (influxDBVersion === 'v1.8' || influxDBVersion == '') {
+                if (influxDBVersion === 'v1.x' || influxDBVersion == '') {
                     update18Options();
                 } else if (influxDBVersion === 'v1.8 flux') {
                     update18FluxOptions();                    
@@ -486,10 +485,11 @@
 </script>
 
 <script type="text/x-red" data-help-name="influxdb in">
-    <p><b>InfluxDB 1.8</b></p>
     <p>Allows basic queries to be made to an influxdb time series database.</p>
     <p>The query can be specified in the configuration property or using the property
-    <b>msg.query</b>. The results will be returned in <b>msg.payload</b>.</p>
+        <b>msg.query</b>. The results will be returned in <b>msg.payload</b>.</p>
+
+    <p><b>InfluxDB 1.x</b></p>
     <p>To output the results of the query in the raw output format returned by InfluxDb,
     check the <i>Raw Output</i> checkbox.</p>
     <p>Check <i>Advanced Query Options</i> to specify a time precision and retention policy for the query.<p>
@@ -498,14 +498,13 @@
     message properties <b>msg.precision</b> and <b>msg.retentionPolicy</b>.</p>
 
     <p>&nbsp;</p><p><b>InfluxDB 1.8 Flux and InfluxDB 2.0</b></p>
-    <p>Allows basic queries to be made to an influxdb 2 time series database.</p>
-    <p>The flux query can be specified in the configuration property or using the property
+    <p>Uses a flux query in the configuration property or using the property
     <b>msg.query</b>. The results will be returned in <b>msg.payload</b>.</p>
 </script>
 
 <script type="text/javascript">
     RED.nodes.registerType('influxdb in', {
-        category: 'storage-output',
+        category: 'storage-input',
         color: "rgb(218, 196, 180)",
         defaults: {
             influxdb: {type: "influxdb", required: true},
@@ -577,9 +576,9 @@
                 if (influxDBVersionMatches) {
                     var influxDBVersion = influxDBVersionMatches[1];
                 }		    
-                if (influxDBVersion === 'v1.8' || influxDBVersion == '') {
+                if (influxDBVersion === 'v1.x' || influxDBVersion == '') {
                     update18Options();
-                } else if (influxDBVersion === 'v1.8 flux') {
+                } else if (influxDBVersion === 'v1.8-flux') {
                     update18FluxOptions();                    
                 } else if (influxDBVersion === 'v2.0') {
                     update20Options();                    

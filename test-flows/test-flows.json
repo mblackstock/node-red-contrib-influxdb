@@ -7,13 +7,6 @@
     "info": ""
   },
   {
-    "id": "c3d8cdf2.4ce0b",
-    "type": "tab",
-    "label": "Performance test",
-    "disabled": false,
-    "info": ""
-  },
-  {
     "id": "d50d0c9f.31e858",
     "type": "tls-config",
     "z": "",
@@ -38,7 +31,7 @@
     "name": "",
     "usetls": true,
     "tls": "d50d0c9f.31e858",
-    "influxdbVersion": "1.8",
+    "influxdbVersion": "1.x",
     "url": "http://localhost:8086"
   },
   {
@@ -52,7 +45,7 @@
     "name": "",
     "usetls": false,
     "tls": "d50d0c9f.31e858",
-    "influxdbVersion": "1.8 flux",
+    "influxdbVersion": "1.8-flux",
     "url": "https://localhost:8086"
   },
   {
@@ -335,63 +328,6 @@
     "name": "",
     "x": 640,
     "y": 280,
-    "wires": []
-  },
-  {
-    "id": "4b914805.49fa",
-    "type": "configurable interval",
-    "z": "c3d8cdf2.4ce0b",
-    "d": true,
-    "name": "configurable interval",
-    "interval": "1",
-    "onstart": false,
-    "do_enable": true,
-    "msg": "ping",
-    "showstatus": true,
-    "unit": "milliseconds",
-    "statusformat": "YYYY-MM-D HH:mm:ss",
-    "x": 140,
-    "y": 60,
-    "wires": [
-      [
-        "b5406554.2f7e98"
-      ]
-    ]
-  },
-  {
-    "id": "b5406554.2f7e98",
-    "type": "function",
-    "z": "c3d8cdf2.4ce0b",
-    "name": "Fields",
-    "func": "msg.payload = {\n    randomValue: Math.random()*10\n}\nreturn msg;",
-    "outputs": 1,
-    "noerr": 0,
-    "initialize": "",
-    "finalize": "",
-    "x": 370,
-    "y": 60,
-    "wires": [
-      [
-        "6d85462a.f2af18"
-      ]
-    ]
-  },
-  {
-    "id": "6d85462a.f2af18",
-    "type": "influxdb out",
-    "z": "c3d8cdf2.4ce0b",
-    "influxdb": "dc66afc1.46c418",
-    "name": "",
-    "measurement": "test",
-    "precision": "ms",
-    "retentionPolicy": "",
-    "database": "test",
-    "precisionV18FluxV20": "ms",
-    "retentionPolicyV18Flux": "",
-    "org": "my-org",
-    "bucket": "test",
-    "x": 630,
-    "y": 60,
     "wires": []
   },
   {

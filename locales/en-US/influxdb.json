@@ -16,12 +16,14 @@
             "version":"Version",
             "url": "URL",
             "token": "Token",
+            "reject-unauthorized": "Verify server certificate",
             "org": "Organisation",
             "bucket": "Bucket"
         },
         "errors":{
             "nomeasurement":"No measurement specified",
-            "missingconfig":"Configuration missing"
+            "missingconfig":"Configuration missing",
+            "invalidconfig":"Configuration invalid"
         },
         "tip": {
             "measurement": "<b> Tip:</b> If no measurement is specified, ensure <b>msg.measurement</b> contains the measurement name.",

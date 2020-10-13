@@ -2,7 +2,7 @@
 
 <a href="http://nodered.org" target="_new">Node-RED</a> nodes to write and query data from an InfluxDB time series database. 
 
-In a first operation mode, selectable with a como box, these nodes use the <a href="https://www.npmjs.com/package/influx" target="_new">influxDB 1.x client</a> for node.js, specifically calling the **writePoints()**, and **query()** methods. Currently they can only communicate with one influxdb host. These nodes are used for writing and querying data in InfluxDB 1.x to 1.8+.
+In a first operation mode, selectable with a combo box, these nodes use the <a href="https://www.npmjs.com/package/influx" target="_new">influxDB 1.x client</a> for node.js, specifically calling the **writePoints()**, and **query()** methods. Currently they can only communicate with one influxdb host. These nodes are used for writing and querying data in InfluxDB 1.x to 1.8+.
 
 Additionally, in a second operation mode, the nodes leverage the <a href="https://docs.influxdata.com/influxdb/v1.8/tools/api/#influxdb-2-0-api-compatibility-endpoints" target="_new"> influxDB 2.0 API compatibility endpoints</a> available in the <a href="https://github.com/influxdata/influxdb-client-js" target="_new">InfluxDB 2.0 client libraries</a> for node.js. These nodes are used for writing and querying data with Flux in InfluxDB 1.8+.
 
@@ -21,7 +21,7 @@ Usually this is `~/.node-red` .
 
     npm install node-red-contrib-influxdb
 
-##  **Usage
+##  Usage
 
 Nodes to write and query data from an influxdb time series database. Supoorted versions from 1.x to 2.0.
 
