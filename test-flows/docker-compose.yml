@@ -1,0 +1,40 @@
+version: '3.3'
+services:
+  # Define an InfluxDB v1.8 service
+  influxdb:
+    image: 'influxdb:1.8'
+    container_name: influxdb
+    ports:
+      - '8086:8086'
+    volumes:
+      - './influxdb1.8-data/influxdb:/var/lib/influxdb'
+      - './influxdb.conf:/etc/influxdb/influxdb.conf:ro'
+      - './ssl:/etc/ssl'
+
+  # Define a Chronograf service
+  chronograf:
+    image: chronograf:1.8
+    container_name: chronograf
+    environment:
+      INFLUXDB_URL: https://influxdb:8086
+      TLS_CERTIFICATE: '/etc/ssl/influxdb-selfsigned.crt'
+      TLS_PRIVATE_KEY: '/etc/ssl/influxdb-selfsigned.key'
+    volumes:
+      - './ssl:/etc/ssl'      
+    ports:
+      - "8888:8888"
+    depends_on:
+      - influxdb
+
+  # Define an InfluxDB v2 service
+  influxdb2:
+    container_name: influxdb2
+    ports:
+      - '9999:9999'
+    image: 'quay.io/influxdb/influxdb:2.0.0-alpha'
+    volumes:
+      - './influxdb2-data:/var/lib/influxdb2'
+      - './ssl:/etc/ssl'
+    command: influxd run --bolt-path /var/lib/influxdb2/influxd.bolt --engine-path /var/lib/influxdb2/engine --store bolt --tls-cert /etc/ssl/influxdb-selfsigned.crt --tls-key /etc/ssl/influxdb-selfsigned.key
+    depends_on:
+      - chronograf

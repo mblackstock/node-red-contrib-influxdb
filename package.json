@@ -1,7 +1,7 @@
 {
   "name": "node-red-contrib-influxdb",
-  "version": "0.4.1",
-  "description": "Node-RED nodes to save and query data from an influxdb 1.x time series database",
+  "version": "0.5.0",
+  "description": "Node-RED nodes to save and query data from an influxdb time series database",
   "main": "influxdb.js",
   "scripts": {
     "test": "echo \"Error: no test specified yet!\" && exit 1"
@@ -10,11 +10,13 @@
     "type": "git",
     "url": "https://github.com/mblackstock/node-red-contrib-influxdb"
   },
-  "author": {
-    "name": "Mike Blackstock",
-    "email": "mikeblackstock@gmail.com",
-    "url": "http://mblackstock.com"
-  },
+  "contributors": [
+    {
+      "name": "Mike Blackstock",
+      "email": "mikeblackstock@gmail.com",
+      "url": "http://mblackstock.com"
+    }
+  ],
   "license": "Apache-2.0",
   "keywords": [
     "node-red",
@@ -26,7 +28,8 @@
     }
   },
   "dependencies": {
-    "influx": "5.5.2",
-    "lodash": "4.17.19"
+    "influx": "5.6.3",
+    "@influxdata/influxdb-client": "^1.6.0",
+    "lodash": "4.17.20"
   }
 }
