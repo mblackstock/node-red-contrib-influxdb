@@ -1,23 +1,22 @@
 # node-red-contrib-influxdb
 
-<a href="http://nodered.org" target="_new">Node-RED</a> nodes to write and query data from an InfluxDB time series database. 
+<a href="http://nodered.org" target="_new">Node-RED</a> nodes to write and query data from an InfluxDB time series database.
 
-In a first operation mode, selectable with a combo box, these nodes use the <a href="https://www.npmjs.com/package/influx" target="_new">influxDB 1.x client</a> for node.js, specifically calling the **writePoints()**, and **query()** methods. Currently they can only communicate with one influxdb host. These nodes are used for writing and querying data in InfluxDB 1.x to 1.8+.
+These nodes support both InfluxDB 1.x and InfluxDb 2.0 databases selected using the **Version** combo box in the configuration node.  See the documentation of the different nodes to understand the options provided by the different versions.
 
-Additionally, in a second operation mode, the nodes leverage the <a href="https://docs.influxdata.com/influxdb/v1.8/tools/api/#influxdb-2-0-api-compatibility-endpoints" target="_new"> influxDB 2.0 API compatibility endpoints</a> available in the <a href="https://github.com/influxdata/influxdb-client-js" target="_new">InfluxDB 2.0 client libraries</a> for node.js. These nodes are used for writing and querying data with Flux in InfluxDB 1.8+.
+When version **1.x** is selected these nodes use the <a href="https://www.npmjs.com/package/influx" target="_new">influxDB 1.x client</a> for node.js, specifically calling the **writePoints()**, and **query()** methods. Currently they can only communicate with one influxdb host. These nodes are used for writing and querying data in InfluxDB 1.x to 1.8+.
 
-A third operation mode, available as **InfluxDB 2** category, makes use of the <a href="https://github.com/influxdata/influxdb-client-js" target="_new">InfluxDB 2.0 client libraries</a> for writing and querying data with Flux in InfluxDB 2.0.
+When version **1.8-flux** is selected, the nodes use the <a href="https://docs.influxdata.com/influxdb/v1.8/tools/api/#influxdb-2-0-api-compatibility-endpoints" target="_new"> influxDB 2.0 API compatibility endpoints</a> available in the <a href="https://github.com/influxdata/influxdb-client-js" target="_new">InfluxDB 2.0 client libraries</a> for node.js. These nodes are used for writing and querying data with Flux in InfluxDB 1.8+.
 
-Operation modes are selectable from the `Version` field in the configuration node. See the documentation of the different nodes to check the options provided by each of the modes.
+When version **2.0** is selected the nodes make use of the <a href="https://github.com/influxdata/influxdb-client-js" target="_new">InfluxDB 2.0 client libraries</a> for writing and querying data with Flux in InfluxDB 2.0.
 
 ## Prerequisites
 
-To run this you'll need access to an InfluxDB database version 1.x, 1.8+ or 2.0. See the <a href="https://influxdb.com/" target="_new">InfluxDB site</a> for more information. The latest release of this node has been tested with InfluxDB 1.8+ and 2.0.
+To run this you'll need access to an InfluxDB database version 1.x, 1.8+ or 2.0. See the <a href="https://influxdb.com/" target="_new">InfluxDB site</a> for more information. The latest release of this node has been tested with InfluxDB 1.8 and 2.0.
 
 ## Install
 
-Run the following command in the root directory of your Node-RED install.
-Usually this is `~/.node-red` .
+You can use the Node-RED *Manage Palette* feature, or run the following command in the root directory of your Node-RED install.  Usually this is `~/.node-red` .
 
     npm install node-red-contrib-influxdb
 
@@ -135,7 +134,7 @@ By default the node will write timestamps using ms precision since that's what J
 
 If you provide a string or number as the timestamp, we'll pass it straight into Influx to parse using the specified precision, or the default precision in nanoseconds if it is left unspecified.
 
->>**Note** that the default precision is *nanoseconds*, so if you pass in a number such as date.getTime(), and do not specify millisecond precision, your timestamp will be orders of magnitude incorrect.
+>**Note** that the default precision is *nanoseconds*, so if you pass in a number such as date.getTime(), and do not specify millisecond precision, your timestamp will be orders of magnitude incorrect.
 
 The following example flow writes two points to two measurements, setting the timestamp to the current date.
 
