@@ -16,6 +16,11 @@ module.exports = function (RED) {
         this.name = n.name;
 
         var clientOptions = null;
+        
+        if (n.influxdbVersion === undefined) {
+            n.influxdbVersion = '1.x'
+        }
+
         if (n.influxdbVersion === '1.x') {
             this.usetls = n.usetls;
             if (typeof this.usetls === 'undefined') {

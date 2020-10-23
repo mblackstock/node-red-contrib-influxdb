@@ -1,7 +1,7 @@
 <script type="text/x-red" data-template-name="influxdb">    
     <div class="form-row">
         <label for="node-config-input-influxdbVersion"><i class="fa fa-code-fork"></i> <span data-i18n="influxdb.label.version"></span></label>
-        <select type="text" id="node-config-input-influxdbVersion">
+        <select type="text" style="width: 100px" id="node-config-input-influxdbVersion">
             <option value="1.x">1.x</option> 
             <option value="1.8-flux">1.8-flux</option> 
             <option value="2.0">2.0</option> 
@@ -63,7 +63,7 @@
             name: {value: ""},
             usetls: {value: false},
             tls: {type:"tls-config",required: false},
-            influxdbVersion: {value: "1.x", required: true},
+            influxdbVersion: {value: "1.x", required: false},
             url: {value: "http://localhost:8086", required: true},
             rejectUnauthorized: {value: true}
         },
@@ -73,7 +73,7 @@
             token: {type: "password"}
         },
         label: function () {
-            if (this.influxdbVersion === '1.x') {
+            if (!this.influxdbVersion || this.influxdbVersion === '1.x') {
                 return this.name || "[v1.x] " + this.hostname + ":" + this.port + "/" + this.database;
             } else if (this.influxdbVersion === '1.8-flux') {
                 return this.name || "[v1.8-flux] " + this.url;
@@ -124,20 +124,28 @@
             }
 
             $("#node-config-input-influxdbVersion").change(function () {
-                if ($("#node-config-input-influxdbVersion option:selected").val() === '1.x') {
-                    update18Options();
-                    updateTLSOptions();
-                    $("#node-config-input-usetls").on("click", function () {
+                let selected = $("#node-config-input-influxdbVersion option:selected").val();
+
+                switch (selected) {
+                    case '1.8-flux':
+                        update18FluxOptions();
+                        break;
+                    case '2.0':
+                        update20Options();
+                        break;
+                    default:    // 1.x
+                        update18Options();
                         updateTLSOptions();
-                    });
-                }
-                if ($("#node-config-input-influxdbVersion option:selected").val() === '1.8-flux') {
-                    update18FluxOptions();
-                }
-                if ($("#node-config-input-influxdbVersion option:selected").val() === '2.0') {
-                    update20Options();
-                }          
+                        $("#node-config-input-usetls").on("click", function () {
+                            updateTLSOptions();
+                        });
+                        break;
+                }   
             });
+            // if version not set assume 1.x to support older flows
+            let selected = $("#node-config-input-influxdbVersion option:selected").val();
+            selected = selected || '1.x';
+            $("#node-config-input-influxdbVersion").val(selected)
         }
     });
 </script>
@@ -304,14 +312,15 @@
             }
 
             $("#node-input-influxdb").change(function () {
+                // use prefix to update UI when version of config node changes
                 var optionSelected = $("#node-input-influxdb option:selected").text();
                 var influxDBVersionMatches = optionSelected.match(/\[(.*?)\]/);
                 var influxDBVersion = '';
                 if (influxDBVersionMatches) {
-                    var influxDBVersion = influxDBVersionMatches[1];
+                    influxDBVersion = influxDBVersionMatches[1];
                 }
                 
-                if (influxDBVersion === 'v1.x' || influxDBVersion == '') {
+                if (influxDBVersion === 'v1.x') {
                     update18Options();
                 } else if (influxDBVersion === 'v1.8-flux') {
                     update18FluxOptions();                    
