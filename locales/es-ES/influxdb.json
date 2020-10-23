@@ -16,17 +16,17 @@
             "version":"Versión",
             "url": "URL",
             "token": "Token",
-            "reject-unauthorized": "Verify server certificate",
+            "reject-unauthorized": "Verificar el certificado del servidor",
             "org": "Organización",
             "bucket": "Bucket"
         },
         "errors":{
             "nomeasurement":"No se ha especificado una medición",
             "missingconfig":"Configuración incompleta",
-            "invalidconfig":"Configuration invalid"
+            "invalidconfig":"Configuration no válida"
         },
         "tip": {
-            "measurement": "<b> TConsejo:</b> Si no se especifica una medición, asegúrate de que <b>msg.measurement</b> contiene el nombre de la medición.",
+            "measurement": "<b> Consejo:</b> Si no se especifica una medición, asegúrate de que <b>msg.measurement</b> contiene el nombre de la medición.",
             "retention-policy": "<b> Consejo:</b> Si no se especifica una política de retención, se asume <b>autogen</b>.",
             "querytip": "<b> Consejo:</b> Si no se incluye una petición, asegúrate de que <b>msg.query</b> contiene una."
         }
