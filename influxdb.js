@@ -17,7 +17,7 @@ module.exports = function (RED) {
 
         var clientOptions = null;
         
-        if (n.influxdbVersion === undefined) {
+        if (!n.influxdbVersion) {
             n.influxdbVersion = '1.x'
         }
 
@@ -211,110 +211,108 @@ module.exports = function (RED) {
         this.org = n.org;
         this.bucket = n.bucket;
 
-        if (this.influxdbConfig) {
-            if (this.influxdbConfig.influxdbVersion === '1.x') {
-                var node = this;
-                var client = this.influxdbConfig.client;
+        if (!this.influxdbConfig) {
+            this.error(RED._("influxdb.errors.missingconfig"));
+            return;
+        }
+        let version = this.influxdbConfig.influxdbVersion;
 
-                node.on("input", function (msg) {
-                    var measurement;
-                    var writeOptions = {};
-                    var measurement = msg.hasOwnProperty('measurement') ? msg.measurement : node.measurement;
-                    if (!measurement) {
-                        node.error(RED._("influxdb.errors.nomeasurement"), msg);
-                        return;
-                    }
-                    var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
-                    var retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
+        if (version === '1.x') {
+            var node = this;
+            var client = this.influxdbConfig.client;
 
-                    if (precision) {
-                        writeOptions.precision = precision;
-                    }
+            node.on("input", function (msg) {
+                var measurement;
+                var writeOptions = {};
+                var measurement = msg.hasOwnProperty('measurement') ? msg.measurement : node.measurement;
+                if (!measurement) {
+                    node.error(RED._("influxdb.errors.nomeasurement"), msg);
+                    return;
+                }
+                var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
+                var retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
 
-                    if (retentionPolicy) {
-                        writeOptions.retentionPolicy = retentionPolicy;
-                    }
+                if (precision) {
+                    writeOptions.precision = precision;
+                }
 
-                    // format payload to match new writePoints API
-                    var points = [];
-                    var point;
-                    var timestamp;
-                    if (_.isArray(msg.payload) && msg.payload.length > 0) {
-                        // array of arrays
-                        if (_.isArray(msg.payload[0]) && msg.payload[0].length > 0) {
-                            msg.payload.forEach(function (nodeRedPoint) {
-                                point = {
-                                    measurement: measurement,
-                                    fields: nodeRedPoint[0],
-                                    tags: nodeRedPoint[1]
-                                }
-                                if (point.fields.time) {
-                                    point.timestamp = point.fields.time;
-                                    delete point.fields.time;
-                                }
-                                points.push(point);
-                            });
-                        } else {
-                            // array of non-arrays, assume one point with both fields and tags
+                if (retentionPolicy) {
+                    writeOptions.retentionPolicy = retentionPolicy;
+                }
+
+                // format payload to match new writePoints API
+                var points = [];
+                var point;
+                var timestamp;
+                if (_.isArray(msg.payload) && msg.payload.length > 0) {
+                    // array of arrays
+                    if (_.isArray(msg.payload[0]) && msg.payload[0].length > 0) {
+                        msg.payload.forEach(function (nodeRedPoint) {
                             point = {
                                 measurement: measurement,
-                                fields: msg.payload[0],
-                                tags: msg.payload[1]
-                            };
+                                fields: nodeRedPoint[0],
+                                tags: nodeRedPoint[1]
+                            }
                             if (point.fields.time) {
                                 point.timestamp = point.fields.time;
                                 delete point.fields.time;
                             }
                             points.push(point);
-                        }
+                        });
                     } else {
-                        if (_.isPlainObject(msg.payload)) {
-                            point = {
-                                measurement: measurement,
-                                fields: msg.payload
-                            };
-                        } else {
-                            // just a value
-                            point = {
-                                measurement: measurement,
-                                fields: { value: msg.payload }
-                            };
-                        }
+                        // array of non-arrays, assume one point with both fields and tags
+                        point = {
+                            measurement: measurement,
+                            fields: msg.payload[0],
+                            tags: msg.payload[1]
+                        };
                         if (point.fields.time) {
                             point.timestamp = point.fields.time;
                             delete point.fields.time;
                         }
                         points.push(point);
                     }
+                } else {
+                    if (_.isPlainObject(msg.payload)) {
+                        point = {
+                            measurement: measurement,
+                            fields: msg.payload
+                        };
+                    } else {
+                        // just a value
+                        point = {
+                            measurement: measurement,
+                            fields: { value: msg.payload }
+                        };
+                    }
+                    if (point.fields.time) {
+                        point.timestamp = point.fields.time;
+                        delete point.fields.time;
+                    }
+                    points.push(point);
+                }
 
-                    client.writePoints(points, writeOptions).catch(function (err) {
-                        msg.influx_error = {
-                            statusCode: err.res ? err.res.statusCode : 503
-                        }
-                        node.error(err, msg);
-                    });
+                client.writePoints(points, writeOptions).catch(function (err) {
+                    msg.influx_error = {
+                        statusCode: err.res ? err.res.statusCode : 503
+                    }
+                    node.error(err, msg);
                 });
-            } else if (this.influxdbConfig.influxdbVersion === '1.8-flux') {
+            });
+        } else if (version === '1.8-flux' || version === '2.0') {
+            let bucket = this.bucket;
+            if (version === '1.8-flux') {
                 let retentionPolicy = this.retentionPolicyV18Flux ? this.retentionPolicyV18Flux : 'autogen';
-                let bucket = `${this.database}/${retentionPolicy}`;
-                this.client = this.influxdbConfig.client.getWriteApi('', bucket, this.precisionV18FluxV20);
-                var node = this;
-
-                node.on("input", function (msg) {
-                    writePoints(msg, node);
-                });
-            } else if (this.influxdbConfig.influxdbVersion === '2.0') {
-                this.client = this.influxdbConfig.client.getWriteApi(this.org, this.bucket, this.precisionV18FluxV20);
-                var node = this;
-
-                node.on("input", function (msg) {
-                    writePoints(msg, node);
-                });
-            } else {
-                this.error(RED._("influxdb.errors.invalidconfig"));
+                bucket = `${this.database}/${retentionPolicy}`;
             }
-        } else {
-            this.error(RED._("influxdb.errors.missingconfig"));
+            let org = version === '1.8-flux' ? '' : this.org;
+
+            this.client = this.influxdbConfig.client.getWriteApi(org, bucket, this.precisionV18FluxV20);
+            var node = this;
+
+            node.on("input", function (msg) {
+                writePoints(msg, node);
+            });
         }
     }
 
@@ -332,33 +330,35 @@ module.exports = function (RED) {
 
         if (!this.influxdbConfig) {
             this.error(RED._("influxdb.errors.missingconfig"));
-        } else if (this.influxdbConfig.influxdbVersion !== '1.x') {
-            this.error(RED._("influxdb.errors.invalidconfig"));
-        } else {
-            var node = this;
-            var client = this.influxdbConfig.client;
-
-            node.on("input", function (msg) {
-                var writeOptions = {};
-                var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
-                var retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
-
-                if (precision) {
-                    writeOptions.precision = precision;
-                }
-
-                if (retentionPolicy) {
-                    writeOptions.retentionPolicy = retentionPolicy;
-                }
-
-                client.writePoints(msg.payload, writeOptions).catch(function (err) {
-                    msg.influx_error = {
-                        statusCode: err.res ? err.res.statusCode : 503
-                    }
-                    node.error(err, msg);
-                });
-            });
+            return;
         }
+        if (this.influxdbConfig.influxdbVersion !== '1.x') {
+            this.error(RED._("influxdb.errors.invalidconfig"));
+            return;
+        }
+        var node = this;
+        var client = this.influxdbConfig.client;
+
+        node.on("input", function (msg) {
+            var writeOptions = {};
+            var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
+            var retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
+
+            if (precision) {
+                writeOptions.precision = precision;
+            }
+
+            if (retentionPolicy) {
+                writeOptions.retentionPolicy = retentionPolicy;
+            }
+
+            client.writePoints(msg.payload, writeOptions).catch(function (err) {
+                msg.influx_error = {
+                    statusCode: err.res ? err.res.statusCode : 503
+                }
+                node.error(err, msg);
+            });
+        });
     }
 
     RED.nodes.registerType("influxdb batch", InfluxBatchNode);
@@ -376,72 +376,67 @@ module.exports = function (RED) {
         this.influxdbConfig = RED.nodes.getNode(this.influxdb);
         this.org = n.org;
 
-        if (this.influxdbConfig) {
-            if (this.influxdbConfig.influxdbVersion === '1.x') {
-                var node = this;
-                var client = this.influxdbConfig.client;
-
-                node.on("input", function (msg) {
-                    var query;
-                    var rawOutput;
-                    var queryOptions = {};
-                    var precision;
-                    var retentionPolicy;
-
-                    query = msg.hasOwnProperty('query') ? msg.query : node.query;
-                    if (!query) {
-                        node.error(RED._("influxdb.errors.noquery"), msg);
-                        return;
-                    }
-
-                    rawOutput = msg.hasOwnProperty('rawOutput') ? msg.rawOutput : node.rawOutput;
-                    precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
-                    retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
-
-                    if (precision) {
-                        queryOptions.precision = precision;
-                    }
-
-                    if (retentionPolicy) {
-                        queryOptions.retentionPolicy = retentionPolicy;
-                    }
-
-                    if (rawOutput) {
-                        var queryPromise = client.queryRaw(query, queryOptions);
-                    } else {
-                        var queryPromise = client.query(query, queryOptions);
-                    }
-
-                    queryPromise.then(function (results) {
-                        msg.payload = results;
-                        node.send(msg);
-                    }).catch(function (err) {
-                        msg.influx_error = {
-                            statusCode: err.res ? err.res.statusCode : 503
-                        }
-                        node.error(err, msg);
-                    });
-                });
-
-            } else if (this.influxdbConfig.influxdbVersion === '1.8-flux') {
-                this.client = this.influxdbConfig.client.getQueryApi('');
-                var node = this;
-
-                node.on("input", function (msg) {
-                    queryRows(msg, node);
-                });
-
-            } else if (this.influxdbConfig.influxdbVersion === '2.0') {
-                this.client = this.influxdbConfig.client.getQueryApi(this.org);
-                var node = this;
-
-                node.on("input", function (msg) {
-                    queryRows(msg, node);
-                });
-
-            }
-        } else {
+        if (!this.influxdbConfig) {
             this.error(RED._("influxdb.errors.missingconfig"));
+            return;
+        }
+
+        let version = this.influxdbConfig.influxdbVersion
+        if (version === '1.x') {
+            var node = this;
+            var client = this.influxdbConfig.client;
+
+            node.on("input", function (msg) {
+                var query;
+                var rawOutput;
+                var queryOptions = {};
+                var precision;
+                var retentionPolicy;
+
+                query = msg.hasOwnProperty('query') ? msg.query : node.query;
+                if (!query) {
+                    node.error(RED._("influxdb.errors.noquery"), msg);
+                    return;
+                }
+
+                rawOutput = msg.hasOwnProperty('rawOutput') ? msg.rawOutput : node.rawOutput;
+                precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
+                retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
+
+                if (precision) {
+                    queryOptions.precision = precision;
+                }
+
+                if (retentionPolicy) {
+                    queryOptions.retentionPolicy = retentionPolicy;
+                }
+
+                if (rawOutput) {
+                    var queryPromise = client.queryRaw(query, queryOptions);
+                } else {
+                    var queryPromise = client.query(query, queryOptions);
+                }
+
+                queryPromise.then(function (results) {
+                    msg.payload = results;
+                    node.send(msg);
+                }).catch(function (err) {
+                    msg.influx_error = {
+                        statusCode: err.res ? err.res.statusCode : 503
+                    }
+                    node.error(err, msg);
+                });
+            });
+
+        } else if (version === '1.8-flux' || version === '2.0') {
+            let org = version === '2.0' ? this.org : ''
+            this.client = this.influxdbConfig.client.getQueryApi(org);
+            var node = this;
+
+            node.on("input", function (msg) {
+                queryRows(msg, node);
+            });
+
         }
     }
 
