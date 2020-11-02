@@ -24,11 +24,13 @@ You can use the Node-RED *Manage Palette* feature, or run the following command 
 
 Nodes to write and query data from an influxdb time series database. Supoorted versions from 1.x to 2.0.
 
-### Input Node
+### Input Node (InfluxDb 1.x and 2.0)
 
 Queries one or more measurements in an influxdb database.  The query is specified in the node configuration or in the ***msg.query*** property.  Setting it in the node will override the ***msg.query***.  The result is returned in ***msg.payload***.
 
-For example, here is a simple flow to query all of the points in the `test` measurement of the `aTimeSeries` database, where the query is in the configuration of the influxdb input node (copy and paste to your NR editor).
+When a v1.x InfluxDb configuration is used, the InfluxQL query syntax must be used; when a v1.8-Flux or 2.0 configuration is used, the Flux query syntax is used.
+
+For example, here is a simple flow to query all of the points in the `test` measurement of the `aTimeSeries` database, where the query is in the configuration of the influxdb input node (copy and paste to your NR editor).  We are using a v1.x InfluxDb here, so an InfluxQL query is used.
 
     [{"id":"eba91e98.1456e","type":"influxdb","z":"b061b303.4f9e5","hostname":"127.0.0.1","port":"8086","database":"aTimeSeries","name":"aTimeSeries"},{"id":"9641241a.69bed8","type":"influxdb in","z":"b061b303.4f9e5","influxdb":"eba91e98.1456e","name":"time query","query":"select * from test;","x":259,"y":416,"wires":[["ef40525d.10bfb"]]},{"id":"99338e00.66cc7","type":"inject","z":"b061b303.4f9e5","name":"","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"x":108,"y":416,"wires":[["9641241a.69bed8"]]},{"id":"ef40525d.10bfb","type":"debug","z":"b061b303.4f9e5","name":"","active":true,"console":"false","complete":"false","x":441,"y":416,"wires":[]}]
 
@@ -41,7 +43,7 @@ The function node in this flow sets the `msg.query` property as follows:
     msg.query="select * from test;";
     return msg;
 
-### Output Node
+### Output Node (InfluxDb 1.x and 2.0)
 
 Writes one or more points (fields and tags) to a measurement.
 
@@ -124,7 +126,7 @@ The function node in the above flow looks as follows:
 
 Note how timestamps are specified - the number of milliseconds since 1 January 1970 00:00:00 UTC. In this case do not forget to set "ms" in "Time Precision" (Advanced Query Options) of the "Influx Out Node".
 
-### The Batch Output Node
+### The Batch Output Node (InfluxDb 1.x Only)
 
 The batch output node (influx batch) sends a list of *points* together in a batch to InfluxDB in a slightly different format from the output node, more in line with the underlying node.js [influx library version 5.x](https://www.npmjs.com/package/influx). In each point you must specify the measurement name to write into as well as a list of tag and field values. Optionally, you can specify the time to tag that point at, defaulting to the current time.
 
