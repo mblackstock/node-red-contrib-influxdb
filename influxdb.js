@@ -79,22 +79,38 @@ module.exports = function (RED) {
         }
     });
 
+    function addFieldToPoint(point, name, value) {
+        
+        function isNumeric(value) {
+            return /^-?\d+$/.test(value);
+        }
+
+        if (name === 'time') {
+            point.timestamp(value);
+        } else if (typeof value === 'number') {
+            point.floatField(name, value);
+        } else if (typeof value === 'string') {
+            // string values with numbers ending with 'i' are considered integers            
+            if (value.slice(-1) === 'i') {
+                let intValue = value.substring(0, value.length-1);
+                if (isNumeric(intValue)) {
+                    value = parseInt(intValue);
+                    point.intField(name, value);
+                } else {
+                    point.stringField(name, value);
+                }
+            } else {
+                point.stringField(name, value);
+            }
+        } else if (typeof value === 'boolean') {
+            point.booleanField(name, value);
+        }
+    }
+
     function addFieldsToPoint(point, fields) {
         for (const prop in fields) {
             const value = fields[prop];
-            if (prop === 'time') {
-                point.timestamp(value);
-            } else if (typeof value === 'number') {
-                if (Number.isInteger(value)) {
-                    point.intField(prop, value);
-                } else {
-                    point.floatField(prop, value);
-                }
-            } else if (typeof value === 'string') {
-                point.stringField(prop, value);
-            } else if (typeof value === 'boolean') {
-                point.booleanField(prop, value);
-            }
+            addFieldToPoint(point, prop, value)
         }
     }
 
@@ -145,17 +161,7 @@ module.exports = function (RED) {
                 // just a value
                 point = new Point(measurement);
                 var value = msg.payload;
-                if (typeof value === 'number') {
-                    if (Number.isInteger(value)) {
-                        point.intField('value', value);
-                    } else {
-                        point.floatField('value', value);
-                    }
-                } else if (typeof value === 'string') {
-                    point.stringField('value', value);
-                } else if (typeof value === 'boolean') {
-                    point.booleanField('value', value);
-                }
+                addFieldToPoint(point, 'value', value);
                 node.client.writePoint(point);
             }
         }
