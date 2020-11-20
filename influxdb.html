@@ -92,10 +92,11 @@
             token: {type: "password"}
         },
         label: function () {
+            var version = "[v"+this.influxdbVersion+"] ";
             if (this.influxdbVersion === '1.8-flux' || this.influxdbVersion === '2.0') {
-                return this.name || "[v"+this.influxdbVersion+"] " + this.url;
+                return this.name ? version + this.name : version + this.url;
             } else {
-                return this.name || "[v1.x] " + this.hostname + ":" + this.port + "/" + this.database;
+                return this.name ? version + this.name : version + this.hostname + ":" + this.port + "/" + this.database;
             }
         },
         oneditprepare: function () {

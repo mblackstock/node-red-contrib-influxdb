@@ -17,7 +17,7 @@
             "url": "URL",
             "token": "Token",
             "reject-unauthorized": "Verify server certificate",
-            "org": "Organisation",
+            "org": "Organization",
             "bucket": "Bucket"
         },
         "errors":{
