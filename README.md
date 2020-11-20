@@ -28,7 +28,7 @@ Nodes to write and query data from an influxdb time series database. Supoorted v
 
 Queries one or more measurements in an influxdb database.  The query is specified in the node configuration or in the ***msg.query*** property.  Setting it in the node will override the ***msg.query***.  The result is returned in ***msg.payload***.
 
-When a v1.x InfluxDb configuration is used, the InfluxQL query syntax must be used; when a v1.8-Flux or 2.0 configuration is used, the Flux query syntax is used.
+With a v1.x InfluxDb configuration, use the InfluxQL query syntax; when a v1.8-Flux or 2.0 configuration, use the Flux query syntax.
 
 For example, here is a simple flow to query all of the points in the `test` measurement of the `aTimeSeries` database, where the query is in the configuration of the influxdb input node (copy and paste to your NR editor).  We are using a v1.x InfluxDb here, so an InfluxQL query is used.
 
@@ -47,7 +47,9 @@ The function node in this flow sets the `msg.query` property as follows:
 
 Writes one or more points (fields and tags) to a measurement.
 
-The fields and tags to write are in ***msg.payload***.  If the message is a string, number, or boolean, it will be written as a single value to the specified measurement (called *value*).
+The fields and tags to write are in ***msg.payload***.  If the message is a string, number, or boolean, it will be written as a single field to the specified measurement called *value*.  
+
+>Note: Javascript numbers are *always* written as a float.  To write an integer type, use a number in a string with an 'i' suffix, for example, to write the integer `1234` use the string `'1234i'`.
 
 For example, the following flow injects a single random field called `value` into the measurement `test` in the database `aTimeSeries` with the current timestamp.
 
@@ -58,7 +60,7 @@ The function node consists of the following:
     msg.payload = Math.random()*10;
     return msg;
 
-If ***msg.payload*** is an object containing multiple properties, the fields will be written to the measurement.
+If ***msg.payload*** is an object containing multiple properties, all of the the fields will be written to the measurement.
 
 For example, the following flow injects three fields, `numValue`, `randomValue` and `strValue` into the same measurement with the current timestamp.
 
@@ -75,7 +77,7 @@ The function node in the flow above consists of the following:
 
 If ***msg.payload*** is an array containing two objects, the first object will be written as the set of named fields, the second is the set of named tags.
 
-For example, the following simple flow injects three fields as above, along with two tags, `tag1` and `tag2`:
+For example, the following simple flow uses an InfluxDb 1.x database and injects three fields as above, along with two tags, `tag1` and `tag2`:
 
     [{"id":"eba91e98.1456e","type":"influxdb","z":"b061b303.4f9e5","hostname":"127.0.0.1","port":"8086","database":"aTimeSeries","name":"aTimeSeries"},{"id":"7f25337e.80dacc","type":"inject","z":"b061b303.4f9e5","name":"","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"x":101,"y":248,"wires":[["bb0ff0.ff44f01"]]},{"id":"bb0ff0.ff44f01","type":"function","z":"b061b303.4f9e5","name":"Fields and Tags","func":"msg.payload = [{\n    numValue: 12,\n    randomValue: Math.random()*10,\n    strValue: \"message2\"\n},\n{\n    tag1:\"sensor1\",\n    tag2:\"device2\"\n}];\nreturn msg;","outputs":1,"noerr":0,"x":272,"y":248,"wires":[["8e2713fa.71d8f"]]},{"id":"8e2713fa.71d8f","type":"influxdb out","z":"b061b303.4f9e5","influxdb":"eba91e98.1456e","name":"","measurement":"test","x":460,"y":248,"wires":[]}]
 
@@ -94,7 +96,7 @@ The function node consists of the following code:
 
 Finally, if ***msg.payload*** is an array of arrays, it will be written as a series of points containing fields and tags.
 
-For example, the following flow injects two points with timestamps specified.  
+For example, the following flow injects two points into an InfluxDb 1.x database with timestamps specified.  
 
     [{"id":"eba91e98.1456e","type":"influxdb","z":"b061b303.4f9e5","hostname":"127.0.0.1","port":"8086","database":"aTimeSeries","name":"aTimeSeries"},{"id":"9555a67c.6aaa58","type":"function","z":"b061b303.4f9e5","name":"multiple readings","func":"msg.payload = [\n    [{\n        numValue: 10,\n        randomValue: Math.random()*10,\n        strValue: \"message1\",\n        time: new Date(\"2015-12-28T19:41:13Z\").getTime()\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }],\n    [{\n        numValue: 20,\n        randomValue: Math.random()*10,\n        strValue: \"message2\",\n        time: new Date(\"2015-12-28T19:41:14Z\").getTime()\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }]\n];\nreturn msg;","outputs":1,"noerr":0,"x":278,"y":335,"wires":[["f485378d.0b7ac8"]]},{"id":"68b911d9.9746f","type":"inject","z":"b061b303.4f9e5","name":"","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"x":104,"y":335,"wires":[["9555a67c.6aaa58"]]},{"id":"f485378d.0b7ac8","type":"influxdb out","z":"b061b303.4f9e5","influxdb":"eba91e98.1456e","name":"","measurement":"test","x":479,"y":334,"wires":[]}]
 
@@ -124,7 +126,7 @@ The function node in the above flow looks as follows:
     ];
     return msg;
 
-Note how timestamps are specified - the number of milliseconds since 1 January 1970 00:00:00 UTC. In this case do not forget to set "ms" in "Time Precision" (Advanced Query Options) of the "Influx Out Node".
+Note how timestamps are specified here - the number of milliseconds since 1 January 1970 00:00:00 UTC. In this case do not forget to set the precision to "ms" in "Time Precision" (Advanced Query Options) of the "Influx Out Node".
 
 ### The Batch Output Node (InfluxDb 1.x Only)
 
