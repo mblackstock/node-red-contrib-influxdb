@@ -8,7 +8,7 @@ When version **1.x** is selected these nodes use the <a href="https://www.npmjs.
 
 When version **1.8-flux** is selected, the nodes use the <a href="https://docs.influxdata.com/influxdb/v1.8/tools/api/#influxdb-2-0-api-compatibility-endpoints" target="_new"> influxDB 2.0 API compatibility endpoints</a> available in the <a href="https://github.com/influxdata/influxdb-client-js" target="_new">InfluxDB 2.0 client libraries</a> for node.js. These nodes are used for writing and querying data with Flux in InfluxDB 1.8+.
 
-When version **2.0** is selected the nodes make use of the <a href="https://github.com/influxdata/influxdb-client-js" target="_new">InfluxDB 2.0 client libraries</a> for writing and querying data with Flux in InfluxDB 2.0.
+When version **2.0** is selected, the nodes make use of the <a href="https://github.com/influxdata/influxdb-client-js" target="_new">InfluxDB 2.0 client libraries</a> for writing and querying data with Flux in InfluxDB 2.0.
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ Nodes to write and query data from an influxdb time series database. Supoorted v
 
 Queries one or more measurements in an influxdb database.  The query is specified in the node configuration or in the ***msg.query*** property.  Setting it in the node will override the ***msg.query***.  The result is returned in ***msg.payload***.
 
-With a v1.x InfluxDb configuration, use the InfluxQL query syntax; when a v1.8-Flux or 2.0 configuration, use the Flux query syntax.
+With a v1.x InfluxDb configuration, use the [InfluxQL query syntax](https://docs.influxdata.com/influxdb/v1.8/query_language/); with a v1.8-Flux or 2.0 configuration, use the [Flux query syntax](https://docs.influxdata.com/influxdb/v2.0/query-data/get-started/).
 
 For example, here is a simple flow to query all of the points in the `test` measurement of the `aTimeSeries` database, where the query is in the configuration of the influxdb input node (copy and paste to your NR editor).  We are using a v1.x InfluxDb here, so an InfluxQL query is used.
 
@@ -49,7 +49,7 @@ Writes one or more points (fields and tags) to a measurement.
 
 The fields and tags to write are in ***msg.payload***.  If the message is a string, number, or boolean, it will be written as a single field to the specified measurement called *value*.  
 
->Note: Javascript numbers are *always* written as a float.  To write an integer type, use a number in a string with an 'i' suffix, for example, to write the integer `1234` use the string `'1234i'`.
+>Note: Javascript numbers are *always* written as a float.  When using the 1.x-flux or 2.0 configuration, you can explicitly write an integer using a number in a string with an 'i' suffix, for example, to write the integer `1234` use the string `'1234i'`.  This is *not* supported using 1.x configurations; they are written as float values.
 
 For example, the following flow injects a single random field called `value` into the measurement `test` in the database `aTimeSeries` with the current timestamp.
 

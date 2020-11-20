@@ -79,11 +79,11 @@ module.exports = function (RED) {
         }
     });
 
+    function isIntegerString(value) {
+        return /^-?\d+i$/.test(value);
+    }
+
     function addFieldToPoint(point, name, value) {
-        
-        function isNumeric(value) {
-            return /^-?\d+$/.test(value);
-        }
 
         if (name === 'time') {
             point.timestamp(value);
@@ -91,14 +91,9 @@ module.exports = function (RED) {
             point.floatField(name, value);
         } else if (typeof value === 'string') {
             // string values with numbers ending with 'i' are considered integers            
-            if (value.slice(-1) === 'i') {
-                let intValue = value.substring(0, value.length-1);
-                if (isNumeric(intValue)) {
-                    value = parseInt(intValue);
-                    point.intField(name, value);
-                } else {
-                    point.stringField(name, value);
-                }
+            if (isIntegerString(value)) {
+                value = parseInt(value.substring(0,value.length-1));
+                point.intField(name, value);
             } else {
                 point.stringField(name, value);
             }
@@ -110,7 +105,7 @@ module.exports = function (RED) {
     function addFieldsToPoint(point, fields) {
         for (const prop in fields) {
             const value = fields[prop];
-            addFieldToPoint(point, prop, value)
+            addFieldToPoint(point, prop, value);
         }
     }
 
@@ -166,6 +161,7 @@ module.exports = function (RED) {
                 }
             }
     
+            // actual write happens here
             node.client
                 .close()
                 .catch(error => {
@@ -223,6 +219,15 @@ module.exports = function (RED) {
         this.org = n.org;
         this.bucket = n.bucket;
 
+        function setFieldIntegers(fields) {
+            for (const prop in fields) {
+                const value = fields[prop];
+                if (isIntegerString(value)) {
+                    fields[prop] = parseInt(value.substring(0,value.length-1));
+                }
+            } 
+        }
+
         if (!this.influxdbConfig) {
             this.error(RED._("influxdb.errors.missingconfig"));
             return;
@@ -255,7 +260,6 @@ module.exports = function (RED) {
                 // format payload to match new writePoints API
                 var points = [];
                 var point;
-                var timestamp;
                 if (_.isArray(msg.payload) && msg.payload.length > 0) {
                     // array of arrays
                     if (_.isArray(msg.payload[0]) && msg.payload[0].length > 0) {
@@ -265,6 +269,7 @@ module.exports = function (RED) {
                                 fields: nodeRedPoint[0],
                                 tags: nodeRedPoint[1]
                             }
+                            setFieldIntegers(point.fields)
                             if (point.fields.time) {
                                 point.timestamp = point.fields.time;
                                 delete point.fields.time;
@@ -278,6 +283,7 @@ module.exports = function (RED) {
                             fields: msg.payload[0],
                             tags: msg.payload[1]
                         };
+                        setFieldIntegers(point.fields)
                         if (point.fields.time) {
                             point.timestamp = point.fields.time;
                             delete point.fields.time;
@@ -290,12 +296,14 @@ module.exports = function (RED) {
                             measurement: measurement,
                             fields: msg.payload
                         };
+                        setFieldIntegers(point.fields)
                     } else {
                         // just a value
                         point = {
                             measurement: measurement,
                             fields: { value: msg.payload }
                         };
+                        setFieldIntegers(point.fields)
                     }
                     if (point.fields.time) {
                         point.timestamp = point.fields.time;
