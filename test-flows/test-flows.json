@@ -7,62 +7,6 @@
     "info": ""
   },
   {
-    "id": "d50d0c9f.31e858",
-    "type": "tls-config",
-    "z": "",
-    "name": "",
-    "cert": "",
-    "key": "",
-    "ca": "",
-    "certname": "influxdb-selfsigned.crt",
-    "keyname": "influxdb-selfsigned.key",
-    "caname": "",
-    "servername": "",
-    "verifyservercert": false
-  },
-  {
-    "id": "dc66afc1.46c418",
-    "type": "influxdb",
-    "z": "",
-    "hostname": "127.0.0.1",
-    "port": "8086",
-    "protocol": "http",
-    "database": "test",
-    "name": "",
-    "usetls": true,
-    "tls": "d50d0c9f.31e858",
-    "influxdbVersion": "1.x",
-    "url": "http://localhost:8086"
-  },
-  {
-    "id": "2ff2a476.a6d2ec",
-    "type": "influxdb",
-    "z": "",
-    "hostname": "127.0.0.1",
-    "port": "8086",
-    "protocol": "http",
-    "database": "database",
-    "name": "",
-    "usetls": false,
-    "tls": "d50d0c9f.31e858",
-    "influxdbVersion": "1.8-flux",
-    "url": "https://localhost:8086"
-  },
-  {
-    "id": "5d7e54ca.019d44",
-    "type": "influxdb",
-    "z": "",
-    "hostname": "127.0.0.1",
-    "port": "8086",
-    "protocol": "http",
-    "database": "database",
-    "name": "",
-    "usetls": false,
-    "tls": "d50d0c9f.31e858",
-    "influxdbVersion": "2.0",
-    "url": "https://localhost:9999"
-  },
-  {
     "id": "9b2d89a5.d4115",
     "type": "influxdb in",
     "z": "c535e74d.ab40f",
@@ -73,8 +17,8 @@
     "precision": "",
     "retentionPolicy": "",
     "org": "my-org",
-    "x": 420,
-    "y": 380,
+    "x": 350,
+    "y": 400,
     "wires": [
       [
         "3b6c3337.5c09e4"
@@ -93,8 +37,8 @@
     "topic": "",
     "payload": "",
     "payloadType": "date",
-    "x": 120,
-    "y": 380,
+    "x": 100,
+    "y": 400,
     "wires": [
       [
         "9b2d89a5.d4115"
@@ -111,8 +55,8 @@
     "console": false,
     "tostatus": false,
     "complete": "false",
-    "x": 710,
-    "y": 380,
+    "x": 610,
+    "y": 400,
     "wires": []
   },
   {
@@ -128,7 +72,7 @@
     "payload": "",
     "payloadType": "date",
     "x": 120,
-    "y": 100,
+    "y": 180,
     "wires": [
       [
         "804662c1.2b9cc"
@@ -140,13 +84,13 @@
     "type": "function",
     "z": "c535e74d.ab40f",
     "name": "Fields",
-    "func": "msg.payload = {\n    numValue: 123.0,\n    strValue: \"message\",\n    randomValue: Math.random()*10\n}\nreturn msg;",
+    "func": "msg.payload = {\n    intValue: '10i',\n    numValue: 123.0,\n    strValue: \"message\",\n    randomValue: Math.random()*10\n}\nreturn msg;",
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
     "finalize": "",
     "x": 270,
-    "y": 100,
+    "y": 180,
     "wires": [
       [
         "b688fcc3.f8735"
@@ -167,8 +111,8 @@
     "retentionPolicyV18Flux": "",
     "org": "my-org",
     "bucket": "test",
-    "x": 610,
-    "y": 100,
+    "x": 490,
+    "y": 180,
     "wires": []
   },
   {
@@ -182,8 +126,8 @@
     "topic": "",
     "payload": "",
     "payloadType": "date",
-    "x": 120,
-    "y": 160,
+    "x": 760,
+    "y": 40,
     "wires": [
       [
         "62da39df.2abfa"
@@ -200,8 +144,8 @@
     "noerr": 0,
     "initialize": "",
     "finalize": "",
-    "x": 300,
-    "y": 160,
+    "x": 920,
+    "y": 40,
     "wires": [
       [
         "27c795a.196d66a"
@@ -222,8 +166,8 @@
     "retentionPolicyV18Flux": "",
     "org": "my-org",
     "bucket": "test",
-    "x": 610,
-    "y": 160,
+    "x": 1150,
+    "y": 40,
     "wires": []
   },
   {
@@ -231,13 +175,13 @@
     "type": "function",
     "z": "c535e74d.ab40f",
     "name": "multiple readings",
-    "func": "msg.payload = [\n    [{\n        numValue: 10,\n        randomValue: Math.random()*10,\n        strValue: \"message1\",\n        time: new Date(\"2020-09-10T15:00:00Z\").getTime()\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }],\n    [{\n        numValue: 20,\n        randomValue: Math.random()*10,\n        strValue: \"message2\",\n        time: new Date(\"2020-09-10T17:00:01Z\").getTime()\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }]\n];\nreturn msg;",
+    "func": "msg.payload = [\n    [{\n        numValue: 10,\n        randomValue: Math.random()*10,\n        strValue: \"message1\",\n        time: new Date().getTime()-1 // ensure not the same!\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }],\n    [{\n        numValue: 20,\n        randomValue: Math.random()*10,\n        strValue: \"message2\",\n        time: new Date().getTime()\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }]\n];\nreturn msg;",
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
     "finalize": "",
-    "x": 310,
-    "y": 220,
+    "x": 930,
+    "y": 180,
     "wires": [
       [
         "2c381ae5.7bd8b6"
@@ -255,8 +199,8 @@
     "topic": "",
     "payload": "",
     "payloadType": "date",
-    "x": 116,
-    "y": 220,
+    "x": 760,
+    "y": 180,
     "wires": [
       [
         "8f13494c.697558"
@@ -277,8 +221,8 @@
     "retentionPolicyV18Flux": "",
     "org": "my-org",
     "bucket": "test",
-    "x": 610,
-    "y": 220,
+    "x": 1170,
+    "y": 180,
     "wires": []
   },
   {
@@ -292,7 +236,7 @@
     "initialize": "",
     "finalize": "",
     "x": 340,
-    "y": 280,
+    "y": 320,
     "wires": [
       [
         "7dd0ab77.6f1574"
@@ -311,7 +255,7 @@
     "payload": "",
     "payloadType": "date",
     "x": 120,
-    "y": 280,
+    "y": 320,
     "wires": [
       [
         "6d00eb8f.166744"
@@ -327,7 +271,7 @@
     "retentionPolicy": "",
     "name": "",
     "x": 640,
-    "y": 280,
+    "y": 320,
     "wires": []
   },
   {
@@ -336,12 +280,12 @@
     "z": "c535e74d.ab40f",
     "influxdb": "2ff2a476.a6d2ec",
     "name": "",
-    "query": "from(bucket: \"test/autogen\") |> range(start: -1m, stop: 1h)",
+    "query": "from(bucket: \"test/autogen\") |> range(start: -1h, stop: now())",
     "rawOutput": false,
     "precision": "",
     "retentionPolicy": "",
     "org": "my-org",
-    "x": 560,
+    "x": 500,
     "y": 440,
     "wires": [
       [
@@ -361,7 +305,7 @@
     "topic": "",
     "payload": "",
     "payloadType": "date",
-    "x": 120,
+    "x": 100,
     "y": 440,
     "wires": [
       [
@@ -379,7 +323,7 @@
     "console": false,
     "tostatus": false,
     "complete": "false",
-    "x": 1010,
+    "x": 910,
     "y": 440,
     "wires": []
   },
@@ -389,13 +333,13 @@
     "z": "c535e74d.ab40f",
     "influxdb": "5d7e54ca.019d44",
     "name": "",
-    "query": "from(bucket: \"test\") |> range(start: -1m, stop: 1h)",
+    "query": "from(bucket: \"test\") |> range(start: -1h, stop: now())",
     "rawOutput": false,
     "precision": "",
     "retentionPolicy": "",
     "org": "my-org",
-    "x": 520,
-    "y": 500,
+    "x": 460,
+    "y": 480,
     "wires": [
       [
         "62b2743e.dcd45c"
@@ -414,8 +358,8 @@
     "topic": "",
     "payload": "",
     "payloadType": "date",
-    "x": 120,
-    "y": 500,
+    "x": 100,
+    "y": 480,
     "wires": [
       [
         "ebcd25d5.a1e6e8"
@@ -432,8 +376,8 @@
     "console": false,
     "tostatus": false,
     "complete": "false",
-    "x": 930,
-    "y": 500,
+    "x": 830,
+    "y": 480,
     "wires": []
   },
   {
@@ -488,8 +432,507 @@
     "retentionPolicyV18Flux": "",
     "org": "my-org",
     "bucket": "test",
-    "x": 610,
+    "x": 490,
     "y": 40,
     "wires": []
+  },
+  {
+    "id": "e0383704.a08828",
+    "type": "inject",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": "",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 120,
+    "y": 80,
+    "wires": [
+      [
+        "b8637241.edb4f"
+      ]
+    ]
+  },
+  {
+    "id": "b8637241.edb4f",
+    "type": "function",
+    "z": "c535e74d.ab40f",
+    "name": "Value",
+    "func": "msg.payload = Math.random()*10;\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "x": 270,
+    "y": 80,
+    "wires": [
+      [
+        "c6ffaa9.5cb7d58"
+      ]
+    ]
+  },
+  {
+    "id": "c6ffaa9.5cb7d58",
+    "type": "influxdb out",
+    "z": "c535e74d.ab40f",
+    "influxdb": "2ff2a476.a6d2ec",
+    "name": "",
+    "measurement": "test",
+    "precision": "ms",
+    "retentionPolicy": "",
+    "database": "test",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "my-org",
+    "bucket": "test",
+    "x": 510,
+    "y": 80,
+    "wires": []
+  },
+  {
+    "id": "5f1d651e.dac6ec",
+    "type": "inject",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": "",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 120,
+    "y": 120,
+    "wires": [
+      [
+        "85b35aa5.22b388"
+      ]
+    ]
+  },
+  {
+    "id": "85b35aa5.22b388",
+    "type": "function",
+    "z": "c535e74d.ab40f",
+    "name": "Value",
+    "func": "msg.payload = Math.random()*10;\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "x": 270,
+    "y": 120,
+    "wires": [
+      [
+        "23734bf4.96bf24"
+      ]
+    ]
+  },
+  {
+    "id": "23734bf4.96bf24",
+    "type": "influxdb out",
+    "z": "c535e74d.ab40f",
+    "influxdb": "5d7e54ca.019d44",
+    "name": "",
+    "measurement": "test",
+    "precision": "ms",
+    "retentionPolicy": "",
+    "database": "test",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "my-org",
+    "bucket": "test",
+    "x": 490,
+    "y": 120,
+    "wires": []
+  },
+  {
+    "id": "3253bf3d.11221",
+    "type": "inject",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": "",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 120,
+    "y": 220,
+    "wires": [
+      [
+        "43e1cd21.14e894"
+      ]
+    ]
+  },
+  {
+    "id": "43e1cd21.14e894",
+    "type": "function",
+    "z": "c535e74d.ab40f",
+    "name": "Fields",
+    "func": "msg.payload = {\n    intValue2: '10i',\n    numValue: 123.0,\n    strValue: \"message\",\n    randomValue: Math.random()*10\n}\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "x": 270,
+    "y": 220,
+    "wires": [
+      [
+        "9ef619de.e9aff8"
+      ]
+    ]
+  },
+  {
+    "id": "9ef619de.e9aff8",
+    "type": "influxdb out",
+    "z": "c535e74d.ab40f",
+    "influxdb": "2ff2a476.a6d2ec",
+    "name": "",
+    "measurement": "test",
+    "precision": "ms",
+    "retentionPolicy": "",
+    "database": "test",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "my-org",
+    "bucket": "test",
+    "x": 510,
+    "y": 220,
+    "wires": []
+  },
+  {
+    "id": "ba41fafd.7548b8",
+    "type": "inject",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": "",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 120,
+    "y": 260,
+    "wires": [
+      [
+        "dad5dd81.245d5"
+      ]
+    ]
+  },
+  {
+    "id": "dad5dd81.245d5",
+    "type": "function",
+    "z": "c535e74d.ab40f",
+    "name": "Fields",
+    "func": "msg.payload = {\n    intValue: '10i',\n    numValue: 123.0,\n    strValue: \"message\",\n    randomValue: Math.random()*10\n}\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "x": 270,
+    "y": 260,
+    "wires": [
+      [
+        "747df02a.5f506"
+      ]
+    ]
+  },
+  {
+    "id": "747df02a.5f506",
+    "type": "influxdb out",
+    "z": "c535e74d.ab40f",
+    "influxdb": "5d7e54ca.019d44",
+    "name": "",
+    "measurement": "test",
+    "precision": "ms",
+    "retentionPolicy": "",
+    "database": "test",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "my-org",
+    "bucket": "test",
+    "x": 490,
+    "y": 260,
+    "wires": []
+  },
+  {
+    "id": "1c250be8.b84ee4",
+    "type": "inject",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 760,
+    "y": 80,
+    "wires": [
+      [
+        "59a39c0d.ad36a4"
+      ]
+    ]
+  },
+  {
+    "id": "59a39c0d.ad36a4",
+    "type": "function",
+    "z": "c535e74d.ab40f",
+    "name": "Fields and Tags",
+    "func": "msg.payload = [{\n    numValue: 12,\n    randomValue: Math.random()*10,\n    strValue: \"message2\"\n},\n{\n    tag1:\"sensor1\",\n    tag2:\"device2\"\n}];\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "x": 920,
+    "y": 80,
+    "wires": [
+      [
+        "889b1d9a.b2b62"
+      ]
+    ]
+  },
+  {
+    "id": "889b1d9a.b2b62",
+    "type": "influxdb out",
+    "z": "c535e74d.ab40f",
+    "influxdb": "2ff2a476.a6d2ec",
+    "name": "",
+    "measurement": "test",
+    "precision": "ms",
+    "retentionPolicy": "",
+    "database": "test",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "my-org",
+    "bucket": "test",
+    "x": 1170,
+    "y": 80,
+    "wires": []
+  },
+  {
+    "id": "82265b10.7a2368",
+    "type": "inject",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 760,
+    "y": 120,
+    "wires": [
+      [
+        "51f74cdf.05c2c4"
+      ]
+    ]
+  },
+  {
+    "id": "51f74cdf.05c2c4",
+    "type": "function",
+    "z": "c535e74d.ab40f",
+    "name": "Fields and Tags",
+    "func": "msg.payload = [{\n    numValue: 12,\n    randomValue: Math.random()*10,\n    strValue: \"message2\"\n},\n{\n    tag1:\"sensor1\",\n    tag2:\"device2\"\n}];\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "x": 920,
+    "y": 120,
+    "wires": [
+      [
+        "505ca507.cb59ac"
+      ]
+    ]
+  },
+  {
+    "id": "505ca507.cb59ac",
+    "type": "influxdb out",
+    "z": "c535e74d.ab40f",
+    "influxdb": "5d7e54ca.019d44",
+    "name": "",
+    "measurement": "test",
+    "precision": "ms",
+    "retentionPolicy": "",
+    "database": "test",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "my-org",
+    "bucket": "test",
+    "x": 1150,
+    "y": 120,
+    "wires": []
+  },
+  {
+    "id": "a1982889.8cd398",
+    "type": "function",
+    "z": "c535e74d.ab40f",
+    "name": "multiple readings",
+    "func": "msg.payload = [\n    [{\n        numValue: 10,\n        randomValue: Math.random()*10,\n        strValue: \"message1\",\n        time: new Date().getTime()-1    // ensure not the same!\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }],\n    [{\n        numValue: 20,\n        randomValue: Math.random()*10,\n        strValue: \"message2\",\n        time: new Date().getTime()\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }]\n];\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "x": 930,
+    "y": 220,
+    "wires": [
+      [
+        "cf1ad0e2.b1ce4"
+      ]
+    ]
+  },
+  {
+    "id": "1fc2d3cb.9e3fdc",
+    "type": "inject",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 760,
+    "y": 220,
+    "wires": [
+      [
+        "a1982889.8cd398"
+      ]
+    ]
+  },
+  {
+    "id": "cf1ad0e2.b1ce4",
+    "type": "influxdb out",
+    "z": "c535e74d.ab40f",
+    "influxdb": "2ff2a476.a6d2ec",
+    "name": "",
+    "measurement": "test",
+    "precision": "ms",
+    "retentionPolicy": "",
+    "database": "test",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "my-org",
+    "bucket": "test",
+    "x": 1190,
+    "y": 220,
+    "wires": []
+  },
+  {
+    "id": "651641f.326c8c",
+    "type": "inject",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 760,
+    "y": 260,
+    "wires": [
+      [
+        "f0c19067.f6119"
+      ]
+    ]
+  },
+  {
+    "id": "f0c19067.f6119",
+    "type": "function",
+    "z": "c535e74d.ab40f",
+    "name": "multiple readings",
+    "func": "msg.payload = [\n    [{\n        numValue: 10,\n        randomValue: Math.random()*10,\n        strValue: \"message1\",\n        time: new Date().getTime()-1 // ensure not the same!\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }],\n    [{\n        numValue: 20,\n        randomValue: Math.random()*10,\n        strValue: \"message2\",\n        time: new Date().getTime()\n    },\n    {\n        tag1:\"sensor1\",\n        tag2:\"device2\"\n    }]\n];\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "x": 930,
+    "y": 260,
+    "wires": [
+      [
+        "77ad0903.035f08"
+      ]
+    ]
+  },
+  {
+    "id": "77ad0903.035f08",
+    "type": "influxdb out",
+    "z": "c535e74d.ab40f",
+    "influxdb": "5d7e54ca.019d44",
+    "name": "",
+    "measurement": "test",
+    "precision": "ms",
+    "retentionPolicy": "",
+    "database": "test",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "my-org",
+    "bucket": "test",
+    "x": 1170,
+    "y": 260,
+    "wires": []
+  },
+  {
+    "id": "dc66afc1.46c418",
+    "type": "influxdb",
+    "hostname": "127.0.0.1",
+    "port": "8086",
+    "protocol": "http",
+    "database": "test",
+    "name": "",
+    "usetls": true,
+    "tls": "d50d0c9f.31e858",
+    "influxdbVersion": "1.x",
+    "url": "http://localhost:8086",
+    "rejectUnauthorized": false
+  },
+  {
+    "id": "2ff2a476.a6d2ec",
+    "type": "influxdb",
+    "hostname": "127.0.0.1",
+    "port": "8086",
+    "protocol": "http",
+    "database": "database",
+    "name": "",
+    "usetls": false,
+    "tls": "d50d0c9f.31e858",
+    "influxdbVersion": "1.8-flux",
+    "url": "https://localhost:8086",
+    "rejectUnauthorized": false
+  },
+  {
+    "id": "5d7e54ca.019d44",
+    "type": "influxdb",
+    "hostname": "127.0.0.1",
+    "port": "8086",
+    "protocol": "http",
+    "database": "database",
+    "name": "",
+    "usetls": false,
+    "tls": "d50d0c9f.31e858",
+    "influxdbVersion": "2.0",
+    "url": "https://localhost:9999",
+    "rejectUnauthorized": false
+  },
+  {
+    "id": "d50d0c9f.31e858",
+    "type": "tls-config",
+    "name": "",
+    "cert": "",
+    "key": "",
+    "ca": "",
+    "certname": "influxdb-selfsigned.crt",
+    "keyname": "influxdb-selfsigned.key",
+    "caname": "",
+    "servername": "",
+    "verifyservercert": false
   }
 ]
