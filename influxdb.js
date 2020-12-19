@@ -264,9 +264,10 @@ module.exports = function (RED) {
                     // array of arrays
                     if (_.isArray(msg.payload[0]) && msg.payload[0].length > 0) {
                         msg.payload.forEach(function (nodeRedPoint) {
+                            let fields = _.clone(nodeRedPoint[0])
                             point = {
                                 measurement: measurement,
-                                fields: nodeRedPoint[0],
+                                fields,
                                 tags: nodeRedPoint[1]
                             }
                             setFieldIntegers(point.fields)
@@ -278,9 +279,10 @@ module.exports = function (RED) {
                         });
                     } else {
                         // array of non-arrays, assume one point with both fields and tags
+                        let fields = _.clone(msg.payload[0])
                         point = {
                             measurement: measurement,
-                            fields: msg.payload[0],
+                            fields,
                             tags: msg.payload[1]
                         };
                         setFieldIntegers(point.fields)
@@ -292,11 +294,16 @@ module.exports = function (RED) {
                     }
                 } else {
                     if (_.isPlainObject(msg.payload)) {
+                        let fields = _.clone(msg.payload)
                         point = {
                             measurement: measurement,
-                            fields: msg.payload
+                            fields,
                         };
                         setFieldIntegers(point.fields)
+                        if (point.fields.time) {
+                            point.timestamp = point.fields.time;
+                            delete point.fields.time;
+                        }
                     } else {
                         // just a value
                         point = {
@@ -304,10 +311,6 @@ module.exports = function (RED) {
                             fields: { value: msg.payload }
                         };
                         setFieldIntegers(point.fields)
-                    }
-                    if (point.fields.time) {
-                        point.timestamp = point.fields.time;
-                        delete point.fields.time;
                     }
                     points.push(point);
                 }
