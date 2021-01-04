@@ -8,11 +8,11 @@ When version **1.x** is selected these nodes use the <a href="https://www.npmjs.
 
 When version **1.8-flux** is selected, the nodes use the <a href="https://docs.influxdata.com/influxdb/v1.8/tools/api/#influxdb-2-0-api-compatibility-endpoints" target="_new"> influxDB 2.0 API compatibility endpoints</a> available in the <a href="https://github.com/influxdata/influxdb-client-js" target="_new">InfluxDB 2.0 client libraries</a> for node.js. These nodes are used for writing and querying data with Flux in InfluxDB 1.8+.
 
-When version **2.0** is selected, the nodes make use of the <a href="https://github.com/influxdata/influxdb-client-js" target="_new">InfluxDB 2.0 client libraries</a> for writing and querying data with Flux in InfluxDB 2.0.
+When version **2.0** is selected, the nodes make use of the <a href="https://github.com/influxdata/influxdb-client-js" target="_new">InfluxDB 2.0 client libraries</a> for writing and querying data with Flux in InfluxDB 2.0.  
 
 ## Prerequisites
 
-To run this you'll need access to an InfluxDB database version 1.x, 1.8+ or 2.0. See the <a href="https://influxdb.com/" target="_new">InfluxDB site</a> for more information. The latest release of this node has been tested with InfluxDB 1.8 and 2.0.
+To run this you'll need access to an InfluxDB database version 1.x, 1.8+ or 2.0. See the <a href="https://influxdb.com/" target="_new">InfluxDB site</a> for more information. The latest release of this node has been tested with InfluxDB 1.8 and 2.0.  This node supports Node.js 10.x, 12.x and 14.x LTS releases.  It does **not** support Node.js 8.x.
 
 ## Install
 
