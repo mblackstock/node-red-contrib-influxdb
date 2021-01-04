@@ -318,7 +318,7 @@ module.exports = function (RED) {
             this.client = this.influxdbConfig.client.getWriteApi(org, bucket, this.precisionV18FluxV20);
             var node = this;
 
-            node.on("input", function (msg) {
+            node.on("input", function (msg, send, done) {
                 writePoints(msg, node, done);
             });
         }
@@ -360,12 +360,13 @@ module.exports = function (RED) {
                 writeOptions.retentionPolicy = retentionPolicy;
             }
 
-            client.writePoints(msg.payload, writeOptions).catch(function (err) {
+            client.writePoints(msg.payload, writeOptions).then(() => {
+                done();
+            }).catch(function (err) {
                 msg.influx_error = {
                     statusCode: err.res ? err.res.statusCode : 503
                 }
-                node.error(err, msg);
-                done();
+                done(err);
             });
         });
     }
@@ -404,9 +405,7 @@ module.exports = function (RED) {
 
                 query = msg.hasOwnProperty('query') ? msg.query : node.query;
                 if (!query) {
-                    node.error(RED._("influxdb.errors.noquery"), msg);
-                    done();
-                    return;
+                    return done(RED._("influxdb.errors.noquery"));
                 }
 
                 rawOutput = msg.hasOwnProperty('rawOutput') ? msg.rawOutput : node.rawOutput;
@@ -459,12 +458,12 @@ module.exports = function (RED) {
                         msg.influx_error = {
                             errorMessage: error
                         };
-                        node.error(error, msg);
-                        done();
+                        done(error);
                     },
                     complete() {
                         msg.payload = output;
                         send(msg);
+                        done();
                     },
                 });
             });
