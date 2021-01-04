@@ -5,6 +5,10 @@ module.exports = function (RED) {
     var Influx = require('influx');
     var { InfluxDB, Point } = require('@influxdata/influxdb-client');
 
+    const VERSION_1X = '1.x';
+    const VERSION_18_FLUX = '1.8-flux';
+    const VERSION_20 = '2.0';
+
     /**
      * Config node. Currently we only connect to one host.
      */
@@ -18,10 +22,10 @@ module.exports = function (RED) {
         var clientOptions = null;
         
         if (!n.influxdbVersion) {
-            n.influxdbVersion = '1.x'
+            n.influxdbVersion = VERSION_1X;
         }
 
-        if (n.influxdbVersion === '1.x') {
+        if (n.influxdbVersion === VERSION_1X) {
             this.usetls = n.usetls;
             if (typeof this.usetls === 'undefined') {
                 this.usetls = false;
@@ -49,7 +53,7 @@ module.exports = function (RED) {
                 username: this.credentials.username,
                 password: this.credentials.password
             });
-        } else if (n.influxdbVersion === '1.8-flux') {
+        } else if (n.influxdbVersion === VERSION_18_FLUX) {
             var token = `${this.credentials.username}:${this.credentials.password}`;
             clientOptions = {
                 url: n.url,
@@ -58,7 +62,7 @@ module.exports = function (RED) {
             }
 
             this.client = new InfluxDB(clientOptions);
-        } else if (n.influxdbVersion === '2.0') {
+        } else if (n.influxdbVersion === VERSION_20) {
             clientOptions = {
                 url: n.url,
                 rejectUnauthorized: n.rejectUnauthorized,
@@ -109,11 +113,13 @@ module.exports = function (RED) {
         }
     }
 
-    function writePoints(msg, node) {
+    // write using influx-client-js
+    function writePoints(msg, node, done) {
         node.client.closed == false ? null : node.client.closed = false;
         var measurement = msg.hasOwnProperty('measurement') ? msg.measurement : node.measurement;
         if (!measurement) {
             node.error(RED._("influxdb.errors.nomeasurement"), msg);
+            done();
             return;
         }
         try {
@@ -164,45 +170,25 @@ module.exports = function (RED) {
             // actual write happens here
             node.client
                 .close()
+                .then(() => {
+                    done();
+                })
                 .catch(error => {
                     msg.influx_error = {
                         errorMessage: error
                     };
                     node.error(error, msg);
+                    done();
                 })
         } catch (error) {
             msg.influx_error = {
                 errorMessage: error
             };
             node.error(error, msg);
+            done();
         }
     }
-
-    function queryRows(msg, node) {
-        var query = msg.hasOwnProperty('query') ? msg.query : node.query;
-        if (!query) {
-            node.error(RED._("influxdb18.errors.noquery"), msg);
-            return;
-        }
-        var output = [];
-        node.client.queryRows(query, {
-            next(row, tableMeta) {
-                var o = tableMeta.toObject(row)
-                output.push(o);
-            },
-            error(error) {
-                msg.influx_error = {
-                    errorMessage: error
-                };
-                node.error(error, msg);
-            },
-            complete() {
-                msg.payload = output;
-                node.send(msg);
-            },
-        })
-    }
-
+    
     /**
      * Output node to write to an influxdb measurement
      */
@@ -234,16 +220,18 @@ module.exports = function (RED) {
         }
         let version = this.influxdbConfig.influxdbVersion;
 
-        if (version === '1.x') {
+        if (version === VERSION_1X) {
             var node = this;
             var client = this.influxdbConfig.client;
 
-            node.on("input", function (msg) {
+            node.on("input", function (msg, send, done) {
                 var measurement;
                 var writeOptions = {};
+
                 var measurement = msg.hasOwnProperty('measurement') ? msg.measurement : node.measurement;
                 if (!measurement) {
                     node.error(RED._("influxdb.errors.nomeasurement"), msg);
+                    done();
                     return;
                 }
                 var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
@@ -315,26 +303,30 @@ module.exports = function (RED) {
                     points.push(point);
                 }
 
-                client.writePoints(points, writeOptions).catch(function (err) {
+                client.writePoints(points, writeOptions)
+                .then(() => {
+                    done();
+                }).catch(function (err) {
                     msg.influx_error = {
                         statusCode: err.res ? err.res.statusCode : 503
-                    }
+                        }
                     node.error(err, msg);
+                    done();
                 });
             });
-        } else if (version === '1.8-flux' || version === '2.0') {
+        } else if (version === VERSION_18_FLUX || version === VERSION_20) {
             let bucket = this.bucket;
-            if (version === '1.8-flux') {
+            if (version === VERSION_18_FLUX) {
                 let retentionPolicy = this.retentionPolicyV18Flux ? this.retentionPolicyV18Flux : 'autogen';
                 bucket = `${this.database}/${retentionPolicy}`;
             }
-            let org = version === '1.8-flux' ? '' : this.org;
+            let org = version === VERSION_18_FLUX ? '' : this.org;
 
             this.client = this.influxdbConfig.client.getWriteApi(org, bucket, this.precisionV18FluxV20);
             var node = this;
 
             node.on("input", function (msg) {
-                writePoints(msg, node);
+                writePoints(msg, node, done);
             });
         }
     }
@@ -355,14 +347,14 @@ module.exports = function (RED) {
             this.error(RED._("influxdb.errors.missingconfig"));
             return;
         }
-        if (this.influxdbConfig.influxdbVersion !== '1.x') {
+        if (this.influxdbConfig.influxdbVersion !== VERSION_1X) {
             this.error(RED._("influxdb.errors.invalidconfig"));
             return;
         }
         var node = this;
         var client = this.influxdbConfig.client;
 
-        node.on("input", function (msg) {
+        node.on("input", function (msg, send, done) {
             var writeOptions = {};
             var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
             var retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
@@ -380,6 +372,7 @@ module.exports = function (RED) {
                     statusCode: err.res ? err.res.statusCode : 503
                 }
                 node.error(err, msg);
+                done();
             });
         });
     }
@@ -405,11 +398,11 @@ module.exports = function (RED) {
         }
 
         let version = this.influxdbConfig.influxdbVersion
-        if (version === '1.x') {
+        if (version === VERSION_1X) {
             var node = this;
             var client = this.influxdbConfig.client;
 
-            node.on("input", function (msg) {
+            node.on("input", function (msg, send, done) {
                 var query;
                 var rawOutput;
                 var queryOptions = {};
@@ -419,6 +412,7 @@ module.exports = function (RED) {
                 query = msg.hasOwnProperty('query') ? msg.query : node.query;
                 if (!query) {
                     node.error(RED._("influxdb.errors.noquery"), msg);
+                    done();
                     return;
                 }
 
@@ -442,24 +436,47 @@ module.exports = function (RED) {
 
                 queryPromise.then(function (results) {
                     msg.payload = results;
-                    node.send(msg);
+                    send(msg);
                 }).catch(function (err) {
                     msg.influx_error = {
                         statusCode: err.res ? err.res.statusCode : 503
                     }
                     node.error(err, msg);
+                    done();
                 });
             });
 
-        } else if (version === '1.8-flux' || version === '2.0') {
-            let org = version === '2.0' ? this.org : ''
+        } else if (version === VERSION_18_FLUX || version === VERSION_20) {
+            let org = version === VERSION_20 ? this.org : ''
             this.client = this.influxdbConfig.client.getQueryApi(org);
             var node = this;
 
-            node.on("input", function (msg) {
-                queryRows(msg, node);
+            node.on("input", function (msg, send, done) {
+                var query = msg.hasOwnProperty('query') ? msg.query : node.query;
+                if (!query) {
+                    node.error(RED._("influxdb18.errors.noquery"), msg);
+                    done();
+                    return;
+                }
+                var output = [];
+                node.client.queryRows(query, {
+                    next(row, tableMeta) {
+                        var o = tableMeta.toObject(row)
+                        output.push(o);
+                    },
+                    error(error) {
+                        msg.influx_error = {
+                            errorMessage: error
+                        };
+                        node.error(error, msg);
+                        done();
+                    },
+                    complete() {
+                        msg.payload = output;
+                        send(msg);
+                    },
+                });
             });
-
         }
     }
 
