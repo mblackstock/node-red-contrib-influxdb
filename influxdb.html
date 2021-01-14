@@ -1,4 +1,8 @@
-<script type="text/x-red" data-template-name="influxdb">    
+<script type="text/html" data-template-name="influxdb">    
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
     <div class="form-row">
         <label for="node-config-input-influxdbVersion"><i class="fa fa-code-fork"></i> <span data-i18n="influxdb.label.version"></span></label>
         <select type="text" style="width: 100px" id="node-config-input-influxdbVersion">
@@ -45,10 +49,7 @@
             <input style="width: 300px;" type="text" id="node-config-input-tls">
         </div>
     </div>
-    <div class="form-row">
-        <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
-        <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
-    </div>
+
 </script>
 
 <script type="text/javascript">
@@ -168,7 +169,11 @@
     });
 </script>
 
-<script type="text/x-red" data-template-name="influxdb out">
+<script type="text/html" data-template-name="influxdb out">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
     <div class="form-row">
         <label for="node-input-influxdb"><i class="fa fa-server"></i> <span data-i18n="influxdb.label.server"></span></label>
         <input type="text" id="node-input-influxdb">
@@ -226,15 +231,12 @@
         <label for="node-input-retentionPolicyV18Flux"><i class="fa fa-gavel"></i> <span data-i18n="influxdb.label.retention-policy"></span></label>
         <input type="text" id="node-input-retentionPolicyV18Flux">
     </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
-    </div>
+
     <div class="form-tips" id="node-warning-measurement"><span data-i18n="[html]influxdb.tip.measurement"></span></div>
     <div class="form-tips" id="node-warning-retention-policy"><span data-i18n="[html]influxdb.tip.retention-policy"></span></div>
 </script>
 
-<script type="text/x-red" data-help-name="influxdb out">
+<script type="text/html" data-help-name="influxdb out">
     <p>A simple influxdb output node to write values and tags to an influxdb measurement.</p>
     <p>The fields and tags to write are in <b>msg.payload</b>. If <b>msg.payload</b> is a string, number, or boolean, 
     it will be written as a single value to the specified measurement (called <i>value</i>).</p>
@@ -393,7 +395,11 @@
     });
 </script>
 
-<script type="text/x-red" data-template-name="influxdb batch">
+<script type="text/html" data-template-name="influxdb batch">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
     <div class="form-row">
         <label for="node-input-influxdb"><i class="fa fa-server"></i> <span data-i18n="influxdb.label.server"></span></label>
         <input type="text" id="node-input-influxdb">
@@ -422,13 +428,10 @@
             </div>
         </div>  
     </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
-    </div>
+
 </script>
 
-<script type="text/x-red" data-help-name="influxdb batch">
+<script type="text/html" data-help-name="influxdb batch">
     <p><b>InfluxDB 1.8</b></p>
     <p>A influxdb output node to write multiple points (fields and tags) to multiple influxdb measurements.</p>
     <p>The <b>msg.payload</b> needs to be an array of <i>point</i> objects.</p>
@@ -490,7 +493,11 @@
     });
 </script>
 
-<script type="text/x-red" data-template-name="influxdb in">
+<script type="text/html" data-template-name="influxdb in">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
     <div class="form-row">
         <label for="node-input-influxdb"><i class="fa fa-server"></i> <span data-i18n="influxdb.label.server"></span></label>
         <input type="text" id="node-input-influxdb">
@@ -499,15 +506,9 @@
         <label for="node-input-org"><i class="fa fa-sitemap"></i> <span data-i18n="influxdb.label.org"></span></label>
         <input type="text" id="node-input-org">
     </div>
-    <div class="form-row">
-        <label for="node-input-query"><i class="fa fa-briefcase"></i> <span data-i18n="influxdb.label.query"></span></label>
-        <input type="text" id="node-input-query">
-    </div>
-    <div class="form-row" id="node-input-row-rawOutput">
+    <div class="form-row" id="node-input-row-extras">
         <input type="checkbox" id="node-input-rawOutput" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="node-input-rawOutput"><span data-i18n="influxdb.label.use-raw-output"></span></label>        
-    </div>
-    <div class="form-row" id="node-input-row-enableAdvancedOptions">
         <input type="checkbox" id="advanced-options-checkbox" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="advanced-options-checkbox" style="width: 70%;"><span data-i18n="influxdb.label.use-advanced-query"></span></label>
         <div id="advanced-options-div" class="hide" style="margin-left: 20px; margin-top: 10px;">
@@ -531,15 +532,19 @@
             </div>
         </div>  
     </div>
-  
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    <div>
+        <input type="hidden" id="node-input-query">
+    </div>
+    <div class="form-row" style="margin-bottom: 0px;">
+        <label for="" style="width: unset;" id="node-input-query-label"><i class="fa fa-code"></i> <span data-i18n="influxdb.label.query"></label>
+    </div>
+    <div class="form-row node-text-editor-row">
+        <div style="height: 250px; min-height:150px;" class="node-text-editor" id="node-input-query-editor" ></div>
     </div>
     <div class="form-tips" id="node-warning" style="display: none"><span data-i18n="[html]influxdb.tip.querytip"></span></div>
 </script>
 
-<script type="text/x-red" data-help-name="influxdb in">
+<script type="text/html" data-help-name="influxdb in">
     <p>Allows basic queries to be made to an influxdb time series database.</p>
     <p>The query can be specified in the configuration property or using the property
         <b>msg.query</b>. The results will be returned in <b>msg.payload</b>.</p>
@@ -582,12 +587,19 @@
         icon: "influxdb.png",
         label: function() {
             var influxNode = RED.nodes.node(this.influxdb);
-            return this.name || (influxNode ? influxNode.label() + " " + this.query: "influxdb");
+            return this.name || (influxNode ? influxNode.label() : "influxdb");
         },
         labelStyle: function() {
             return this.name ? "node_label_italic" : "";
         },
         oneditprepare: function() {
+            this.editor = RED.editor.createEditor({
+                id: 'node-input-query-editor',
+                mode: 'ace/mode/text',
+                value: $("#node-input-query").val()
+            });
+            $("#node-input-query").change();
+
             $("#node-input-query").change(function () {
                 if($("#node-input-query").val() === "") {
                     $("#node-warning").show();
@@ -615,20 +627,17 @@
 
             function update18Options() {
                 $("#node-input-row-org").hide();
-                $("#node-input-row-rawOutput").show();
-                $("#node-input-row-enableAdvancedOptions").show();
+                $("#node-input-row-extras").show();
             }
 
             function update18FluxOptions() {                
                 $("#node-input-row-org").hide();
-                $("#node-input-row-rawOutput").hide();
-                $("#node-input-row-enableAdvancedOptions").hide();
+                $("#node-input-row-extras").hide();
             }
 
             function update20Options() {
                 $("#node-input-row-org").show();
-                $("#node-input-row-rawOutput").hide();
-                $("#node-input-row-enableAdvancedOptions").hide();
+                $("#node-input-row-extras").hide();
             }
 
             $("#node-input-influxdb").change(function () {
@@ -645,11 +654,19 @@
             });
         },
         oneditsave: function() {
+            $("#node-input-query").val(this.editor.getValue());
+            this.editor.destroy();
+            delete this.editor;
+            
             // reset inputs if we are not using advanced options
             if (!$("#advanced-options-checkbox").is(':checked')) {
                 $("#node-input-precision").val("");
                 $("#node-input-retentionPolicy").val("");
             }
+        },
+        oneditcancel: function() {
+            this.editor.destroy();
+            delete this.editor;
         }
     });
 </script>
