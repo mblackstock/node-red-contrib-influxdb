@@ -23,7 +23,8 @@
         "errors":{
             "nomeasurement":"No measurement specified",
             "missingconfig":"Configuration missing",
-            "invalidconfig":"Configuration invalid"
+            "invalidconfig":"Configuration invalid",
+            "noquery":"No query"
         },
         "tip": {
             "measurement": "<b> Tip:</b> If no measurement is specified, ensure <b>msg.measurement</b> contains the measurement name.",

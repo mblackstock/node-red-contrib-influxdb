@@ -23,7 +23,8 @@
         "errors":{
             "nomeasurement":"No se ha especificado una medición",
             "missingconfig":"Configuración incompleta",
-            "invalidconfig":"Configuration no válida"
+            "invalidconfig":"Configuration no válida",
+            "noquery":"No query"
         },
         "tip": {
             "measurement": "<b> Consejo:</b> Si no se especifica una medición, asegúrate de que <b>msg.measurement</b> contiene el nombre de la medición.",

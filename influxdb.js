@@ -446,7 +446,7 @@ module.exports = function (RED) {
             node.on("input", function (msg, send, done) {
                 var query = msg.hasOwnProperty('query') ? msg.query : node.query;
                 if (!query) {
-                    return done(RED._("influxdb18.errors.noquery"));
+                    return done(RED._("influxdb.errors.noquery"));
                 }
                 var output = [];
                 node.client.queryRows(query, {
