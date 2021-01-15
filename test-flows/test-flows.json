@@ -2,9 +2,9 @@
   {
     "id": "c535e74d.ab40f",
     "type": "tab",
-    "label": "InfluxDB",
+    "label": "InfluxDB tests",
     "disabled": false,
-    "info": ""
+    "info": "# InfluxDb Node Tests\n\nBefore starting up influxdb nodes, run all tests\nby clicking on inject nodes to ensure error handling is working.\n\nThe catch node should display an error 'connection refused' for all other than the \n`no query error` test.\n\nThen, start the databases as described in the README, adding tokens and credentials as needed to configuration nodes.\n\nAll segments should not throw errors.\n\nThe segment with the comment _check write test_ will ensure that data is actually written to the database by reading back the last entry once the output node has finished writing.\n"
   },
   {
     "id": "9b2d89a5.d4115",
@@ -17,8 +17,8 @@
     "precision": "",
     "retentionPolicy": "",
     "org": "my-org",
-    "x": 350,
-    "y": 400,
+    "x": 310,
+    "y": 480,
     "wires": [
       [
         "3b6c3337.5c09e4"
@@ -37,8 +37,8 @@
     "topic": "",
     "payload": "",
     "payloadType": "date",
-    "x": 100,
-    "y": 400,
+    "x": 120,
+    "y": 480,
     "wires": [
       [
         "9b2d89a5.d4115"
@@ -55,8 +55,8 @@
     "console": false,
     "tostatus": false,
     "complete": "false",
-    "x": 610,
-    "y": 400,
+    "x": 490,
+    "y": 480,
     "wires": []
   },
   {
@@ -111,7 +111,7 @@
     "retentionPolicyV18Flux": "",
     "org": "my-org",
     "bucket": "test",
-    "x": 490,
+    "x": 450,
     "y": 180,
     "wires": []
   },
@@ -166,7 +166,7 @@
     "retentionPolicyV18Flux": "",
     "org": "my-org",
     "bucket": "test",
-    "x": 1150,
+    "x": 1110,
     "y": 40,
     "wires": []
   },
@@ -221,7 +221,7 @@
     "retentionPolicyV18Flux": "",
     "org": "my-org",
     "bucket": "test",
-    "x": 1170,
+    "x": 1130,
     "y": 180,
     "wires": []
   },
@@ -236,7 +236,7 @@
     "initialize": "",
     "finalize": "",
     "x": 340,
-    "y": 320,
+    "y": 420,
     "wires": [
       [
         "7dd0ab77.6f1574"
@@ -255,7 +255,7 @@
     "payload": "",
     "payloadType": "date",
     "x": 120,
-    "y": 320,
+    "y": 420,
     "wires": [
       [
         "6d00eb8f.166744"
@@ -270,8 +270,8 @@
     "precision": "ms",
     "retentionPolicy": "",
     "name": "",
-    "x": 640,
-    "y": 320,
+    "x": 600,
+    "y": 420,
     "wires": []
   },
   {
@@ -280,13 +280,13 @@
     "z": "c535e74d.ab40f",
     "influxdb": "2ff2a476.a6d2ec",
     "name": "",
-    "query": "from(bucket: \"test/autogen\") |> range(start: -1h, stop: now())",
+    "query": "from(bucket: \"test/autogen\")\n  |> range(start: -1d, stop: now())",
     "rawOutput": false,
     "precision": "",
     "retentionPolicy": "",
     "org": "my-org",
-    "x": 500,
-    "y": 440,
+    "x": 370,
+    "y": 520,
     "wires": [
       [
         "98becea7.b984a8"
@@ -305,8 +305,8 @@
     "topic": "",
     "payload": "",
     "payloadType": "date",
-    "x": 100,
-    "y": 440,
+    "x": 120,
+    "y": 520,
     "wires": [
       [
         "7d7eb0f3.363b38"
@@ -323,8 +323,8 @@
     "console": false,
     "tostatus": false,
     "complete": "false",
-    "x": 910,
-    "y": 440,
+    "x": 610,
+    "y": 520,
     "wires": []
   },
   {
@@ -333,13 +333,13 @@
     "z": "c535e74d.ab40f",
     "influxdb": "5d7e54ca.019d44",
     "name": "",
-    "query": "from(bucket: \"test\") |> range(start: -1h, stop: now())",
+    "query": "from(bucket: \"test\")\n  |> range(start: -1d, stop: now())",
     "rawOutput": false,
     "precision": "",
     "retentionPolicy": "",
     "org": "my-org",
-    "x": 460,
-    "y": 480,
+    "x": 360,
+    "y": 560,
     "wires": [
       [
         "62b2743e.dcd45c"
@@ -358,8 +358,8 @@
     "topic": "",
     "payload": "",
     "payloadType": "date",
-    "x": 100,
-    "y": 480,
+    "x": 120,
+    "y": 560,
     "wires": [
       [
         "ebcd25d5.a1e6e8"
@@ -376,8 +376,8 @@
     "console": false,
     "tostatus": false,
     "complete": "false",
-    "x": 830,
-    "y": 480,
+    "x": 590,
+    "y": 560,
     "wires": []
   },
   {
@@ -432,7 +432,7 @@
     "retentionPolicyV18Flux": "",
     "org": "my-org",
     "bucket": "test",
-    "x": 490,
+    "x": 450,
     "y": 40,
     "wires": []
   },
@@ -600,7 +600,7 @@
     "retentionPolicyV18Flux": "",
     "org": "my-org",
     "bucket": "test",
-    "x": 510,
+    "x": 500,
     "y": 220,
     "wires": []
   },
@@ -629,7 +629,7 @@
     "type": "function",
     "z": "c535e74d.ab40f",
     "name": "Fields",
-    "func": "msg.payload = {\n    intValue: '10i',\n    numValue: 123.0,\n    strValue: \"message\",\n    randomValue: Math.random()*10\n}\nreturn msg;",
+    "func": "msg.payload = {\n    intValue: '10i',\n    numValue: 11.0,\n    strValue: \"message\",\n    randomValue: Math.random()*10\n}\nreturn msg;",
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
@@ -647,7 +647,7 @@
     "type": "influxdb out",
     "z": "c535e74d.ab40f",
     "influxdb": "5d7e54ca.019d44",
-    "name": "",
+    "name": "write fields 2.0",
     "measurement": "test",
     "precision": "ms",
     "retentionPolicy": "",
@@ -656,7 +656,7 @@
     "retentionPolicyV18Flux": "",
     "org": "my-org",
     "bucket": "test",
-    "x": 490,
+    "x": 440,
     "y": 260,
     "wires": []
   },
@@ -711,7 +711,7 @@
     "retentionPolicyV18Flux": "",
     "org": "my-org",
     "bucket": "test",
-    "x": 1170,
+    "x": 1160,
     "y": 80,
     "wires": []
   },
@@ -821,7 +821,7 @@
     "retentionPolicyV18Flux": "",
     "org": "my-org",
     "bucket": "test",
-    "x": 1190,
+    "x": 1180,
     "y": 220,
     "wires": []
   },
@@ -881,13 +881,255 @@
     "wires": []
   },
   {
+    "id": "8b64f233.88ac6",
+    "type": "complete",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "scope": [
+      "9b2d89a5.d4115",
+      "b688fcc3.f8735",
+      "7dd0ab77.6f1574",
+      "7d7eb0f3.363b38",
+      "ebcd25d5.a1e6e8",
+      "9f4686a0.88a5e",
+      "c6ffaa9.5cb7d58",
+      "23734bf4.96bf24",
+      "9ef619de.e9aff8",
+      "747df02a.5f506",
+      "27c795a.196d66a",
+      "2c381ae5.7bd8b6",
+      "889b1d9a.b2b62",
+      "505ca507.cb59ac",
+      "cf1ad0e2.b1ce4",
+      "77ad0903.035f08"
+    ],
+    "uncaught": false,
+    "x": 390,
+    "y": 680,
+    "wires": [
+      [
+        "7ea1566e.15c648"
+      ]
+    ]
+  },
+  {
+    "id": "7ea1566e.15c648",
+    "type": "debug",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 590,
+    "y": 680,
+    "wires": []
+  },
+  {
+    "id": "cf272269.8ec9c",
+    "type": "complete",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "scope": [
+      "747df02a.5f506"
+    ],
+    "uncaught": false,
+    "x": 290,
+    "y": 320,
+    "wires": [
+      [
+        "fe66f1a8.73e8f"
+      ]
+    ]
+  },
+  {
+    "id": "8961150.9b34fe8",
+    "type": "influxdb in",
+    "z": "c535e74d.ab40f",
+    "influxdb": "5d7e54ca.019d44",
+    "name": "query last",
+    "query": "from(bucket: \"test\")   |> range(start: -5m, stop: now())   |> filter(fn: (r) => r[\"_measurement\"] == \"test\")   |> last()",
+    "rawOutput": false,
+    "precision": "",
+    "retentionPolicy": "",
+    "org": "my-org",
+    "x": 500,
+    "y": 360,
+    "wires": [
+      [
+        "a6f36053.1b712"
+      ]
+    ]
+  },
+  {
+    "id": "5c077a61.575954",
+    "type": "debug",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 790,
+    "y": 360,
+    "wires": []
+  },
+  {
+    "id": "fe66f1a8.73e8f",
+    "type": "change",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "rules": [
+      {
+        "t": "move",
+        "p": "payload",
+        "pt": "msg",
+        "to": "write",
+        "tot": "msg"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 490,
+    "y": 320,
+    "wires": [
+      [
+        "8961150.9b34fe8"
+      ]
+    ]
+  },
+  {
+    "id": "be5513cb.789a5",
+    "type": "catch",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "scope": null,
+    "uncaught": false,
+    "x": 380,
+    "y": 720,
+    "wires": [
+      [
+        "bc031033.9b3db"
+      ]
+    ]
+  },
+  {
+    "id": "bc031033.9b3db",
+    "type": "debug",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 590,
+    "y": 720,
+    "wires": []
+  },
+  {
+    "id": "a6f36053.1b712",
+    "type": "function",
+    "z": "c535e74d.ab40f",
+    "name": "check fields",
+    "func": "intValue = msg.payload[0]._value;\nnumValue = msg.payload[1]._value;\nrandomValue = msg.payload[2]._value;\nstrValue = msg.payload[3]._value;\n\nif (intValue+'i' !== msg.write.intValue) {\n    node.error('intValue not equivalent', msg);\n    return;\n}\n\nif (numValue !== msg.write.numValue) {\n    node.error('numValue not equivalent', msg);\n    return;\n}\n\nif (randomValue !== msg.write.randomValue) {\n    node.error('randomValue not equivalent', msg);\n    return;\n}\n\nif (strValue !== msg.write.strValue) {\n    node.error('strValue not equivalent', msg);\n    return;\n}\n    \nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "x": 650,
+    "y": 360,
+    "wires": [
+      [
+        "5c077a61.575954"
+      ]
+    ]
+  },
+  {
+    "id": "e271446.7110db8",
+    "type": "comment",
+    "z": "c535e74d.ab40f",
+    "name": "check write test",
+    "info": "Segment below checks that data written by segment above matches last data queried from the database.",
+    "x": 120,
+    "y": 320,
+    "wires": []
+  },
+  {
+    "id": "a22881b.f904d8",
+    "type": "influxdb in",
+    "z": "c535e74d.ab40f",
+    "influxdb": "5d7e54ca.019d44",
+    "name": "no query error",
+    "query": "",
+    "rawOutput": false,
+    "precision": "",
+    "retentionPolicy": "",
+    "org": "my-org",
+    "x": 320,
+    "y": 600,
+    "wires": [
+      [
+        "3c31831b.89859c"
+      ]
+    ]
+  },
+  {
+    "id": "bb718815.254478",
+    "type": "inject",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 120,
+    "y": 600,
+    "wires": [
+      [
+        "a22881b.f904d8"
+      ]
+    ]
+  },
+  {
+    "id": "3c31831b.89859c",
+    "type": "debug",
+    "z": "c535e74d.ab40f",
+    "name": "",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "false",
+    "x": 590,
+    "y": 600,
+    "wires": []
+  },
+  {
     "id": "dc66afc1.46c418",
     "type": "influxdb",
     "hostname": "127.0.0.1",
     "port": "8086",
     "protocol": "http",
     "database": "test",
-    "name": "",
+    "name": "test db",
     "usetls": true,
     "tls": "d50d0c9f.31e858",
     "influxdbVersion": "1.x",
@@ -929,8 +1171,8 @@
     "cert": "",
     "key": "",
     "ca": "",
-    "certname": "influxdb-selfsigned.crt",
-    "keyname": "influxdb-selfsigned.key",
+    "certname": "",
+    "keyname": "",
     "caname": "",
     "servername": "",
     "verifyservercert": false
