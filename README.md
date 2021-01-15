@@ -12,7 +12,7 @@ When version **2.0** is selected, the nodes make use of the <a href="https://git
 
 ## Prerequisites
 
-To run this you'll need access to an InfluxDB database version 1.x, 1.8+ or 2.0. See the <a href="https://influxdb.com/" target="_new">InfluxDB site</a> for more information. The latest release of this node has been tested with InfluxDB 1.8 and 2.0.  This node supports Node.js 10.x, 12.x and 14.x LTS releases.  It does **not** support Node.js 8.x.
+To run this you'll need access to an InfluxDB database version 1.x, 1.8+ or 2.0. See the <a href="https://influxdb.com/" target="_new">InfluxDB site</a> for more information. The latest release of this node has been tested with InfluxDB 1.8 and 2.0.  This node supports Node.js 10.x, 12.x and 14.x LTS releases.  It does **not** support Node.js 8.x.  This node does not support Node-RED before version 1.0.
 
 ## Install
 
@@ -190,3 +190,7 @@ this includes the HTTP status code returned from the influxdb server. The `influ
 node will always throw a `503`, whereas the write nodes will include other status codes
 as detailed in the 
 [Influx API documentation](https://docs.influxdata.com/influxdb/v1.8/tools/api/#status-codes-and-responses-2).
+
+### Support for Complete Node
+
+All of the nodes make the required `done()` call to support the `complete` node as described in the [related blog post](https://nodered.org/blog/2019/09/20/node-done). When an error is logged, `catch` nodes will receive a message, but an associated `complete` node will not.
