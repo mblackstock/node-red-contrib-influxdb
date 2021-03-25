@@ -404,7 +404,19 @@
         <label for="node-input-influxdb"><i class="fa fa-server"></i> <span data-i18n="influxdb.label.server"></span></label>
         <input type="text" id="node-input-influxdb">
     </div>
-    <div class="form-row">
+    <div class="form-row" id="node-input-row-org">
+        <label for="node-input-org"><i class="fa fa-sitemap"></i> <span data-i18n="influxdb.label.org"></span></label>
+        <input type="text" id="node-input-org">
+    </div>
+    <div class="form-row" id="node-input-row-bucket">
+        <label for="node-input-bucket"><i class="fa fa-database"></i> <span data-i18n="influxdb.label.bucket"></span></label>
+        <input type="text" id="node-input-bucket">
+    </div>
+    <div class="form-row" id="node-input-row-database">
+        <label for="node-input-database"><i class="fa fa-database"></i> <span data-i18n="influxdb.label.database"></span></label>
+        <input type="text" id="node-input-database">
+    </div>
+    <div class="form-row" id="node-input-row-enableAdvancedOptions">
         <input type="checkbox" id="advanced-options-checkbox" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="advanced-options-checkbox" style="width: 70%;"><span data-i18n="influxdb.label.use-advanced-query"></span></label>
         <div id="advanced-options-div" class="hide" style="margin-left: 20px; margin-top: 10px;">
@@ -428,7 +440,20 @@
             </div>
         </div>  
     </div>
-
+    <div class="form-row" id="node-input-row-precisionV18FluxV20">
+        <label for="node-input-precisionV18FluxV20"><i class="fa fa-clock-o"></i> <span data-i18n="influxdb.label.time-precision"></span></label>
+        <select type="text" id="node-input-precisionV18FluxV20">
+            <option value="ns">Nanoseconds (ns)</option> 
+            <option value="us">Microseconds (us)</option> 
+            <option value="ms">Milliseconds (ms)</option> 
+            <option value="s">Seconds (s)</option>
+        </select>  
+    </div>
+    <div class="form-row" id="node-input-row-retentionPolicyV18Flux">
+        <label for="node-input-retentionPolicyV18Flux"><i class="fa fa-gavel"></i> <span data-i18n="influxdb.label.retention-policy"></span></label>
+        <input type="text" id="node-input-retentionPolicyV18Flux">
+    </div>
+    <div class="form-tips" id="node-warning-retention-policy"><span data-i18n="[html]influxdb.tip.retention-policy"></span></div>
 </script>
 
 <script type="text/html" data-help-name="influxdb batch">
@@ -466,6 +491,48 @@
             return this.name ? "node_label_italic" : "";
         },
         oneditprepare: function() {
+            function update18Options() {                
+                $("#node-input-row-org").hide();
+                $("#node-input-row-bucket").hide();
+                $("#node-input-row-database").hide();
+                $("#node-input-row-enableAdvancedOptions").show();
+                $("#node-input-row-precisionV18FluxV20").hide();
+                $("#node-input-row-retentionPolicyV18Flux").hide();
+                $("#node-warning-retention-policy").show();
+            }
+
+            function update18FluxOptions() {       
+                $("#node-input-row-org").hide();
+                $("#node-input-row-bucket").hide();         
+                $("#node-input-row-database").show();
+                $("#node-input-row-enableAdvancedOptions").hide();
+                $("#node-input-row-precisionV18FluxV20").show();
+                $("#node-input-row-retentionPolicyV18Flux").show();
+                $("#node-warning-retention-policy").show();
+            }
+
+            function update20Options() {
+                $("#node-input-row-org").show();
+                $("#node-input-row-bucket").show();           
+                $("#node-input-row-database").hide();
+                $("#node-input-row-enableAdvancedOptions").hide();
+                $("#node-input-row-precisionV18FluxV20").show();
+                $("#node-input-row-retentionPolicyV18Flux").hide();
+                $("#node-warning-retention-policy").hide();
+            }
+            $("#node-input-influxdb").change(function () {
+                switch (selectedVersion()) {
+                    case 'v1.8-flux':
+                        update18FluxOptions();                    
+                        break;
+                    case 'v2.0':
+                        update20Options();                    
+                        break;
+                    default:
+                        update18Options();
+                }
+            });
+            
             $("#advanced-options-checkbox").change( function () {
                 if ($('#advanced-options-checkbox').is(":checked")) {
                     $("#advanced-options-div").show();
