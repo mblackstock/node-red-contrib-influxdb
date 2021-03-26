@@ -124,7 +124,6 @@ module.exports = function (RED) {
 
     // write using influx-client-js
     function writePoints(msg, node, done) {
-        node.client.closed == false ? null : node.client.closed = false;
         var measurement = msg.hasOwnProperty('measurement') ? msg.measurement : node.measurement;
         if (!measurement) {
             return done(RED._("influxdb.errors.nomeasurement"));
@@ -174,9 +173,9 @@ module.exports = function (RED) {
                 }
             }
     
-            // actual write happens here
+            // ensure we write everything including scheduled retries
             node.client
-                .close()
+                .flush(true)        
                 .then(() => {
                     done();
                 })
@@ -199,9 +198,9 @@ module.exports = function (RED) {
      */
     function InfluxOutNode(n) {
         RED.nodes.createNode(this, n);
-        this.influxdbConfig = RED.nodes.getNode(this.influxdb);
         this.measurement = n.measurement;
         this.influxdb = n.influxdb;
+        this.influxdbConfig = RED.nodes.getNode(this.influxdb);
         this.precision = n.precision;
         this.retentionPolicy = n.retentionPolicy;
 
@@ -334,8 +333,8 @@ module.exports = function (RED) {
      */
     function InfluxBatchNode(n) {
         RED.nodes.createNode(this, n);
-        this.influxdbConfig = RED.nodes.getNode(this.influxdb);
         this.influxdb = n.influxdb;
+        this.influxdbConfig = RED.nodes.getNode(this.influxdb);
         this.precision = n.precision;
         this.retentionPolicy = n.retentionPolicy;
 
@@ -346,7 +345,6 @@ module.exports = function (RED) {
         this.org = n.org;
         this.bucket = n.bucket;
 
-        this.influxdbConfig = RED.nodes.getNode(this.influxdb);
 
         if (!this.influxdbConfig) {
             this.error(RED._("influxdb.errors.missingconfig"));
@@ -391,10 +389,6 @@ module.exports = function (RED) {
 
             var client = this.influxdbConfig.client.getWriteApi(org, bucket, this.precisionV18FluxV20);
 
-            // TODO: check that this is needed (and above in ouput node)
-            if (!client.closed)
-                client.closed = false;
-
             node.on("input", function (msg, send, done) {
 
                 msg.payload.forEach(element => {
@@ -415,8 +409,10 @@ module.exports = function (RED) {
                     }
                     client.writePoint(point);
                 });
+
+                // ensure we write everything including scheduled retries
                 client
-                    .close()
+                    .flush(true)
                     .then(() => {
                         done();
                     })

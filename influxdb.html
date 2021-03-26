@@ -477,7 +477,34 @@
             influxdb: {type: "influxdb", required: true},
             precision: {value: ""},
             retentionPolicy: {value: ""},
-            name: {value: ""}
+            name: {value: ""},
+            database: {value: "database",
+                validate:function(db) {
+                    if (selectedVersion() === 'v1.8-flux') {
+                        return db.length > 0;
+                    }
+                    return true;
+                }
+            },
+            precisionV18FluxV20: {value: "ms"},
+            retentionPolicyV18Flux: {value: ""},
+            org: {value: "organisation",
+                validate:function(org) {
+                    if (selectedVersion() === 'v2.0') {
+                        return org.length > 0;
+                    }
+                    return true;
+                }
+            },
+            bucket: {value: "bucket",
+                validate:function(bucket) {
+                    let version = selectedVersion()
+                    if (version === 'v2.0') {
+                        return bucket.length > 0;
+                    }
+                    return true;
+                }
+            }
         },
         inputs: 1,
         outputs: 0,
