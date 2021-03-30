@@ -41,7 +41,6 @@ module.exports = function (RED) {
                     tlsNode.addTLSOptions(this.hostOptions);
                 }
             }
-
             this.client = new Influx.InfluxDB({
                 hosts: [{
                     host: this.hostname,
@@ -53,25 +52,19 @@ module.exports = function (RED) {
                 username: this.credentials.username,
                 password: this.credentials.password
             });
-        } else if (n.influxdbVersion === VERSION_18_FLUX) {
-            var token = `${this.credentials.username}:${this.credentials.password}`;
+        } else if (n.influxdbVersion === VERSION_18_FLUX || n.influxdbVersion === VERSION_20) {
+
+            const token = n.influxdbVersion === VERSION_18_FLUX ?
+                `${this.credentials.username}:${this.credentials.password}` :
+                this.credentials.token;
+
             clientOptions = {
                 url: n.url,
                 rejectUnauthorized: n.rejectUnauthorized,
-                token: token
+                token
             }
-
-            this.client = new InfluxDB(clientOptions);
-        } else if (n.influxdbVersion === VERSION_20) {
-            clientOptions = {
-                url: n.url,
-                rejectUnauthorized: n.rejectUnauthorized,
-                token: this.credentials.token
-            }
-
             this.client = new InfluxDB(clientOptions);
         }
-
         this.influxdbVersion = n.influxdbVersion;
     }
 
@@ -93,11 +86,10 @@ module.exports = function (RED) {
             if (isIntegerString(value)) {
                 fields[prop] = parseInt(value.substring(0,value.length-1));
             }
-        } 
+        }
     }
 
     function addFieldToPoint(point, name, value) {
-
         if (name === 'time') {
             point.timestamp(value);
         } else if (typeof value === 'number') {
@@ -130,14 +122,12 @@ module.exports = function (RED) {
         }
         try {
             if (_.isArray(msg.payload) && msg.payload.length > 0) {
-                // array of arrays
+                // array of arrays: multiple points with fields and tags
                 if (_.isArray(msg.payload[0]) && msg.payload[0].length > 0) {
                     msg.payload.forEach(element => {
                         let point = new Point(measurement);
-    
                         let fields = element[0];
                         addFieldsToPoint(point, fields);
-    
                         let tags = element[1];
                         for (const prop in tags) {
                             point.tag(prop, tags[prop]);
@@ -145,20 +135,18 @@ module.exports = function (RED) {
                         node.client.writePoint(point);
                     });
                 } else {
-                    // array of non-arrays, assume one point with both fields and tags
+                    // array of non-arrays: one point with both fields and tags
                     let point = new Point(measurement);
-    
                     let fields = msg.payload[0];
                     addFieldsToPoint(point, fields);
-    
                     const tags = msg.payload[1];
                     for (const prop in tags) {
                         point.tag(prop, tags[prop]);
                     }
-    
                     node.client.writePoint(point)
                 }
             } else {
+                // single object: fields only
                 if (_.isPlainObject(msg.payload)) {
                     let point = new Point(measurement);
                     let fields = msg.payload;
@@ -173,7 +161,6 @@ module.exports = function (RED) {
                 }
             }
     
-            // ensure we write everything including scheduled retries
             node.client
                 .flush(true)        
                 .then(() => {
@@ -194,7 +181,7 @@ module.exports = function (RED) {
     }
 
     /**
-     * Output node to write to an influxdb measurement
+     * Output node to write to a single influxdb measurement
      */
     function InfluxOutNode(n) {
         RED.nodes.createNode(this, n);
@@ -329,7 +316,7 @@ module.exports = function (RED) {
     RED.nodes.registerType("influxdb out", InfluxOutNode);
 
     /**
-     * Output node to write batches of points to influxdb
+     * Output node to write to multiple InfluxDb measurements
      */
     function InfluxBatchNode(n) {
         RED.nodes.createNode(this, n);
@@ -394,9 +381,8 @@ module.exports = function (RED) {
                 msg.payload.forEach(element => {
                     let point = new Point(element.measurement);
         
-                    let fields = element.fields;
                     // time is reserved as a field name still! will be overridden by the timestamp below.
-                    addFieldsToPoint(point, fields);
+                    addFieldsToPoint(point, element.fields);
 
                     let tags = element.tags;
                     if (tags) {

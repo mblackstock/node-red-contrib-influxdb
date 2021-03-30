@@ -24,7 +24,7 @@ You can use the Node-RED *Manage Palette* feature, or run the following command 
 
 Nodes to write and query data from an influxdb time series database. Supports InfluxDb versions 1.x to 2.0.
 
-### Input Node (InfluxDb 1.x and 2.0)
+### Input Node
 
 Queries one or more measurements in an influxdb database.  The query is specified in the node configuration or in the ***msg.query*** property.  Setting it in the node will override the ***msg.query***.  The result is returned in ***msg.payload***.
 
@@ -47,7 +47,7 @@ The function node in this flow sets the `msg.query` property as follows:
     msg.query = 'from(bucket: "test/autogen") |> range(start: -1d, stop: now())'
     return msg;
 
-### Output Node (InfluxDb 1.x and 2.0)
+### Output Node
 
 Writes one or more points (fields and tags) to a measurement.
 
@@ -136,11 +136,11 @@ The function node in the above flow looks as follows:
 
 Note how timestamps are specified here - the number of milliseconds since 1 January 1970 00:00:00 UTC. In this case do not forget to set the precision to "ms" in "Time Precision" of the "Influx Out Node".  We make sure the timestamps are a different so the first element doesn't get overwritten by the second.
 
-### The Batch Output Node (InfluxDb 1.x Only)
+### The Batch Output Node
 
-The batch output node (influx batch) sends a list of *points* together in a batch to InfluxDB in a slightly different format from the output node, more in line with the underlying node.js [influx library version 5.x](https://www.npmjs.com/package/influx). In each point you must specify the measurement name to write into as well as a list of tag and field values. Optionally, you can specify the time to tag that point at, defaulting to the current time.
+The batch output node (influx batch) sends a list of *points* together in a batch to InfluxDB in a slightly different format from the output node. Using the batch node you must specify the measurement name to write into as well as a list of tag and field values. Optionally, you can specify the timestamp for the point, defaulting to the current time.
 
-Under the hood we are calling the node influxdb 5.x library **writePoints()** call as documented [here](https://node-influx.github.io/class/src/index.js~InfluxDB.html#instance-method-writePoints).
+>Note: Javascript numbers are *always* written as a float.  As in the output node, when using the 1.8-flux or 2.0 configuration, you can explicitly write an integer using a number in a string with an 'i' suffix, for example, to write the integer `1234` use the string `'1234i'`.  This is *not* supported using 1.x configurations; all numbers are written as float values.
 
 By default the node will write timestamps using ms precision since that's what JavaScript gives us. if you specify the timestamp as a Date object, we'll convert it to milliseconds.
 
