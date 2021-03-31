@@ -161,12 +161,9 @@ module.exports = function (RED) {
                 }
             }
     
-            node.client
-                .flush(true)        
-                .then(() => {
+            node.client.flush(true).then(() => {
                     done();
-                })
-                .catch(error => {
+                }).catch(error => {
                     msg.influx_error = {
                         errorMessage: error
                     };
@@ -287,8 +284,7 @@ module.exports = function (RED) {
                     points.push(point);
                 }
 
-                client.writePoints(points, writeOptions)
-                .then(() => {
+                client.writePoints(points, writeOptions).then(() => {
                     done();
                 }).catch(function (err) {
                     msg.influx_error = {
@@ -397,12 +393,9 @@ module.exports = function (RED) {
                 });
 
                 // ensure we write everything including scheduled retries
-                client
-                    .flush(true)
-                    .then(() => {
+                client.flush(true).then(() => {
                         done();
-                    })
-                    .catch(error => {
+                    }).catch(error => {
                         msg.influx_error = {
                             errorMessage: error
                         };
