@@ -31,7 +31,7 @@ services:
     container_name: influxdb2
     ports:
       - '9999:8086'
-    image: 'quay.io/influxdb/influxdb:v2.0.2'
+    image: 'influxdb:2.1.1'
     volumes:
       - './influxdb2-data:/var/lib/influxdb2'
       - './ssl:/etc/ssl'
