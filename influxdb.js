@@ -5,7 +5,7 @@ module.exports = function (RED) {
     var { InfluxDB, Point } = require('@influxdata/influxdb-client');
 
     const VERSION_18 = '1.8';
-    const VERSION_20 = '2.0';
+    const VERSION_LATEST = 'Latest';
 
     /**
      * Config node. Currently we only connect to one host.
@@ -20,7 +20,7 @@ module.exports = function (RED) {
         var clientOptions = null;
         
         if (!n.influxdbVersion) {
-            n.influxdbVersion = VERSION_20;
+            n.influxdbVersion = VERSION_LATEST;
         }
 
         const token = n.influxdbVersion === VERSION_18 ?
@@ -173,8 +173,8 @@ module.exports = function (RED) {
             let retentionPolicy = this.retentionPolicy ? this.retentionPolicy : 'autogen';
             bucket = `${this.database}/${retentionPolicy}`;
         }
-        // org only set for 2.x
-        let org = version === VERSION_20 ? this.org : '';
+        // org only set for 2.0 and later
+        let org = version === VERSION_LATEST ? this.org : '';
 
         this.client = this.influxdbConfig.client.getWriteApi(org, bucket, this.precision);
 
@@ -204,7 +204,7 @@ module.exports = function (RED) {
         }
 
         let version = this.influxdbConfig.influxdbVersion
-        let org = version === VERSION_20 ? this.org : ''
+        let org = version === VERSION_LATEST ? this.org : ''
         this.client = this.influxdbConfig.client.getQueryApi(org);
         var node = this;
 

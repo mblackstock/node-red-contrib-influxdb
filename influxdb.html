@@ -6,8 +6,8 @@
     <div class="form-row">
         <label for="node-config-input-influxdbVersion"><i class="fa fa-code-fork"></i> <span data-i18n="influxdb.label.version"></span></label>
         <select type="text" style="width: 100px" id="node-config-input-influxdbVersion">
-            <option value="1.8">1.8</option> 
-            <option value="2.x">2.x</option> 
+            <option value="1.8">1.8 Flux</option> 
+            <option value="Latest">Latest</option> 
         </select>
     </div>
     <div class="form-row" id="node-config-row-url">
@@ -38,7 +38,7 @@
         color: "rgb(218, 196, 180)",
         defaults: {
             name: {value: ""},
-            influxdbVersion: {value: "2.x", required: true},
+            influxdbVersion: {value: "Latest", required: true},
             url: {value: "http://localhost:8086",
                 validate:function(url) {
                     return url.length > 0;
@@ -53,8 +53,8 @@
         },
         label: function () {
             // label version prefix used to change node UI
-            this.influxdbVersion = this.influxdbVersion || '2.x';
-            var version = "[v"+this.influxdbVersion+"] ";
+            this.influxdbVersion = this.influxdbVersion || 'Latest';
+            var version = "["+this.influxdbVersion+"] ";
             return this.name ? version + this.name : version + this.url;
         },
         oneditprepare: function () {
@@ -78,14 +78,14 @@
                     case '1.8':
                         update18FluxOptions();
                         break;
-                    default: // '2.x':
+                    default: // Latest
                         update20Options();
                         break;
                 }   
             });
             // if version not set assume 1.x to support older flows
             let selected = $("#node-config-input-influxdbVersion option:selected").val();
-            selected = selected || '2.x';
+            selected = selected || 'Latest';
             $("#node-config-input-influxdbVersion").val(selected)
         }
     });
@@ -171,25 +171,25 @@
             measurement: {value: ""},
             precision: {value: "ms"},
             retentionPolicy: {value: ""},
-            database: {value: "database",
+            database: {value: "",
                 validate:function(db) {
-                    if (selectedVersion() === 'v1.8') {
+                    if (selectedVersion() === '1.8') {
                         return db.length > 0;
                     }
                     return true;
                 }
             },
-            org: {value: "organisation",
+            org: {value: "",
                 validate:function(org) {
-                    if (selectedVersion() === 'v2.x') {
+                    if (selectedVersion() === 'Latest') {
                         return org.length > 0;
                     }
                     return true;
                 }
             },
-            bucket: {value: "bucket",
+            bucket: {value: "",
                 validate:function(bucket) {
-                    if (selectedVersion() === 'v2.x') {
+                    if (selectedVersion() === 'Latest') {
                         return bucket.length > 0;
                     }
                     return true;
@@ -227,10 +227,10 @@
 
             $("#node-input-influxdb").change(function () {
                 switch (selectedVersion()) {
-                    case 'v1.8':
+                    case '1.8':
                         update18FluxOptions();                    
                         break;
-                    default: //v2.x
+                    default: // Latest
                         update20Options();                    
                         break;
                 }
@@ -293,7 +293,7 @@
             query: {value: ""},
             org: { value: "organisation",
                 validate:function(org) {
-                    if (selectedVersion() === 'v2.x') {
+                    if (selectedVersion() === 'Latest') {
                         return org.length > 0;
                     }
                     return true;
@@ -340,7 +340,7 @@
                     case 'v1.8':
                         update18FluxOptions();                    
                         break;
-                    default:// 'v2.0':
+                    default:
                         update20Options();                    
                         break;
                 }

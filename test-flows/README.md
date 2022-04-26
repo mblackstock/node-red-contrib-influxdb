@@ -64,11 +64,11 @@ Try these queries to ensure they work using the web front ends.  You should get 
 * InfluxDB 1.8-flux
 
         from(bucket: "test/autogen")
-          |> range(start: -1m, stop: 1h)
+          |> range(start: -1h)
           |> filter(fn: (r) => r._measurement == "test")
 
 * InfluxDB 2.0
 
         from(bucket: "test")
-          |> range(start: -1m, stop: 1h)
+          |> range(start: -1h)
           |> filter(fn: (r) => r._measurement == "test")

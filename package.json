@@ -1,6 +1,6 @@
 {
-  "name": "node-red-contrib-influxdb",
-  "version": "0.6.1",
+  "name": "@mblackstock/node-red-influxdb",
+  "version": "0.0.1",
   "description": "Node-RED nodes to save and query data from an influxdb time series database",
   "main": "influxdb.js",
   "scripts": {
@@ -32,7 +32,6 @@
     }
   },
   "dependencies": {
-    "influx": "5.6.3",
     "@influxdata/influxdb-client": "^1.8.0",
     "lodash": "4.17.21"
   }
