@@ -294,6 +294,7 @@ module.exports = function (RED) {
                 });
             });
         } else if (version === VERSION_18_FLUX || version === VERSION_20) {
+            var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precisionV18FluxV20;
             let bucket = this.bucket;
             if (version === VERSION_18_FLUX) {
                 let retentionPolicy = this.retentionPolicyV18Flux ? this.retentionPolicyV18Flux : 'autogen';
@@ -301,7 +302,7 @@ module.exports = function (RED) {
             }
             let org = version === VERSION_18_FLUX ? '' : this.org;
 
-            this.client = this.influxdbConfig.client.getWriteApi(org, bucket, this.precisionV18FluxV20);
+            this.client = this.influxdbConfig.client.getWriteApi(org, bucket, precision);
 
             node.on("input", function (msg, send, done) {
                 writePoints(msg, node, done);
@@ -363,6 +364,7 @@ module.exports = function (RED) {
                 });
             });
         } else if (version === VERSION_18_FLUX || version === VERSION_20) {
+            var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precisionV18FluxV20;
             let bucket = node.bucket;
             if (version === VERSION_18_FLUX) {
                 let retentionPolicy = this.retentionPolicyV18Flux ? this.retentionPolicyV18Flux : 'autogen';
@@ -370,7 +372,7 @@ module.exports = function (RED) {
             }
             let org = version === VERSION_18_FLUX ? '' : this.org;
 
-            var client = this.influxdbConfig.client.getWriteApi(org, bucket, this.precisionV18FluxV20);
+            var client = this.influxdbConfig.client.getWriteApi(org, bucket, precision);
 
             node.on("input", function (msg, send, done) {
 
