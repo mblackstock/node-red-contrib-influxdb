@@ -1133,8 +1133,7 @@
     "usetls": true,
     "tls": "d50d0c9f.31e858",
     "influxdbVersion": "1.x",
-    "url": "http://localhost:8086",
-    "rejectUnauthorized": false
+    "url": "http://localhost:8086"
   },
   {
     "id": "2ff2a476.a6d2ec",
@@ -1147,8 +1146,7 @@
     "usetls": false,
     "tls": "d50d0c9f.31e858",
     "influxdbVersion": "1.8-flux",
-    "url": "https://localhost:8086",
-    "rejectUnauthorized": false
+    "url": "https://localhost:8086"
   },
   {
     "id": "5d7e54ca.019d44",
@@ -1161,8 +1159,7 @@
     "usetls": false,
     "tls": "d50d0c9f.31e858",
     "influxdbVersion": "2.0",
-    "url": "https://localhost:9999",
-    "rejectUnauthorized": false
+    "url": "https://localhost:9999"
   },
   {
     "id": "d50d0c9f.31e858",

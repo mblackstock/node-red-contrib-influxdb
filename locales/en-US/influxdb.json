@@ -16,7 +16,6 @@
             "version":"Version",
             "url": "URL",
             "token": "Token",
-            "reject-unauthorized": "Verify server certificate",
             "org": "Organization",
             "bucket": "Bucket"
         },
