@@ -61,11 +61,13 @@ module.exports = function (RED) {
 
             clientOptions = {
                 url: n.url,
-                key: this.hostOptions.key,
-                cert: this.hostOptions.cert,
-                ca: this.hostOptions.ca,
-                rejectUnauthorized: this.hostOptions.rejectUnauthorized,
                 token
+            }
+            if (this.usetls && n.tls) {
+                clientOptions["key"] = this.hostOptions.key;
+                clientOptions["cert"] = this.hostOptions.cert;
+                clientOptions["ca"] = this.hostOptions.ca;
+                clientOptions["rejectUnauthorized"] = this.hostOptions.rejectUnauthorized;
             }
             this.client = new InfluxDB(clientOptions);
         }
