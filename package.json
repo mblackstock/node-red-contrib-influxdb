@@ -32,7 +32,7 @@
     }
   },
   "dependencies": {
-    "@influxdata/influxdb-client": "^1.8.0",
+    "@influxdata/influxdb-client": "^1.33.2",
     "lodash": "4.17.21"
   }
 }
