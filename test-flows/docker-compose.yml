@@ -2,7 +2,7 @@ version: '3.3'
 services:
   # Define an InfluxDB v1.8 service
   influxdb:
-    image: 'influxdb:1.8'
+    image: 'influxdb:1.8.10'
     container_name: influxdb
     ports:
       - '8086:8086'
@@ -13,7 +13,7 @@ services:
 
   # Define a Chronograf service
   chronograf:
-    image: chronograf:1.8
+    image: chronograf:1.10.2
     container_name: chronograf
     environment:
       INFLUXDB_URL: https://influxdb:8086
@@ -31,7 +31,7 @@ services:
     container_name: influxdb2
     ports:
       - '9999:8086'
-    image: 'influxdb:2.1.1'
+    image: 'influxdb:2.7.4'
     volumes:
       - './influxdb2-data:/var/lib/influxdb2'
       - './ssl:/etc/ssl'
