@@ -16,6 +16,7 @@
             "version":"Version",
             "url": "URL",
             "token": "Token",
+            "timeout": "Connection timeout (seconds)",
             "reject-unauthorized": "Verify server certificate",
             "org": "Organization",
             "bucket": "Bucket"
