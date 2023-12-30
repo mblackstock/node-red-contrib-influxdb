@@ -35,5 +35,8 @@
     "influx": "5.9.3",
     "@influxdata/influxdb-client": "^1.33.2",
     "lodash": "4.17.21"
+  },
+  "engines": {
+    "node": ">=10"
   }
 }
