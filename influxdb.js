@@ -25,22 +25,23 @@ module.exports = function (RED) {
             n.influxdbVersion = VERSION_1X;
         }
 
+        this.usetls = n.usetls;
+        if (typeof this.usetls === 'undefined') {
+            this.usetls = false;
+        }
+        // for backward compatibility with old 'protocol' setting
+        if (n.protocol === 'https') {
+            this.usetls = true;
+        }
+        if (this.usetls && n.tls) {
+            var tlsNode = RED.nodes.getNode(n.tls);
+            if (tlsNode) {
+                this.hostOptions = {};
+                tlsNode.addTLSOptions(this.hostOptions);
+            }
+        }
+
         if (n.influxdbVersion === VERSION_1X) {
-            this.usetls = n.usetls;
-            if (typeof this.usetls === 'undefined') {
-                this.usetls = false;
-            }
-            // for backward compatibility with old 'protocol' setting
-            if (n.protocol === 'https') {
-                this.usetls = true;
-            }
-            if (this.usetls && n.tls) {
-                var tlsNode = RED.nodes.getNode(n.tls);
-                if (tlsNode) {
-                    this.hostOptions = {};
-                    tlsNode.addTLSOptions(this.hostOptions);
-                }
-            }
             this.client = new Influx.InfluxDB({
                 hosts: [{
                     host: this.hostname,
@@ -63,7 +64,12 @@ module.exports = function (RED) {
                 url: n.url,
                 token,
                 timeout,
-                rejectUnauthorized: n.rejectUnauthorized
+            }
+            if (this.usetls && n.tls) {
+                clientOptions["key"] = this.hostOptions.key;
+                clientOptions["cert"] = this.hostOptions.cert;
+                clientOptions["ca"] = this.hostOptions.ca;
+                clientOptions["rejectUnauthorized"] = this.hostOptions.rejectUnauthorized;
             }
             this.client = new InfluxDB(clientOptions);
         }

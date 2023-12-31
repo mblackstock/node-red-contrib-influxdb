@@ -41,14 +41,10 @@
         <label for="node-config-input-timeout" style="width:auto"><i class="fa fa-clock-o"></i> <span data-i18n="influxdb.label.timeout"></span></label>
         <input type="text" style="margin-left: 10px; width: 50px" id="node-config-input-timeout" placeholder="10">
     </div>
-    <div class="form-row" id="node-config-row-rejectUnauthorized">
-        <input type="checkbox" id="node-config-input-rejectUnauthorized" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-config-input-rejectUnauthorized" style="width: auto" data-i18n="influxdb.label.reject-unauthorized"></label>
-    </div>
     <div class="form-row" id="node-config-row-enableSecureConnection">
         <input type="checkbox" id="node-config-input-usetls" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="node-config-input-usetls" style="width: auto" data-i18n="influxdb.label.use-tls"></label>
-        <div id="node-config-row-tls" class="hide">
+        <div id="node-config-row-tls">
             <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-config-input-tls"><span data-i18n="influxdb.label.tls-config"></span></label>
             <input style="width: 300px;" type="text" id="node-config-input-tls">
         </div>
@@ -90,7 +86,6 @@
                 }
             },
             timeout: {value:10, required: false},
-            rejectUnauthorized: {value: true}
         },
         credentials: {
             username: {type: "text"},
@@ -123,8 +118,6 @@
                 $("#node-config-row-password").show();
                 $("#node-config-row-token").hide();
                 $("#node-config-row-timeout").hide();
-                $("#node-config-row-rejectUnauthorized").hide();   
-                $("#node-config-row-enableSecureConnection").show();                
             }
 
             function update18FluxOptions() {                
@@ -135,8 +128,6 @@
                 $("#node-config-row-password").show();
                 $("#node-config-row-token").hide();
                 $("#node-config-row-timeout").show();
-                $("#node-config-row-rejectUnauthorized").show();   
-                $("#node-config-row-enableSecureConnection").hide();   
             }
 
             function update20Options() {                
@@ -147,14 +138,17 @@
                 $("#node-config-row-password").hide();
                 $("#node-config-row-token").show();
                 $("#node-config-row-timeout").show();
-                $("#node-config-row-rejectUnauthorized").show();   
-                $("#node-config-row-enableSecureConnection").hide();  
             }
 
             $("#node-config-input-influxdbVersion").change(function () {
                 let selected = $("#node-config-input-influxdbVersion option:selected").val();
 
-                switch (selected) {
+                    updateTLSOptions();
+                    $("#node-config-input-usetls").on("click", function () {
+                        updateTLSOptions();
+                    });
+
+                    switch (selected) {
                     case '1.8-flux':
                         update18FluxOptions();
                         break;
@@ -163,10 +157,6 @@
                         break;
                     default:    // 1.x
                         update18Options();
-                        updateTLSOptions();
-                        $("#node-config-input-usetls").on("click", function () {
-                            updateTLSOptions();
-                        });
                 }   
             });
             // if version not set assume 1.x to support older flows

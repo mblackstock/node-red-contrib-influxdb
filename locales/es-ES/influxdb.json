@@ -17,7 +17,6 @@
             "url": "URL",
             "token": "Token",
             "timeout": "Connection timeout (seconds)",
-            "reject-unauthorized": "Verificar el certificado del servidor",
             "org": "Organización",
             "bucket": "Bucket"
         },
