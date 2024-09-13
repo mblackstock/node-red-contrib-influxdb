@@ -218,6 +218,7 @@ module.exports = function (RED) {
                 }
                 var precision = msg.hasOwnProperty('precision') ? msg.precision : node.precision;
                 var retentionPolicy = msg.hasOwnProperty('retentionPolicy') ? msg.retentionPolicy : node.retentionPolicy;
+                var database = msg.hasOwnProperty('database') ? msg.database : node.database;
 
                 if (precision) {
                     writeOptions.precision = precision;
@@ -225,6 +226,10 @@ module.exports = function (RED) {
 
                 if (retentionPolicy) {
                     writeOptions.retentionPolicy = retentionPolicy;
+                }
+
+                if (database) {
+                    writeOptions.database = database;
                 }
 
                 // format payload to match new writePoints API
