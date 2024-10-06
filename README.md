@@ -1,6 +1,6 @@
 # node-red-contrib-influxdb
 
-<a href="http://nodered.org" target="_new">Node-RED</a> nodes to write and query data from an InfluxDB time series database.
+<a href="https://nodered.org" target="_new">Node-RED</a> nodes to write and query data from an InfluxDB time series database.
 
 These nodes support both InfluxDB 1.x and InfluxDb 2.0 databases selected using the **Version** combo box in the configuration node.  See the documentation of the different nodes to understand the options provided by the different versions.  Currently the node uses two client libraries.
 
