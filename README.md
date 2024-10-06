@@ -18,7 +18,9 @@ To run this you'll need access to an InfluxDB database version 1.x, 1.8+ or 2.0.
 
 You can use the Node-RED *Manage Palette* feature, or run the following command in the root directory of your Node-RED install.  Usually this is `~/.node-red` .
 
-    npm install node-red-contrib-influxdb
+```bash
+npm install node-red-contrib-influxdb
+```
 
 ##  Usage
 
@@ -44,8 +46,10 @@ This flow performs the same, but using the ***msg.query*** property:
 
 The function node in this flow sets the `msg.query` property as follows:
 
-    msg.query = 'from(bucket: "test/autogen") |> range(start: -1d, stop: now())'
-    return msg;
+```js
+msg.query = 'from(bucket: "test/autogen") |> range(start: -1d, stop: now())'
+return msg;
+```
 
 ### Output Node
 
@@ -61,8 +65,10 @@ For example, the following flow injects a single random field called `value` int
 
 The function node consists of the following:
 
-    msg.payload = Math.random()*10;
-    return msg;
+```js
+msg.payload = Math.random()*10;
+return msg;
+```
 
 If ***msg.payload*** is an object containing multiple properties, all of the the fields will be written to the measurement.
 
@@ -72,13 +78,15 @@ For example, the following flow injects four fields, `intValue`, `numValue`, `ra
 
 The function node in the flow above consists of the following:
 
-    msg.payload = {
-        intValue: '10i',
-        numValue: 123.0,
-        strValue: "message",
-        randomValue: Math.random()*10
-    }
-    return msg;
+```js
+msg.payload = {
+    intValue: '10i',
+    numValue: 123.0,
+    strValue: "message",
+    randomValue: Math.random()*10
+}
+return msg;
+```
 
 If ***msg.payload*** is an array containing two objects, the first object will be written as the set of named fields, the second is the set of named tags.
 
@@ -88,17 +96,19 @@ For example, the following simple flow uses an InfluxDb 2.0 database and injects
 
 The function node consists of the following code:
 
-    msg.payload = [{
-        intValue: '10i',
-        numValue: 12,
-        randomValue: Math.random()*10,
-        strValue: "message2"
-    },
-    {
-        tag1:"sensor1",
-        tag2:"device2"
-    }];
-    return msg;
+```js
+msg.payload = [{
+    intValue: '10i',
+    numValue: 12,
+    randomValue: Math.random()*10,
+    strValue: "message2"
+},
+{
+    tag1:"sensor1",
+    tag2:"device2"
+}];
+return msg;
+```
 
 Finally, if ***msg.payload*** is an array of arrays, it will be written as a series of points containing fields and tags.
 
@@ -108,31 +118,33 @@ For example, the following flow injects two points into an InfluxDb 2.0 database
 
 The function node in the above flow looks as follows:
 
-    msg.payload = [
-        [{
-            intValue: '9i',
-            numValue: 10,
-            randomValue: Math.random()*10,
-            strValue: "message1",
-            time: new Date().getTime()-1
-        },
-        {
-            tag1:"sensor1",
-            tag2:"device2"
-        }],
-        [{
-            intValue: '11i',
-            numValue: 20,
-            randomValue: Math.random()*10,
-            strValue: "message2",
-            time: new Date().getTime()
-        },
-        {
-            tag1:"sensor1",
-            tag2:"device2"
-        }]
-    ];
-    return msg;
+```js
+msg.payload = [
+    [{
+        intValue: '9i',
+        numValue: 10,
+        randomValue: Math.random()*10,
+        strValue: "message1",
+        time: new Date().getTime()-1
+    },
+    {
+        tag1:"sensor1",
+        tag2:"device2"
+    }],
+    [{
+        intValue: '11i',
+        numValue: 20,
+        randomValue: Math.random()*10,
+        strValue: "message2",
+        time: new Date().getTime()
+    },
+    {
+        tag1:"sensor1",
+        tag2:"device2"
+    }]
+];
+return msg;
+```
 
 Note how timestamps are specified here - the number of milliseconds since 1 January 1970 00:00:00 UTC. In this case do not forget to set the precision to "ms" in "Time Precision" of the "Influx Out Node".  We make sure the timestamps are a different so the first element doesn't get overwritten by the second.
 
@@ -154,32 +166,34 @@ The following example flow writes two points to two measurements, setting the ti
 
 The function node generates sample points as follows:
 
-    msg.payload = [
-        {
-            measurement: "weather_sensor",
-            fields: {
-                temp: 5.5,
-                light: 678,
-                humidity: 51
-            },
-            tags:{
-                location:"garden"
-            },
-            timestamp: new Date()
+```js
+msg.payload = [
+    {
+        measurement: "weather_sensor",
+        fields: {
+            temp: 5.5,
+            light: 678,
+            humidity: 51
         },
-        {
-            measurement: "alarm_sensor",
-            fields: {
-                proximity: 999,
-                temp: 19.5
-            },
-            tags:{
-                location:"home"
-            },
-            timestamp: new Date()
-        }
-    ];
-    return msg;
+        tags:{
+            location:"garden"
+        },
+        timestamp: new Date()
+    },
+    {
+        measurement: "alarm_sensor",
+        fields: {
+            proximity: 999,
+            temp: 19.5
+        },
+        tags:{
+            location:"home"
+        },
+        timestamp: new Date()
+    }
+];
+return msg;
+```
 
 ### Catching Failed Reads and Writes
 
