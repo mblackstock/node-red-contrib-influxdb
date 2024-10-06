@@ -142,7 +142,7 @@ The batch output node (influx batch) sends a list of *points* together in a batc
 
 >Note: Javascript numbers are *always* written as a float.  As in the output node, when using the 1.8-flux or 2.0 configuration, you can explicitly write an integer using a number in a string with an 'i' suffix, for example, to write the integer `1234` use the string `'1234i'`.  This is *not* supported using 1.x configurations; all numbers are written as float values.
 
-By default the node will write timestamps using ms precision since that's what JavaScript gives us. if you specify the timestamp as a Date object, we'll convert it to milliseconds.
+By default the node will write timestamps using ms precision since that's what JavaScript gives us. If you specify the timestamp as a Date object, we'll convert it to milliseconds.
 
 If you provide a string or number as the timestamp, we'll pass it straight into Influx to parse using the specified precision, or the default precision in nanoseconds if it is left unspecified.
 
@@ -184,7 +184,7 @@ The function node generates sample points as follows:
 ### Catching Failed Reads and Writes
 
 Errors in reads and writes can be caught using the node-red `catch` node as usual.
-Standard error information is availlable in the default `msg.error` field; additional
+Standard error information is available in the default `msg.error` field; additional
 information about the underlying error is in the `msg.influx_error` field. Currently,
 this includes the HTTP status code returned from the influxdb server. The `influx-read`
 node will always throw a `503`, whereas the write nodes will include other status codes
