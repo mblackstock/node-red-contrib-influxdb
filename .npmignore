@@ -1,1 +1,3 @@
+.github/
 test-flows/
+eslint.config.mjs

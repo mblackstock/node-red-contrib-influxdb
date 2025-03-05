@@ -1,0 +1,16 @@
+# Dependabot should update GitHub Action dependencies.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "chore(ci): "
+    groups:
+      github-actions:
+        patterns:
+          - "*"

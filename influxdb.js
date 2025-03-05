@@ -97,7 +97,7 @@ module.exports = function (RED) {
         } else if (typeof value === 'number') {
             point.floatField(name, value);
         } else if (typeof value === 'string') {
-            // string values with numbers ending with 'i' are considered integers            
+            // string values with numbers ending with 'i' are considered integers
             if (isIntegerString(value)) {
                 value = parseInt(value.substring(0,value.length-1));
                 point.intField(name, value);
@@ -209,7 +209,6 @@ module.exports = function (RED) {
             var client = this.influxdbConfig.client;
 
             node.on("input", function (msg, send, done) {
-                var measurement;
                 var writeOptions = {};
 
                 var measurement = msg.hasOwnProperty('measurement') ? msg.measurement : node.measurement;
@@ -436,6 +435,7 @@ module.exports = function (RED) {
                 var query;
                 var rawOutput;
                 var queryOptions = {};
+                var queryPromise;
                 var precision;
                 var retentionPolicy;
 
@@ -457,9 +457,9 @@ module.exports = function (RED) {
                 }
 
                 if (rawOutput) {
-                    var queryPromise = client.queryRaw(query, queryOptions);
+                    queryPromise = client.queryRaw(query, queryOptions);
                 } else {
-                    var queryPromise = client.query(query, queryOptions);
+                    queryPromise = client.query(query, queryOptions);
                 }
 
                 queryPromise.then(function (results) {
