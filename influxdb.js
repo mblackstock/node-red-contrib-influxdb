@@ -9,13 +9,37 @@ module.exports = function (RED) {
     const VERSION_18_FLUX = '1.8-flux';
     const VERSION_20 = '2.0';
 
+    function normalizeHostAndPort(hostname, port) {
+        if (typeof hostname !== "string") {
+            return { hostname: hostname, port: port };
+        }
+
+        var trimmedHostname = hostname.trim();
+        var hostWithProtocol = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmedHostname);
+
+        try {
+            var parsedUrl = new URL(hostWithProtocol ? trimmedHostname : "http://" + trimmedHostname);
+            if (parsedUrl.hostname && parsedUrl.port) {
+                return { hostname: parsedUrl.hostname, port: parsedUrl.port };
+            }
+        } catch (err) {
+            var hostPortMatch = trimmedHostname.match(/^([^:]+):(\d+)$/);
+            if (hostPortMatch) {
+                return { hostname: hostPortMatch[1], port: hostPortMatch[2] };
+            }
+        }
+
+        return { hostname: trimmedHostname, port: port };
+    }
+
     /**
      * Config node. Currently we only connect to one host.
      */
     function InfluxConfigNode(n) {
         RED.nodes.createNode(this, n);
-        this.hostname = n.hostname;
-        this.port = n.port;
+        var hostConfig = normalizeHostAndPort(n.hostname, n.port);
+        this.hostname = hostConfig.hostname;
+        this.port = hostConfig.port;
         this.database = n.database;
         this.name = n.name;
 
