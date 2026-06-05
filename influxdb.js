@@ -116,8 +116,16 @@ module.exports = function (RED) {
         }
     }
 
+    function getWriteApi(node, org, bucket, precision) {
+        let key = [org, bucket, precision].join('\u001f');
+        if (!node.writeApis[key]) {
+            node.writeApis[key] = node.influxdbConfig.client.getWriteApi(org, bucket, precision);
+        }
+        return node.writeApis[key];
+    }
+
     // write using influx-client-js
-    function writePoints(msg, node, done) {
+    function writePoints(msg, node, done, client) {
         var measurement = msg.hasOwnProperty('measurement') ? msg.measurement : node.measurement;
         if (!measurement) {
             return done(RED._("influxdb.errors.nomeasurement"));
@@ -134,7 +142,7 @@ module.exports = function (RED) {
                         for (const prop in tags) {
                             point.tag(prop, tags[prop]);
                         }
-                        node.client.writePoint(point);
+                        client.writePoint(point);
                     });
                 } else {
                     // array of non-arrays: one point with both fields and tags
@@ -145,7 +153,7 @@ module.exports = function (RED) {
                     for (const prop in tags) {
                         point.tag(prop, tags[prop]);
                     }
-                    node.client.writePoint(point)
+                    client.writePoint(point)
                 }
             } else {
                 // single object: fields only
@@ -153,17 +161,17 @@ module.exports = function (RED) {
                     let point = new Point(measurement);
                     let fields = msg.payload;
                     addFieldsToPoint(point, fields);
-                    node.client.writePoint(point);
+                    client.writePoint(point);
                 } else {
                     // just a value
                     let point = new Point(measurement);
                     let value = msg.payload;
                     addFieldToPoint(point, 'value', value);
-                    node.client.writePoint(point);
+                    client.writePoint(point);
                 }
             }
     
-            node.client.flush(true).then(() => {
+            client.flush(true).then(() => {
                     done();
                 }).catch(error => {
                     msg.influx_error = {
@@ -303,10 +311,13 @@ module.exports = function (RED) {
             }
             let org = version === VERSION_18_FLUX ? '' : this.org;
 
-            this.client = this.influxdbConfig.client.getWriteApi(org, bucket, this.precisionV18FluxV20);
+            this.writeApis = {};
+            this.client = getWriteApi(this, org, bucket, this.precisionV18FluxV20);
 
             node.on("input", function (msg, send, done) {
-                writePoints(msg, node, done);
+                let writeBucket = version === VERSION_20 && msg.bucket ? msg.bucket : bucket;
+                let client = getWriteApi(node, org, writeBucket, node.precisionV18FluxV20);
+                writePoints(msg, node, done, client);
             });
         }
     }
